@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-#9fa_rv7^=0%r4jkdt24p@oe%1w6+=wcxkm0+reunx6urbz$7#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['EntregadeObjetos.onrender.com','www.EntregadeObjetos.com']
 
 
 # Application definition
