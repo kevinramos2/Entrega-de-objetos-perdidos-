@@ -1,3 +1,4 @@
+python-3.10.12
 Django>=4.2
 gunicorn
 psycopg2-binary
