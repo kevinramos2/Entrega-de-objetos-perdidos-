@@ -1,5 +1,3 @@
-from datetime import timedelta
-from django.utils import timezone
 from django.contrib import admin
 from django.db.models import Count
 from django.utils.safestring import mark_safe
@@ -32,14 +30,6 @@ class ObjetoReclamadoAdmin(admin.ModelAdmin):
         total_si = ObjetoReclamado.objects.filter(suministro_correo=True).count()
         total_no = ObjetoReclamado.objects.filter(suministro_correo=False).count()
 
-        # porcentaje_correos = round((total_si / (total_si + total_no)) * 100, 2) if (total_si + total_no) > 0 else 0
-
-        # Entregas en los últimos 7 días
-        # hoy = timezone.now().date()
-        # Hace_7_dias = hoy - timedelta(days=7)
-        # Entregas_ultimos_7_dias = ObjetoReclamado.objects.filter(fecha_entrega__gte=hace_7_dias).count()
-
-
         # Número de entregas por días
         datos_por_fecha = (
             ObjetoReclamado.objects
@@ -56,22 +46,6 @@ class ObjetoReclamadoAdmin(admin.ModelAdmin):
         else:
             max_index = None
 
-        # Totales generales
-        total_entregas = sum(valores_fecha)
-
-        # Día con más entregas
-        dia_mas_activo = etiquetas_fecha[max_index] if max_index is not None else "N/A"
-        entregas_dia_mas_activo = max(valores_fecha) if valores_fecha else 0
-
-        # Categoría más común
-        if etiquetas_tipo and valores_tipo:
-            idx_categoria = valores_tipo.index(max(valores_tipo))
-            categoria_mas_comun = etiquetas_tipo[idx_categoria]
-            total_categoria_mas_comun = valores_tipo[idx_categoria]
-        else:
-            categoria_mas_comun = "N/A"
-            total_categoria_mas_comun = 0
-
         # Contexts
         extra_context = extra_context or {}
         extra_context.update({
@@ -82,16 +56,7 @@ class ObjetoReclamadoAdmin(admin.ModelAdmin):
             'correo_values': mark_safe(json.dumps([total_si, total_no], cls=DjangoJSONEncoder)),
             'fecha_labels': mark_safe(json.dumps(etiquetas_fecha, cls=DjangoJSONEncoder)),
             'fecha_values': mark_safe(json.dumps(valores_fecha, cls=DjangoJSONEncoder)),
-            'max_fecha_index': max_index,
-            'total_entregas': total_entregas,
-            'dia_mas_activo': dia_mas_activo,
-            'entregas_dia_mas_activo': entregas_dia_mas_activo,
-            'categoria_mas_comun': categoria_mas_comun,
-            'total_categoria_mas_comun': total_categoria_mas_comun,
-            #'entregas_ultimos_7_dias': entregas_ultimos_7_dias,
-            'total_entregas': total_entregas,
-            #'porcentaje_correos': porcentaje_correos, 
-
+            'max_fecha_index': max_index
         })
 
         return super().changelist_view(request, extra_context=extra_context)
