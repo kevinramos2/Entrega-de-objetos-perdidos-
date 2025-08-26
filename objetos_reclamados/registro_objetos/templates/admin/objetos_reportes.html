@@ -1,6 +1,8 @@
 {% extends "admin/change_list.html" %}
 
 {% block content %}
+
+
 <style>
     .grafico-contenedor {
         max-width: 400px;
@@ -28,6 +30,60 @@
 </div>
 
 <hr>
+<h2>Resumen</h2>
+<div class="resumen-container">
+    <div class="resumen-card resumen-total">
+        <strong>Total de entregas</strong>
+        <p>{{ total_entregas }}</p>
+    </div>
+    <div class="resumen-card resumen-dia">
+        <strong>Día más activo</strong>
+        <p>{{ dia_mas_activo }} ({{ entregas_dia_mas_activo }} entregas)</p>
+    </div>
+    <div class="resumen-card resumen-categoria">
+        <strong>Categoría más común</strong>
+        <p>{{ categoria_mas_comun }} ({{ total_categoria_mas_comun }} entregas)</p>
+    </div>
+    <div class="resumen-card resumen-correos">
+        <strong>Correos registrados</strong>
+        <p>{{ porcentaje_correos }}%</p>
+    </div>
+    <!-- <div class="resumen-card resumen-semana">
+        <strong>Últimos 7 días</strong>
+        <p>{{ entregas_ultimos_7_dias }} entregas</p>
+    </div> -->
+</div>
+
+<style>
+.resumen-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;           /* Espaciado entre tarjetas */
+    margin-bottom: 20px;
+}
+
+.resumen-card {
+    flex: 1 1 200px;     /* Que se adapten al espacio */
+    background: #2a2a2a;
+    color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    text-align: center;
+    transition: transform 0.2s ease-in-out;
+}
+
+.resumen-card:hover {
+    transform: scale(1.05);  /* Efecto hover */
+}
+
+/* Colores personalizados para cada card */
+.resumen-total { background: #1e88e5; }
+.resumen-dia { background: #43a047; }
+.resumen-categoria { background: #8e24aa; }
+.resumen-correos { background: #fb8c00; }
+.resumen-semana { background: #e53935; }
+</style>
 
 <!-- <table border="1" cellpadding="5" cellspacing="0">
     <tr>s

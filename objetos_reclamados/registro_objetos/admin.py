@@ -27,8 +27,16 @@ class ObjetoReclamadoAdmin(admin.ModelAdmin):
         valores_tipo = [item['total'] for item in datos_por_tipo]
 
         # Porcentaje de quienes suministraron correo
+        total_entregas = ObjetoReclamado.objects.count()
         total_si = ObjetoReclamado.objects.filter(suministro_correo=True).count()
         total_no = ObjetoReclamado.objects.filter(suministro_correo=False).count()
+
+        if total_entregas > 0:
+            porcentaje_correos = round((total_si / total_entregas) * 100, 2)
+        else:
+            porcentaje_correos = 0
+
+
 
         # Número de entregas por días
         datos_por_fecha = (
@@ -46,6 +54,19 @@ class ObjetoReclamadoAdmin(admin.ModelAdmin):
         else:
             max_index = None
 
+        # Variables de resumen
+        total_entregas = sum(valores_fecha) if valores_fecha else 0
+        dia_mas_activo = etiquetas_fecha[max_index] if max_index is not None else "N/A"
+        entregas_dia_mas_activo = max(valores_fecha) if valores_fecha else 0
+
+        if etiquetas_tipo and valores_tipo:
+            idx_categoria = valores_tipo.index(max(valores_tipo))
+            categoria_mas_comun = etiquetas_tipo[idx_categoria]
+            total_categoria_mas_comun = valores_tipo[idx_categoria]
+        else:
+            categoria_mas_comun = "N/A"
+            total_categoria_mas_comun = 0
+
         # Contexts
         extra_context = extra_context or {}
         extra_context.update({
@@ -56,7 +77,13 @@ class ObjetoReclamadoAdmin(admin.ModelAdmin):
             'correo_values': mark_safe(json.dumps([total_si, total_no], cls=DjangoJSONEncoder)),
             'fecha_labels': mark_safe(json.dumps(etiquetas_fecha, cls=DjangoJSONEncoder)),
             'fecha_values': mark_safe(json.dumps(valores_fecha, cls=DjangoJSONEncoder)),
-            'max_fecha_index': max_index
+            'max_fecha_index': max_index,
+            'total_entregas': total_entregas,
+            'dia_mas_activo': dia_mas_activo,
+            'entregas_dia_mas_activo': entregas_dia_mas_activo,
+            'categoria_mas_comun': categoria_mas_comun,
+            'total_categoria_mas_comun': total_categoria_mas_comun,
+            'porcentaje_correos': porcentaje_correos,
         })
 
         return super().changelist_view(request, extra_context=extra_context)
