@@ -25,7 +25,6 @@ El objetivo es tener una plataforma escalable y fácil de usar para centralizar 
 4. Cambiar a la ruta del proyecto Django.
    ```bash
    cd objetos_reclamados
-   cd "C:\Users\kevin\OneDrive\Escritorio\Entrega-de-objetos-perdidos-\objetos_reclamados"
 5. Ejecutar el servidor de desarrollo.
    ```bash
    python manage.py runserver
