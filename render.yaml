@@ -1,0 +1,63 @@
+# ---------------------------------------------------------------------------
+# Render Blueprint - Despliegue de "Entrega de objetos perdidos"
+# ---------------------------------------------------------------------------
+# Cómo usarlo:
+#   1) Render -> Dashboard -> "New +" -> "Blueprint" -> elige este repositorio.
+#   2) Render detecta este archivo y crea el Web Service + PostgreSQL.
+#   3) Escribe el valor de DJANGO_SECRET_KEY cuando Render lo pida.
+#   4) "Apply" y espera el despliegue.
+# El primer despliegue ejecuta las migraciones (preDeployCommand).
+# ---------------------------------------------------------------------------
+
+databases:
+  - name: objetos-perdidos-db
+    databaseName: objetos_perdidos
+    user: objetos
+    plan: free
+
+services:
+  - type: web
+    name: objetos-perdidos
+    runtime: python
+    rootDir: objetos_reclamados
+    plan: free
+
+    # Dependencias + estáticos
+    buildCommand: "pip install -r ../requirements.txt && python manage.py collectstatic --noinput"
+
+    # Se ejecuta justo antes de arrancar el servicio (con la BD conectada)
+    preDeployCommand: "python manage.py migrate && python manage.py promocionar_admins"
+
+    startCommand: "gunicorn objetos_reclamados.wsgi:application --bind 0.0.0.0:$PORT"
+
+    healthCheckPath: /
+
+    envVars:
+      - key: DJANGO_DEBUG
+        value: "0"
+      # Obligatoria: Render te pedirá escribirla al crear el blueprint.
+      # Genera una con:
+      #   python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+      - key: DJANGO_SECRET_KEY
+        sync: false
+      # Host permitido = la URL .onrender.com que Render le asigne al servicio
+      - key: DJANGO_ALLOWED_HOSTS
+        fromService:
+          type: web
+          name: objetos-perdidos
+          property: host
+      # Único dominio dado de alta
+      - key: DJANGO_EMAIL_DOMAINS
+        value: unal.edu.co
+      # Correo que se convierte en administrador automáticamente
+      - key: DJANGO_ADMIN_EMAILS
+        value: keramosl@unal.edu.co
+      # OAuth de Google (opcional). Con valores vacíos el botón no se muestra.
+      - key: GOOGLE_OAUTH_CLIENT_ID
+        sync: false
+      - key: GOOGLE_OAUTH_CLIENT_SECRET
+        sync: false
+
+    # Vincula la base de datos: Render inyecta DATABASE_URL automáticamente
+    databases:
+      - name: objetos-perdidos-db

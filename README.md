@@ -275,11 +275,20 @@ Entrega-de-objetos-perdidos-/
 
 ##  Despliegue
 
-Listo para **Render** con **PostgreSQL** (o cualquier servicio PyPI/Gunicorn):
+**Forma recomendada: Blueprint (configuración a código).**
+
+El archivo [`render.yaml`](render.yaml) define el Web Service, el **PostgreSQL** y todas las variables. Para usarlo:
+
+1. En Render: **Dashboard → New + → Blueprint** y elige este repositorio.
+2. Render lee `render.yaml` y prepara el servicio + la base de datos.
+3. Escribe el `DJANGO_SECRET_KEY` cuando Render lo pida y pulsa **Apply**.
+4. El primer despliegue ejecuta `migrate` y `promocionar_admins` automáticamente.
+
+Alternativa, configuración **manual** (sin blueprint):
 
 1. **Base de datos**: crea un **PostgreSQL en Render** y copia su `Internal Database URL`.
 2. **Runtime**: el archivo `runtime.txt` fija la versión de Python (`python-3.10.12`).
-3. **Build**: instala `requirements.txt` y ejecuta `python manage.py migrate && python manage.py collectstatic --noinput`.
+3. **Build**: instala `requirements.txt` y ejecuta `python manage.py collectstatic --noinput` (las migraciones van en migración previa al arranque: `python manage.py migrate`).
 4. **Start**: `gunicorn objetos_reclamados.wsgi:application --bind 0.0.0.0:$PORT`
 5. **Variables de entorno** en el panel del servicio:
    - `DJANGO_SECRET_KEY` (generada con `get_random_secret_key()`)
