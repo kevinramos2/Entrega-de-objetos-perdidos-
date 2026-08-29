@@ -1,4 +1,4 @@
-# 🎒 Entrega de Objetos Perdidos
+#  Entrega de Objetos Perdidos
 
 Plataforma web para centralizar la gestión de **objetos perdidos y encontrados** en el campus universitario. Permite a los estudiantes **buscar y reclamar** sus objetos, y al personal administrativo **registrar, clasificar y hacer seguimiento** de cada entrega, con estadísticas y exportación de datos para análisis.
 
@@ -9,7 +9,7 @@ Plataforma web para centralizar la gestión de **objetos perdidos y encontrados*
 
 ---
 
-## 📖 Tabla de contenidos
+##  Tabla de contenidos
 
 - [Motivación](#-motivación)
 - [Funcionalidades](#-funcionalidades)
@@ -26,7 +26,7 @@ Plataforma web para centralizar la gestión de **objetos perdidos y encontrados*
 
 ---
 
-## 🎯 Motivación
+##  Motivación
 
 Cada día se pierden y se recogen decenas de objetos en las instalaciones (termos, carnéts, celulares, cuadernos, ropa…). Este proyecto nace para resolver ese problema con una herramienta centralizada:
 
@@ -36,7 +36,7 @@ Cada día se pierden y se recogen decenas de objetos en las instalaciones (termo
 
 ---
 
-## ✨ Funcionalidades
+##  Funcionalidades
 
 ### Rol estudiante
 - Registro e inicio de sesión con **correo institucional** obligatorio (`@unal.edu.co`).
@@ -56,7 +56,7 @@ Cada día se pierden y se recogen decenas de objetos en las instalaciones (termo
 
 ---
 
-## 👥 Roles
+##  Roles
 
 | Rol | Qué puede hacer |
 |-----|-----------------|
@@ -67,7 +67,7 @@ Cada día se pierden y se recogen decenas de objetos en las instalaciones (termo
 
 ---
 
-## 🔄 Flujo de trabajo
+##  Flujo de trabajo
 
 ```mermaid
 flowchart LR
@@ -90,9 +90,9 @@ flowchart LR
 
 ---
 
-## 📸 Capturas
+##  Capturas
 
-> **Nota:** reemplaza los archivos de esta sección con capturas reales de tu despliegue. Ejemplos:
+> Ejemplos:
 
 | | |
 |---|---|
@@ -102,7 +102,7 @@ flowchart LR
 
 ---
 
-## 🛠️ Tecnologías
+##  Tecnologías
 
 - [Python 3.11](https://www.python.org/) · [Django 5.2](https://www.djangoproject.com/)
 - [django-allauth](https://docs.allauth.org/) — SSO con Google restringido por dominio
@@ -112,7 +112,7 @@ flowchart LR
 
 ---
 
-## 🚀 Instalación y puesta en marcha
+##  Instalación y puesta en marcha
 
 ### Requisitos previos
 - Python 3.10+
@@ -175,11 +175,11 @@ flowchart LR
 | Administrador | `admin` | `admin@unal.edu.co` | `CambiaEsteAdmin123!` |
 | Estudiante | `estudiante` | `estudiante@unal.edu.co` | `Estudiante123!` |
 
-> ⚠️ Cambia estas contraseñas antes de un despliegue real.
+>  Cambia estas contraseñas antes de un despliegue real.
 
 ---
 
-## 🔐 Variables de entorno
+##  Variables de entorno
 
 Toda la configuración sensible se lee desde variables de entorno.
 
@@ -196,7 +196,7 @@ Si `DJANGO_DEBUG="False"` y `DJANGO_ALLOWED_HOSTS` no incluye el host del sitio,
 
 ---
 
-## 🛡️ Seguridad
+##  Seguridad
 
 - **Correo institucional obligatorio**: el registro local y el SSO de Google solo aceptan dominios autorizados (`unal.edu.co` por defecto). Los adaptadores de allauth bloquean el acceso con cuentas Gmail/personales.
 - **Rate limiting del login**: se limita a **5 intentos fallidos en 15 minutos** por usuario y por IP; las nuevas contraseñas pasan los validadores de Django.
@@ -207,7 +207,7 @@ Si `DJANGO_DEBUG="False"` y `DJANGO_ALLOWED_HOSTS` no incluye el host del sitio,
 
 ---
 
-## 📁 Estructura del proyecto
+##  Estructura del proyecto
 
 ```txt
 Entrega-de-objetos-perdidos-/
@@ -238,7 +238,7 @@ Entrega-de-objetos-perdidos-/
 
 ---
 
-## ☁️ Despliegue
+##  Despliegue
 
 Preparado para **Render** (o cualquier servicio PyPI/Gunicorn):
 
@@ -254,7 +254,7 @@ Preparado para **Render** (o cualquier servicio PyPI/Gunicorn):
 
 ---
 
-## 👤 Autor
+##  Autor
 
 **Kevin Ramos** — [@kevinramos2](https://github.com/kevinramos2)
 
