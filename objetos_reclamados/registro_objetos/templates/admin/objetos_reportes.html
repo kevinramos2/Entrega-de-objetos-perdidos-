@@ -1,191 +1,61 @@
 {% extends "admin/change_list.html" %}
 
 {% block content %}
-
-
 <style>
-    .grafico-contenedor {
-        max-width: 400px;
-        margin: 20px auto;
-    }
+    .obr-resumen { display: flex; flex-wrap: wrap; gap: 16px; margin: 8px 0 20px; }
+    .obr-card { flex: 1 1 220px; background: #fff; border: 1px solid #dee2e6; border-radius: 12px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+    .obr-card b { display: block; font-size: 1.6rem; font-family: inherit; }
+    .obr-card span { color: #6c757d; font-size: .85rem; }
+    .obr-grafico { max-width: 560px; margin: 24px auto; }
+    .obr-grafico canvas { width: 100% !important; }
+    .obr-titulo { font-size: 1.1rem; margin: 26px 0 4px; }
 </style>
 
-<h2>Objetos entregados por tipo</h2>
-<div class="grafico-contenedor">
-    <canvas id="graficoObjetos"></canvas>
+<div class="obr-resumen">
+    <div class="obr-card"><b>{{ total_entregas }}</b><span>Objetos registrados</span></div>
+    <div class="obr-card"><b>{{ total_categoria_mas_comun }}</b><span>Categoría más común: {{ categoria_mas_comun }}</span></div>
+    <div class="obr-card"><b>{{ correo_si }}</b><span>Con correo suministrado</span></div>
+    <div class="obr-card"><b>{{ correo_no }}</b><span>Sin correo</span></div>
 </div>
 
-<hr>
+<h2 class="obr-titulo">Objetos por categoría</h2>
+<div class="obr-grafico"><canvas id="graficoCategoria"></canvas></div>
 
-<h2>Porcentaje de personas que dieron correo</h2>
-<div class="grafico-contenedor">
-    <canvas id="graficoCorreo"></canvas>
-</div>
+<h2 class="obr-titulo">Objetos por estado</h2>
+<div class="obr-grafico"><canvas id="graficoEstado"></canvas></div>
 
-<hr>
+<h2 class="obr-titulo">Registros por fecha</h2>
+<div class="obr-grafico"><canvas id="graficoFecha"></canvas></div>
 
-<h2>Entregas por fecha</h2>
-<div class="grafico-contenedor">
-    <canvas id="graficoFecha"></canvas>
-</div>
-
-<hr>
-<h2>Resumen</h2>
-<div class="resumen-container">
-    <div class="resumen-card resumen-total">
-        <strong>Total de entregas</strong>
-        <p>{{ total_entregas }}</p>
-    </div>
-    <div class="resumen-card resumen-dia">
-        <strong>Día más activo</strong>
-        <p>{{ dia_mas_activo }} ({{ entregas_dia_mas_activo }} entregas)</p>
-    </div>
-    <div class="resumen-card resumen-categoria">
-        <strong>Categoría más común</strong>
-        <p>{{ categoria_mas_comun }} ({{ total_categoria_mas_comun }} entregas)</p>
-    </div>
-    <div class="resumen-card resumen-correos">
-        <strong>Correos registrados</strong>
-        <p>{{ porcentaje_correos }}%</p>
-    </div>
-    <!-- <div class="resumen-card resumen-semana">
-        <strong>Últimos 7 días</strong>
-        <p>{{ entregas_ultimos_7_dias }} entregas</p>
-    </div> -->
-</div>
-
-<style>
-.resumen-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;           /* Espaciado entre tarjetas */
-    margin-bottom: 20px;
-}
-
-.resumen-card {
-    flex: 1 1 200px;     /* Que se adapten al espacio */
-    background: #2a2a2a;
-    color: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    text-align: center;
-    transition: transform 0.2s ease-in-out;
-}
-
-.resumen-card:hover {
-    transform: scale(1.05);  /* Efecto hover */
-}
-
-/* Colores personalizados para cada card */
-.resumen-total { background: #1e88e5; }
-.resumen-dia { background: #43a047; }
-.resumen-categoria { background: #8e24aa; }
-.resumen-correos { background: #fb8c00; }
-.resumen-semana { background: #e53935; }
-</style>
-
-<!-- <table border="1" cellpadding="5" cellspacing="0">
-    <tr>s
-        <th>Tipo de Objeto</th>
-        <th>Total Entregados</th>
-    </tr>
-    {% for fila in datos_por_tipo %}
-    <tr>
-        <td>{{ fila.tipo_objeto }}</td>
-        <td>{{ fila.total }}</td>
-    </tr>
-    {% endfor %}
-</table>  -->
-
-<hr>
 {{ block.super }}
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-    // Gráfico por tipo de objeto
-    new Chart(document.getElementById('graficoObjetos'), {
+    new Chart(document.getElementById('graficoCategoria'), {
         type: 'bar',
         data: {
             labels: {{ chart_labels|safe }},
-            datasets: [{
-                label: 'Objetos entregados',
-                data: {{ chart_values|safe }},
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
+            datasets: [{ label: 'Objetos', data: {{ chart_values|safe }},
+                backgroundColor: 'rgba(79, 70, 229, .7)', borderRadius: 6 }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    ticks: {
-                        autoSkip: true,    // Salta etiquetas si hay muchas
-                        maxRotation: 45,   // Rota etiquetas si es necesario
-                        minRotation: 0
-                    }
-                },
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
     });
-
-
-    // Gráfico de pastel para porcentajes de correo
-    new Chart(document.getElementById('graficoCorreo'), {
-        type: 'pie',
+    new Chart(document.getElementById('graficoEstado'), {
+        type: 'doughnut',
         data: {
-            labels: {{ correo_labels|safe }},
-            datasets: [{
-                data: {{ correo_values|safe }},
-                backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
-                borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
-                borderWidth: 1
-            }]
+            labels: {{ estado_labels|safe }},
+            datasets: [{ data: {{ estado_values|safe }}, backgroundColor: ['#10b981', '#f59e0b', '#3b82f6'], borderWidth: 2 }]
         },
-        options: { responsive: true, maintainAspectRatio: false }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
     });
-
-    // Gráfico por fecha
     new Chart(document.getElementById('graficoFecha'), {
         type: 'line',
         data: {
             labels: {{ fecha_labels|safe }},
-            datasets: [{
-                label: 'Entregas por día',
-                data: {{ fecha_values|safe }},
-                fill: false,
-                borderColor: 'rgba(153, 102, 255, 1)',
-                tension: 0.2,
-                pointBackgroundColor: {{ fecha_values|safe }}.map((v, i) =>
-                    i === {{ max_fecha_index }} ? 'red' : 'rgba(153, 102, 255, 1)'
-                ),
-                pointRadius: {{ fecha_values|safe }}.map((v, i) =>
-                    i === {{ max_fecha_index }} ? 6 : 3
-                )
-            }]
+            datasets: [{ data: {{ fecha_values|safe }}, fill: true, tension: .3,
+                borderColor: '#06b6d4', backgroundColor: 'rgba(6, 182, 212, .12)' }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    ticks: {
-                        autoSkip: true,
-                        maxRotation: 45,
-                        minRotation: 0
-                    }
-                },
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
     });
-
 </script>
 {% endblock %}

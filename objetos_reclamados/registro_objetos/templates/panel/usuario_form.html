@@ -1,0 +1,55 @@
+{% extends 'panel/base.html' %}
+{% block title %}Editar cuenta · Panel{% endblock %}
+
+{% block panel_content %}
+<div class="panel-titulo">
+  <div>
+    <div class="crumb"><a href="{% url 'panel_usuarios' %}" style="color:var(--muted)">Cuentas</a> → </div>
+    <h1>Editar cuenta de {{ usuario.username }}</h1>
+  </div>
+</div>
+
+<form method="post" class="form-card" style="max-width:640px">
+  {% csrf_token %}
+  {% if es_self %}<p class="muted" style="font-size:.86rem">⚠️ Es tu propia cuenta: evita desactivarla o quitarte el rol de administrador.</p>{% endif %}
+  {% if form.errors %}
+  <div class="errores-form">
+    <ul style="margin:0;padding-left:18px">
+      {% for campo in form %}{% for error in campo.errors %}<li>{{ error }}</li>{% endfor %}{% endfor %}
+      {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <div class="form-grid-2">
+    <div class="form-campo"><label>{{ form.username.label }}</label>{{ form.username }}</div>
+    <div class="form-campo"><label>{{ form.email.label }}</label>{{ form.email }}</div>
+    <div class="form-campo"><label>{{ form.first_name.label }}</label>{{ form.first_name }}</div>
+    <div class="form-campo"><label>{{ form.last_name.label }}</label>{{ form.last_name }}</div>
+  </div>
+  <div class="form-grid-2">
+    <div class="form-campo"><label>{{ form.rol.label }}</label>{{ form.rol }}</div>
+    <div class="form-campo form-check" style="margin-top:30px">
+      {{ form.is_active }}
+      <label for="{{ form.is_active.id_for_label }}" style="margin:0">Cuenta activa</label>
+    </div>
+  </div>
+  <div class="form-campo">
+    <label>{{ form.contrasena.label }}</label>
+    {{ form.contrasena }}
+    <div class="help">Si escribes una contraseña nueva, el usuario deberá usarla la próxima vez.</div>
+  </div>
+  <hr class="divider">
+  <div class="form-grid-2">
+    <div class="form-campo"><label>{{ form.tipo_documento.label }}</label>{{ form.tipo_documento }}</div>
+    <div class="form-campo"><label>{{ form.numero_documento.label }}</label>{{ form.numero_documento }}</div>
+    <div class="form-campo"><label>{{ form.telefono.label }}</label>{{ form.telefono }}</div>
+    <div class="form-campo"><label>{{ form.programa.label }}</label>{{ form.programa }}</div>
+  </div>
+
+  <div class="flex mt-3">
+    <button type="submit" class="btn btn-primary">💾 Guardar cambios</button>
+    <a href="{% url 'panel_usuarios' %}" class="btn btn-ghost">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

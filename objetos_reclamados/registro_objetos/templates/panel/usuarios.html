@@ -1,0 +1,106 @@
+{% extends 'panel/base.html' %}
+{% block title %}Cuentas · Panel{% endblock %}
+
+{% block panel_content %}
+<div class="panel-titulo">
+  <div>
+    <div class="crumb">Configuración</div>
+    <h1>Gestión de cuentas</h1>
+  </div>
+</div>
+
+<div class="grid-charts-2" style="grid-template-columns:1.3fr .7fr;margin-top:0">
+  <div>
+    <form method="get" class="filtros-busqueda" autocomplete="off">
+      <div class="caja-busqueda" style="max-width:300px">
+        <span>🔍</span>
+        <input type="search" name="q" value="{{ q }}" placeholder="Buscar usuario o correo…">
+      </div>
+      <select name="rol" class="cat-chip" style="padding:10px 16px" onchange="this.form.submit()">
+        <option value="">Todos</option>
+        <option value="estudiante" {% if rol == 'estudiante' %}selected{% endif %}>Estudiantes</option>
+        <option value="admin" {% if rol == 'admin' %}selected{% endif %}>Administradores</option>
+      </select>
+      <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
+    </form>
+
+    <div class="card" style="overflow:auto">
+      <table class="tabla">
+        <thead>
+          <tr><th>Usuario</th><th>Rol</th><th>Estado</th><th>Reclamos</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for u in usuarios %}
+          <tr>
+            <td>
+              <div class="flex">
+                <span class="avatar">{{ u.username|slice:":1"|upper }}</span>
+                <div>
+                  <b>{{ u.get_full_name|default:u.username }}</b><br>
+                  <span class="muted" style="font-size:.8rem">{{ u.email }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              {% if u.is_superuser %}
+                <span class="badge" style="background:var(--danger-50);color:#b91c1c">Superusuario</span>
+              {% elif u.is_staff %}
+                <span class="badge badge-aprobada">Administrador</span>
+              {% else %}
+                <span class="badge badge-cat">Estudiante</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if u.is_active %}<span class="badge badge-disponible">Activa</span>
+              {% else %}<span class="badge badge-rechazada">Inactiva</span>{% endif %}
+            </td>
+            <td>{{ u.solicitudes.count }}</td>
+            <td><a href="{% url 'panel_usuario_editar' u.pk %}" class="btn btn-sm btn-outline">Editar</a></td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5"><div class="vacio"><p>No hay cuentas que coincidan.</p></div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div>
+    <form method="post" class="form-card">
+      {% csrf_token %}
+      <h3 style="margin-top:0">Crear cuenta</h3>
+      {% if form.errors %}
+      <div class="errores-form">
+        <ul style="margin:0;padding-left:18px">
+          {% for campo in form %}{% for error in campo.errors %}<li>{{ error }}</li>{% endfor %}{% endfor %}
+          {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      <div class="form-campo"><label>{{ form.username.label }}</label>{{ form.username }}</div>
+      <div class="form-campo"><label>{{ form.email.label }}</label>{{ form.email }}<div class="help">Estudiantes: correo @{{ DOMINIOS_PERMITIDOS.0 }}</div></div>
+      <div class="form-grid-2">
+        <div class="form-campo"><label>{{ form.first_name.label }}</label>{{ form.first_name }}</div>
+        <div class="form-campo"><label>{{ form.last_name.label }}</label>{{ form.last_name }}</div>
+      </div>
+      <div class="form-grid-2">
+        <div class="form-campo"><label>{{ form.rol.label }}</label>{{ form.rol }}</div>
+        <div class="form-campo"><label>{{ form.is_active.label }}</label>{{ form.is_active }}</div>
+      </div>
+      <div class="form-campo">
+        <label>{{ form.contrasena.label }}</label>
+        {{ form.contrasena }}
+      </div>
+      <div class="form-grid-2">
+        <div class="form-campo"><label>{{ form.tipo_documento.label }}</label>{{ form.tipo_documento }}</div>
+        <div class="form-campo"><label>{{ form.numero_documento.label }}</label>{{ form.numero_documento }}</div>
+      </div>
+      <div class="form-grid-2">
+        <div class="form-campo"><label>{{ form.telefono.label }}</label>{{ form.telefono }}</div>
+        <div class="form-campo"><label>{{ form.programa.label }}</label>{{ form.programa }}</div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">➕ Crear cuenta</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -3,87 +3,110 @@ from django.db.models import Count
 from django.utils.safestring import mark_safe
 from django.core.serializers.json import DjangoJSONEncoder
 import json
-from .models import ObjetoReclamado
+
+from .models import (
+    Categoria,
+    ObjetoReclamado,
+    PerfilUsuario,
+    SolicitudReclamacion,
+)
+
+
+class SolicitudInline(admin.TabularInline):
+    model = SolicitudReclamacion
+    extra = 0
+    readonly_fields = ('usuario', 'mensaje', 'estado', 'fecha')
+
+
+@admin.register(Categoria)
+class CategoriaAdmin(admin.ModelAdmin):
+    list_display = ('icono', 'nombre', 'color', 'orden', 'cantidad_objetos')
+    list_editable = ('orden',)
+    search_fields = ('nombre',)
+
+    def cantidad_objetos(self, obj):
+        return obj.objetos.count()
+    cantidad_objetos.short_description = 'Objetos'
+
 
 @admin.register(ObjetoReclamado)
 class ObjetoReclamadoAdmin(admin.ModelAdmin):
-    list_display = ('nombre_persona', 'tipo_objeto', 'fecha_entrega', 'responsable_entrega')
-    list_filter = ('tipo_objeto', 'fecha_entrega', 'suministro_correo')
-    search_fields = ('nombre_persona', 'numero_documento', 'tipo_objeto')
+    list_display = ('nombre_objeto', 'etiqueta_categoria', 'estado', 'fecha_registro', 'responsable_entrega')
+    list_filter = ('estado', 'categoria', 'suministro_correo')
+    search_fields = ('nombre_objeto', 'nombre_persona', 'numero_documento', 'descripcion_objeto')
+    list_select_related = ('categoria',)
+    inlines = [SolicitudInline]
+    readonly_fields = ('fecha_registro', 'fecha_reclamo', 'registrado_por', 'reclamado_por')
+    autocomplete_fields = ('categoria',)
 
     change_list_template = "admin/objetos_reportes.html"
 
     def changelist_view(self, request, extra_context=None):
-        # Datos agrupados por tipo_objeto
         datos_por_tipo = (
             ObjetoReclamado.objects
-            .values('tipo_objeto')
+            .values('categoria__nombre')
             .annotate(total=Count('id'))
             .order_by('-total')
         )
-
-        # Extraer listas para Chart.js
-        etiquetas_tipo = [item['tipo_objeto'] for item in datos_por_tipo]
+        etiquetas_tipo = [item['categoria__nombre'] or 'Sin categoría' for item in datos_por_tipo]
         valores_tipo = [item['total'] for item in datos_por_tipo]
 
-        # Porcentaje de quienes suministraron correo
         total_entregas = ObjetoReclamado.objects.count()
         total_si = ObjetoReclamado.objects.filter(suministro_correo=True).count()
-        total_no = ObjetoReclamado.objects.filter(suministro_correo=False).count()
 
-        if total_entregas > 0:
-            porcentaje_correos = round((total_si / total_entregas) * 100, 2)
-        else:
-            porcentaje_correos = 0
+        datos_por_estado = (
+            ObjetoReclamado.objects
+            .values('estado')
+            .annotate(total=Count('id'))
+            .order_by('estado')
+        )
+        etiquetas_estado = [ObjetoReclamado.Estados(i['estado']).label for i in datos_por_estado]
+        valores_estado = [i['total'] for i in datos_por_estado]
 
-
-
-        # Número de entregas por días
         datos_por_fecha = (
             ObjetoReclamado.objects
-            .values('fecha_entrega')
+            .filter(fecha_registro__isnull=False)
+            .values('fecha_registro')
             .annotate(total=Count('id'))
-            .order_by('fecha_entrega')
+            .order_by('fecha_registro')
         )
-        etiquetas_fecha = [str(item['fecha_entrega']) for item in datos_por_fecha]
+        etiquetas_fecha = [str(item['fecha_registro']) for item in datos_por_fecha]
         valores_fecha = [item['total'] for item in datos_por_fecha]
 
-        # Encontrar el día con más entregas
-        if valores_fecha:
-            max_index = valores_fecha.index(max(valores_fecha))
-        else:
-            max_index = None
-
-        # Variables de resumen
-        total_entregas = sum(valores_fecha) if valores_fecha else 0
-        dia_mas_activo = etiquetas_fecha[max_index] if max_index is not None else "N/A"
-        entregas_dia_mas_activo = max(valores_fecha) if valores_fecha else 0
-
-        if etiquetas_tipo and valores_tipo:
+        if valores_tipo:
             idx_categoria = valores_tipo.index(max(valores_tipo))
             categoria_mas_comun = etiquetas_tipo[idx_categoria]
             total_categoria_mas_comun = valores_tipo[idx_categoria]
         else:
-            categoria_mas_comun = "N/A"
-            total_categoria_mas_comun = 0
+            categoria_mas_comun, total_categoria_mas_comun = 'N/A', 0
 
-        # Contexts
         extra_context = extra_context or {}
         extra_context.update({
-            'datos_por_tipo': datos_por_tipo,
             'chart_labels': mark_safe(json.dumps(etiquetas_tipo, cls=DjangoJSONEncoder)),
             'chart_values': mark_safe(json.dumps(valores_tipo, cls=DjangoJSONEncoder)),
-            'correo_labels': mark_safe(json.dumps(["Sí suministró correo", "No suministró correo"], cls=DjangoJSONEncoder)),
-            'correo_values': mark_safe(json.dumps([total_si, total_no], cls=DjangoJSONEncoder)),
+            'estado_labels': mark_safe(json.dumps(etiquetas_estado, cls=DjangoJSONEncoder)),
+            'estado_values': mark_safe(json.dumps(valores_estado, cls=DjangoJSONEncoder)),
             'fecha_labels': mark_safe(json.dumps(etiquetas_fecha, cls=DjangoJSONEncoder)),
             'fecha_values': mark_safe(json.dumps(valores_fecha, cls=DjangoJSONEncoder)),
-            'max_fecha_index': max_index,
             'total_entregas': total_entregas,
-            'dia_mas_activo': dia_mas_activo,
-            'entregas_dia_mas_activo': entregas_dia_mas_activo,
             'categoria_mas_comun': categoria_mas_comun,
             'total_categoria_mas_comun': total_categoria_mas_comun,
-            'porcentaje_correos': porcentaje_correos,
+            'correo_si': total_si,
+            'correo_no': total_entregas - total_si,
         })
-
         return super().changelist_view(request, extra_context=extra_context)
+
+
+@admin.register(PerfilUsuario)
+class PerfilUsuarioAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'programa', 'telefono', 'numero_documento')
+    search_fields = ('usuario__username', 'usuario__email', 'programa', 'numero_documento')
+    autocomplete_fields = ('usuario',)
+
+
+@admin.register(SolicitudReclamacion)
+class SolicitudReclamacionAdmin(admin.ModelAdmin):
+    list_display = ('objeto', 'usuario', 'estado', 'fecha', 'respondida_por', 'fecha_respuesta')
+    list_filter = ('estado',)
+    search_fields = ('usuario__username', 'usuario__email', 'objeto__nombre_objeto')
+    readonly_fields = ('fecha', 'fecha_respuesta')

@@ -1,0 +1,105 @@
+{% extends 'objetos/base.html' %}
+{% block title %}Inicio · Perdidos y Encontrados{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">🎓 Comunidad universitaria</span>
+        <h1>¿Perdiste algo?<br>Aquí puede estar esperándote.</h1>
+        <p class="sub">
+          Centralizamos los objetos perdidos y encontrados de la universidad.
+          Reporta lo que encontraste, busca lo que perdiste y recupera lo
+          que es tuyo, sin vueltas.
+        </p>
+        <div class="hero-ctas">
+          {% if user.is_authenticated %}
+            <a href="{% url 'lista_objetos' %}" class="btn btn-white btn-lg">🔎 Ver objetos perdidos</a>
+            {% if not user.is_staff %}
+              <a href="{% url 'mis_solicitudes' %}" class="btn btn-sm btn-lg" style="background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25)">Mis reclamos</a>
+            {% endif %}
+          {% else %}
+            <a href="{% url 'registro' %}" class="btn btn-white btn-lg">Crear cuenta gratis</a>
+            <a href="{% url 'login' %}" class="btn btn-lg" style="background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25)">Iniciar sesión</a>
+          {% endif %}
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><b>{{ resumen.total }}</b><span>objetos reportados</span></div>
+          <div class="hero-stat"><b>{{ resumen.disponibles }}</b><span>esperando dueño</span></div>
+          <div class="hero-stat"><b>{{ resumen.tasa_recuperacion }}%</b><span>recuperados</span></div>
+        </div>
+      </div>
+      <div class="hero-demo">
+        <div class="demo-title">🆕 Fueron encontrados recientemente</div>
+        <div class="demo-list">
+          {% for obj in recientes %}
+          <div class="demo-item">
+            <div class="demo-icon">{{ obj.icono }}</div>
+            <div>
+              <b>{{ obj.nombre_objeto }}</b>
+              <span>{{ obj.etiqueta_categoria }} · {{ obj.lugar_encontrado|default:'Sin lugar' }}</span>
+            </div>
+            {% if user.is_authenticated %}
+            <a href="{% url 'detalle_objeto' obj.pk %}" class="btn btn-sm btn-white">Ver</a>
+            {% endif %}
+          </div>
+          {% empty %}
+          <div class="demo-item"><div class="demo-icon">📦</div><div><b>Aún no hay reportes</b><span>El primero lo puedes hacer tú.</span></div></div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="container">
+    <div class="seccion-header">
+      <h2>¿Cómo funciona?</h2>
+      <p>Tres pasos simples que conectan lo perdido con su dueño.</p>
+    </div>
+    <div class="pasos">
+      <div class="card paso">
+        <div class="num">1</div>
+        <h3>Reporta</h3>
+        <p>¿Encontraste un objeto? Regístralo con su descripción, foto y lugar.</p>
+      </div>
+      <div class="card paso">
+        <div class="num">2</div>
+        <h3>Consulta</h3>
+        <p>¿Perdiste algo? Explora los objetos reportados y filtra por categoría.</p>
+      </div>
+      <div class="card paso">
+        <div class="num">3</div>
+        <h3>Recupera</h3>
+        <p>Solicita tu reclamo; la administración verifica y coordina la entrega.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="seccion" style="background:#fff">
+  <div class="container">
+    <div class="seccion-header">
+      <h2>La situación, en números</h2>
+      <p>Datos reales de nuestra comunidad (se actualizan automáticamente).</p>
+    </div>
+    <div class="insights">
+      {% for m in mensajes %}
+      <div class="insight">
+        <div class="ico">{{ m.icono }}</div>
+        <div><b>{{ m.titulo }}</b><span>{{ m.detalle }}</span></div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-4">
+      {% if user.is_authenticated %}
+        <a href="{% url 'lista_objetos' %}" class="btn btn-primary btn-lg">Empezar a buscar 🔎</a>
+      {% else %}
+        <a href="{% url 'registro' %}" class="btn btn-primary btn-lg">Únete a la comunidad</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

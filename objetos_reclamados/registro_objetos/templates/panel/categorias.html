@@ -1,0 +1,53 @@
+{% extends 'panel/base.html' %}
+{% block title %}Categorías · Panel{% endblock %}
+
+{% block panel_content %}
+<div class="panel-titulo">
+  <div>
+    <div class="crumb">Configuración</div>
+    <h1>Categorías</h1>
+  </div>
+</div>
+
+<div class="grid-charts-2" style="grid-template-columns:1.2fr .8fr;margin-top:0">
+  <div class="card" style="overflow:auto">
+    <table class="tabla">
+      <thead><tr><th>Icono</th><th>Nombre</th><th>Objetos</th><th>Acciones</th></tr></thead>
+      <tbody>
+        {% for cat in categorias %}
+        <tr>
+          <td style="font-size:1.4rem">{{ cat.icono }}</td>
+          <td><b>{{ cat.nombre }}</b></td>
+          <td>{{ cat.total_objetos }}</td>
+          <td>
+            <div class="acciones">
+              <a href="{% url 'panel_categoria_editar' cat.pk %}" class="btn btn-sm btn-outline">Editar</a>
+              <form method="post" action="{% url 'panel_categoria_eliminar' cat.pk %}" data-confirm="¿Eliminar esta categoría?">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-danger">🗑️</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4"><div class="vacio"><p>Aún no hay categorías.</p></div></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div>
+    <form method="post" class="form-card">
+      {% csrf_token %}
+      <h3 style="margin-top:0">Nueva categoría</h3>
+      <div class="form-campo"><label>{{ form.nombre.label }}</label>{{ form.nombre }}</div>
+      <div class="form-grid-2">
+        <div class="form-campo"><label>{{ form.icono.label }}</label>{{ form.icono }}</div>
+        <div class="form-campo"><label>{{ form.color.label }}</label>{{ form.color }}</div>
+      </div>
+      <div class="form-campo"><label>{{ form.orden.label }}</label>{{ form.orden }}</div>
+      <button type="submit" class="btn btn-primary btn-block">Crear categoría</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

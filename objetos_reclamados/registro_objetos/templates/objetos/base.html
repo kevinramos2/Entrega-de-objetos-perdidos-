@@ -1,0 +1,110 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Plataforma de objetos perdidos y encontrados de la comunidad universitaria. Reporta, encuentra y recupera lo que perdiste.">
+  <title>{% block title %}Perdidos y Encontrados{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+  <header class="navbar">
+    <div class="container">
+      <button class="nav-toggle" aria-label="Abrir menú">☰</button>
+      <a href="{% url 'inicio' %}" class="brand">
+        <span class="brand-mark">🗺️</span>
+        <span>Perdidos &amp; Encontrados</span>
+      </a>
+      <nav class="nav-links">
+        <a href="{% url 'inicio' %}" class="{% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">Inicio</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'lista_objetos' %}" class="{% if request.resolver_match.url_name == 'lista_objetos' %}active{% endif %}">Objetos perdidos</a>
+          {% if not user.is_staff %}
+            <a href="{% url 'mis_solicitudes' %}" class="{% if request.resolver_match.url_name == 'mis_solicitudes' %}active{% endif %}">Mis reclamos</a>
+          {% endif %}
+          {% if user.is_staff %}
+            <a href="{% url 'panel_inicio' %}" class="{% if 'panel' in request.resolver_match.url_name %}active{% endif %}">Panel de administración</a>
+          {% endif %}
+        {% endif %}
+      </nav>
+      <div class="nav-actions">
+        {% if user.is_authenticated %}
+          {% if not user.is_staff %}
+            <span class="avatar" title="{{ user.get_full_name|default:user.username }}">{{ user.username|slice:":1"|upper }}</span>
+          {% else %}
+            <a href="{% url 'panel_inicio' %}" class="avatar" title="Panel de administración" style="text-decoration:none">{{ user.username|slice:":1"|upper }}</a>
+          {% endif %}
+          <form action="{% url 'logout' %}" method="post" style="margin:0">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-ghost btn-sm">Salir</button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-sm btn-outline">Iniciar sesión</a>
+          <a href="{% url 'registro' %}" class="btn btn-sm btn-primary">Crear cuenta</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  {% if messages %}
+  <div class="toasts">
+    {% for mensaje in messages %}
+      <div class="toast {{ mensaje.tags }}">
+        <span class="t-ico">
+          {% if 'success' in mensaje.tags %}✅
+          {% elif 'error' in mensaje.tags %}⚠️
+          {% elif 'warning' in mensaje.tags %}🕐
+          {% else %}ℹ️{% endif %}
+        </span>
+        <span>{{ mensaje }}</span>
+        <button class="cerrar" aria-label="Cerrar">&times;</button>
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+
+  <footer class="footer">
+    <div class="container">
+      <div>
+        <a href="{% url 'inicio' %}" class="brand"><span class="brand-mark">🗺️</span> Perdidos &amp; Encontrados</a>
+        <p style="max-width:340px">
+          Una herramienta creada por y para la comunidad universitaria para
+          reducir los objetos que quedan sin dueño. Encuentra lo que perdiste
+          o ayuda a devolver lo que encontraste.
+        </p>
+      </div>
+      <div>
+        <h4>Explora</h4>
+        <a href="{% url 'inicio' %}">Inicio</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'lista_objetos' %}">Objetos perdidos</a>
+          {% if user.is_staff %}<a href="{% url 'panel_inicio' %}">Panel de administración</a>{% endif %}
+        {% else %}
+          <a href="{% url 'registro' %}">Crear cuenta</a>
+          <a href="{% url 'login' %}">Iniciar sesión</a>
+        {% endif %}
+      </div>
+      <div>
+        <h4>Universidad</h4>
+        <a href="#">Biblioteca central</a>
+        <a href="#">Bienestar universitario</a>
+        <a href="#">Atención al estudiante</a>
+      </div>
+    </div>
+    <div class="bottom">
+      Hecho con 💜 para la comunidad · {% now "Y" %}
+    </div>
+  </footer>
+
+  <script src="{% static 'js/app.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,30 @@
+# Entorno virtual
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Django / app
+*.log
+media/
+staticfiles/
+.env
+.env.*
+
+# Base de datos (mantener db.sqlite3 versionado solo para datos demo)
+# db.sqlite3
+
+# IDE / SO
+.idea/
+.vscode/
+*.suo
+.DS_Store
+Thumbs.db
+
+# Despliegue
+*.pid

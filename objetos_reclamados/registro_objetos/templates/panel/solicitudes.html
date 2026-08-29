@@ -1,0 +1,57 @@
+{% extends 'panel/base.html' %}
+{% block title %}Solicitudes · Panel{% endblock %}
+
+{% block panel_content %}
+<div class="panel-titulo">
+  <div>
+    <div class="crumb">Gestión</div>
+    <h1>Solicitudes de reclamación</h1>
+  </div>
+</div>
+
+<div class="chips mb-3">
+  <a href="{% url 'panel_solicitudes' %}" class="cat-chip {% if not estado %}active{% endif %}">Pendientes ({{ conteos.pendiente }})</a>
+  <a href="{% url 'panel_solicitudes' %}?estado=aprobada" class="cat-chip {% if estado == 'aprobada' %}active{% endif %}">Aprobadas ({{ conteos.aprobada }})</a>
+  <a href="{% url 'panel_solicitudes' %}?estado=rechazada" class="cat-chip {% if estado == 'rechazada' %}active{% endif %}">Rechazadas ({{ conteos.rechazada }})</a>
+</div>
+
+<div class="card" style="overflow:auto">
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Estudiante</th>
+        <th>Objeto</th>
+        <th>Mensaje</th>
+        <th>Fecha</th>
+        <th>Estado</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in solicitudes %}
+      <tr>
+        <td>
+          <b>{{ s.usuario.get_full_name|default:s.usuario.username }}</b><br>
+          <span class="muted" style="font-size:.8rem">{{ s.usuario.email }}</span>
+        </td>
+        <td>
+          <div class="flex">
+            <span style="font-size:1.3rem">{{ s.objeto.icono }}</span>
+            <div>
+              <b>{{ s.objeto.nombre_objeto }}</b><br>
+              <span class="muted" style="font-size:.8rem">{{ s.objeto.etiqueta_categoria }}</span>
+            </div>
+          </div>
+        </td>
+        <td style="max-width:240px">{{ s.mensaje|truncatechars:70|default:'—' }}</td>
+        <td>{{ s.fecha|date:'d M Y, H:i' }}</td>
+        <td><span class="badge badge-{{ s.estado }}">{{ s.get_estado_display }}</span></td>
+        <td><a href="{% url 'panel_solicitud_detalle' s.pk %}" class="btn btn-sm btn-outline">Revisar</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6"><div class="vacio"><span class="emoji">📬</span><p>No hay solicitudes en esta vista.</p></div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

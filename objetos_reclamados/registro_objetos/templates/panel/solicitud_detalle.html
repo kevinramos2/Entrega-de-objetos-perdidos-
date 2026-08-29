@@ -1,0 +1,76 @@
+{% extends 'panel/base.html' %}
+{% block title %}Solicitud de {{ solicitud.usuario.get_full_name|default:solicitud.usuario.username }} · Panel{% endblock %}
+
+{% block panel_content %}
+<div class="panel-titulo">
+  <div>
+    <div class="crumb"><a href="{% url 'panel_solicitudes' %}" style="color:var(--muted)">Solicitudes</a> → </div>
+    <h1>Revisión de solicitud</h1>
+  </div>
+  <a href="{% url 'panel_solicitudes' %}" class="btn btn-ghost">← Volver</a>
+</div>
+
+<div class="detalle-grid">
+  <div class="card" style="padding:24px">
+    <h3 style="margin-top:0">Objeto solicitado</h3>
+    <div class="flex mb-2" style="font-size:2.4rem">{{ solicitud.objeto.icono }}</div>
+    <ul class="lista-clave">
+      <li><b>Nombre</b><span>{{ solicitud.objeto.nombre_objeto }}</span></li>
+      <li><b>Categoría</b><span>{{ solicitud.objeto.etiqueta_categoria }}</span></li>
+      <li><b>Descripción</b><span>{{ solicitud.objeto.descripcion_objeto|default:'—' }}</span></li>
+      <li><b>Lugar</b><span>{{ solicitud.objeto.lugar_encontrado|default:'—' }}</span></li>
+      <li><b>Estado actual</b><span class="badge badge-{{ solicitud.objeto.estado }}">{{ solicitud.objeto.get_estado_display }}</span></li>
+    </ul>
+    <a href="{% url 'panel_objeto_editar' solicitud.objeto.pk %}" class="btn btn-sm btn-outline mt-2">Editar objeto</a>
+  </div>
+
+  <div class="card" style="padding:24px">
+    <h3 style="margin-top:0">Estudiante</h3>
+    <ul class="lista-clave">
+      <li><b>Nombre</b><span>{{ solicitud.usuario.get_full_name|default:solicitud.usuario.username }}</span></li>
+      <li><b>Correo</b><span>{{ solicitud.usuario.email }}</span></li>
+      <li><b>Documento</b><span>{{ solicitud.usuario.perfil.get_tipo_documento_display }} {{ solicitud.usuario.perfil.numero_documento }}</span></li>
+      <li><b>Teléfono</b><span>{{ solicitud.usuario.perfil.telefono|default:'—' }}</span></li>
+      <li><b>Programa</b><span>{{ solicitud.usuario.perfil.programa|default:'—' }}</span></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card mt-3" style="padding:24px">
+  <h3 style="margin-top:0">¿Por qué cree que es suyo?</h3>
+  <p style="margin:0">{{ solicitud.mensaje|default:'No dejó un mensaje adicional.' }}</p>
+  <p class="muted" style="font-size:.84rem;margin-top:12px">Solicitado el {{ solicitud.fecha|date:'d M Y, H:i' }}</p>
+</div>
+
+{% if solicitud.estado == 'pendiente' %}
+<div class="card mt-3" style="padding:24px">
+  <h3 style="margin-top:0">Decisión</h3>
+  <p class="muted" style="margin-top:0">
+    Al aprobar, el objeto pasa a estado <b>Reclamado</b>, se vincula al estudiante
+    y sus datos de contacto se guardan automáticamente para la entrega.
+  </p>
+  <div class="flex">
+    <form method="post" action="{% url 'panel_solicitud_decision' solicitud.pk 'aprobar' %}" data-confirm="¿Confirmas que el objeto es de este estudiante?">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-success btn-lg">✅ Aprobar reclamo</button>
+    </form>
+    <form method="post" action="{% url 'panel_solicitud_decision' solicitud.pk 'rechazar' %}" data-confirm="¿Rechazar esta solicitud?">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger btn-lg">✖️ Rechazar</button>
+    </form>
+  </div>
+</div>
+{% else %}
+<div class="card mt-3" style="padding:24px">
+  <div class="flex">
+    <span class="badge badge-{{ solicitud.estado }}">{{ solicitud.get_estado_display }}</span>
+    <span class="muted">
+      {% if solicitud.respondida_por %}
+        Respondida por <b>{{ solicitud.respondida_por.get_full_name|default:solicitud.respondida_por.username }}</b>
+        el {{ solicitud.fecha_respuesta|date:'d M Y, H:i' }}
+      {% endif %}
+    </span>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

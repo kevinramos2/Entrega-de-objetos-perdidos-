@@ -1,0 +1,22 @@
+{% extends 'panel/base.html' %}
+{% block title %}Editar categoría · Panel{% endblock %}
+
+{% block panel_content %}
+<div class="panel-titulo">
+  <div>
+    <div class="crumb"><a href="{% url 'panel_categorias' %}" style="color:var(--muted)">Categorías</a> → </div>
+    <h1>Editar categoría</h1>
+  </div>
+</div>
+
+<form method="post" class="form-card" style="max-width:520px">
+  {% csrf_token %}
+  {% for campo in form %}
+    <div class="form-campo"><label>{{ campo.label }}</label>{{ campo }}</div>
+  {% endfor %}
+  <div class="flex mt-3">
+    <button type="submit" class="btn btn-primary">💾 Guardar</button>
+    <a href="{% url 'panel_categorias' %}" class="btn btn-ghost">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

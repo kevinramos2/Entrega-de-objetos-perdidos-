@@ -1,0 +1,100 @@
+{% extends 'panel/base.html' %}
+{% block title %}{{ titulo }} · Panel{% endblock %}
+
+{% block panel_content %}
+<div class="panel-titulo">
+  <div>
+    <div class="crumb"><a href="{% url 'panel_objetos' %}" style="color:var(--muted)">Objetos</a> → </div>
+    <h1>{{ titulo }}</h1>
+  </div>
+</div>
+
+{% if form.errors %}
+<div class="errores-form">
+  <ul style="margin:0;padding-left:18px">
+    {% for campo in form %}
+      {% for error in campo.errors %}<li><b>{{ campo.label }}:</b> {{ error }}</li>{% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" class="form-card">
+  {% csrf_token %}
+  <h3 style="margin-top:0">Información del objeto</h3>
+  <div class="form-grid-2">
+    <div class="form-campo">
+      <label for="{{ form.nombre_objeto.id_for_label }}">{{ form.nombre_objeto.label }}</label>
+      {{ form.nombre_objeto }}
+    </div>
+    <div class="form-campo">
+      <label for="{{ form.categoria.id_for_label }}">{{ form.categoria.label }}</label>
+      {{ form.categoria }}
+    </div>
+  </div>
+  <div class="form-campo">
+    <label for="{{ form.descripcion_objeto.id_for_label }}">{{ form.descripcion_objeto.label }}</label>
+    {{ form.descripcion_objeto }}
+  </div>
+  <div class="form-grid-2">
+    <div class="form-campo">
+      <label for="{{ form.lugar_encontrado.id_for_label }}">{{ form.lugar_encontrado.label }}</label>
+      {{ form.lugar_encontrado }}
+    </div>
+    <div class="form-campo">
+      <label for="{{ form.foto.id_for_label }}">{{ form.foto.label }}</label>
+      {{ form.foto }}
+      <div class="help">JPG, PNG o WEBP · máx. 5 MB</div>
+    </div>
+  </div>
+  <div class="form-campo">
+    <label for="{{ form.estado.id_for_label }}">{{ form.estado.label }}</label>
+    {{ form.estado }}
+  </div>
+
+  {% if es_nuevo %}<p class="muted" style="font-size:.86rem">Si el objeto es <b>reclamado</b> o <b>entregado</b>, completa también la sección de abajo. Si está <b>disponible</b>, puedes dejarla vacía.</p>{% endif %}
+
+  <hr class="divider">
+  <h3>Datos de la persona que reclama</h3>
+  <div class="form-grid-2">
+    <div class="form-campo">
+      <label for="{{ form.nombre_persona.id_for_label }}">{{ form.nombre_persona.label }}</label>
+      {{ form.nombre_persona }}
+    </div>
+    <div class="form-campo">
+      <label for="{{ form.tipo_documento.id_for_label }}">{{ form.tipo_documento.label }}</label>
+      {{ form.tipo_documento }}
+    </div>
+    <div class="form-campo">
+      <label for="{{ form.numero_documento.id_for_label }}">{{ form.numero_documento.label }}</label>
+      {{ form.numero_documento }}
+    </div>
+    <div class="form-campo">
+      <label for="{{ form.telefono.id_for_label }}">{{ form.telefono.label }}</label>
+      {{ form.telefono }}
+    </div>
+    <div class="form-campo">
+      <label for="{{ form.correo.id_for_label }}">{{ form.correo.label }}</label>
+      {{ form.correo }}
+    </div>
+    <div class="form-campo">
+      <label for="{{ form.fecha_entrega.id_for_label }}">{{ form.fecha_entrega.label }}</label>
+      {{ form.fecha_entrega }}
+    </div>
+    <div class="form-campo">
+      <label for="{{ form.responsable_entrega.id_for_label }}">{{ form.responsable_entrega.label }}</label>
+      {{ form.responsable_entrega }}
+    </div>
+    <div class="form-campo form-check" style="margin-top:34px">
+      {{ form.suministro_correo }}
+      <label for="{{ form.suministro_correo.id_for_label }}" style="margin:0">¿Suministró correo?</label>
+    </div>
+  </div>
+
+  <div class="flex mt-3">
+    <button type="submit" class="btn btn-primary btn-lg">💾 Guardar</button>
+    <a href="{% url 'panel_objetos' %}" class="btn btn-ghost">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

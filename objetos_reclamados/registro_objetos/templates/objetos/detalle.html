@@ -1,0 +1,49 @@
+{% extends 'objetos/base.html' %}
+{% block title %}{{ objeto.nombre_objeto }} · Perdidos y Encontrados{% endblock %}
+
+{% block content %}
+<section class="page-inner">
+  <a href="{% url 'lista_objetos' %}" class="btn btn-sm btn-ghost mb-2">← Volver a los objetos</a>
+
+  <div class="detalle-grid">
+    <div class="detalle-media">
+      {% if objeto.foto %}<img src="{{ objeto.foto.url }}" alt="{{ objeto.nombre_objeto }}">{% else %}{{ objeto.icono }}{% endif %}
+    </div>
+    <div class="detalle-info">
+      <span class="badge badge-disponible">Disponible</span>
+      <h1 class="mt-2">{{ objeto.nombre_objeto|default:'Objeto' }}</h1>
+      <div class="detalle-tags">
+        {% if objeto.categoria %}<span class="badge badge-cat">{{ objeto.icono }} {{ objeto.categoria.nombre }}</span>{% endif %}
+        <span class="badge" style="background:var(--primary-50);color:var(--primary-600)">📅 {{ objeto.fecha_registro|date:'d M Y' }}</span>
+      </div>
+
+      <ul class="lista-clave">
+        <li><b>Lugar</b><span>{{ objeto.lugar_encontrado|default:'No especificado' }}</span></li>
+        <li><b>Descripción</b><span>{{ objeto.descripcion_objeto|default:'Sin descripción adicional.' }}</span></li>
+      </ul>
+
+      <hr class="divider">
+
+      {% if ya_solicito %}
+        <div class="errores-form" style="border-color:#fde68a;background:var(--warning-50);color:#b45309">
+          Ya tienes una solicitud pendiente para este objeto.
+          <a href="{% url 'mis_solicitudes' %}" style="font-weight:700;color:#b45309;text-decoration:underline">Ver mis reclamos →</a>
+        </div>
+      {% else %}
+        <h3 style="margin:0 0 12px">¿Creés que es tuyo?</h3>
+        <form method="post" action="{% url 'solicitar_reclamacion' objeto.pk %}">
+          {% csrf_token %}
+          <div class="form-campo">
+            {{ form.mensaje }}
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg">Solicitar reclamo 📬</button>
+        </form>
+        <p class="muted" style="font-size:.84rem;margin:12px 0 0">
+          Un administrador revisará tu solicitud y se contactará contigo.
+          Solo pedimos datos cuando confirmas el objeto para proteger tu privacidad.
+        </p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

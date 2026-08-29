@@ -1,0 +1,12 @@
+{% extends 'objetos/base.html' %}
+{% block title %}Panel de administración · Perdidos y Encontrados{% endblock %}
+{% block body_class %}panel-body{% endblock %}
+
+{% block content %}
+<div class="panel-layout">
+  {% include 'panel/partials/menulateral.html' %}
+  <main class="panel-main">
+    {% block panel_content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

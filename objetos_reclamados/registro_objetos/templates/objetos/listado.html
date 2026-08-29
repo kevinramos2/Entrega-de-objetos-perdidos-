@@ -1,0 +1,71 @@
+{% extends 'objetos/base.html' %}
+{% block title %}Objetos perdidos · Perdidos y Encontrados{% endblock %}
+
+{% block content %}
+<section class="page-inner">
+  <div class="page-head">
+    <h1>🔎 Objetos que buscan dueño</h1>
+    <p>{{ resumen.disponibles }} objetos disponibles ahora mismo. ¿Reconoces alguno?</p>
+  </div>
+
+  {% if mensajes %}
+  <div class="insights mb-3">
+    {% for m in mensajes %}
+    <div class="insight">
+      <div class="ico">{{ m.icono }}</div>
+      <div><b>{{ m.titulo }}</b><span>{{ m.detalle }}</span></div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <form method="get" class="filtros-busqueda" autocomplete="off">
+    {% if categoria_actual %}<input type="hidden" name="categoria" value="{{ categoria_actual }}">{% endif %}
+    <div class="caja-busqueda">
+      <span>🔍</span>
+      <input type="search" name="q" value="{{ q }}" placeholder="Buscar por nombre, descripción o lugar…" aria-label="Buscar objetos">
+    </div>
+    <button type="submit" class="btn btn-primary">Buscar</button>
+    {% if q or categoria_actual %}
+      <a href="{% url 'lista_objetos' %}" class="btn btn-ghost">Limpiar</a>
+    {% endif %}
+  </form>
+
+  <div class="chips">
+    <a href="{% url 'lista_objetos' %}" class="cat-chip {% if not categoria_actual %}active{% endif %}">Todas</a>
+    {% for cat in categorias %}
+      <a href="{% url 'lista_objetos' %}?{% if q %}q={{ q }}&{% endif %}categoria={{ cat.id }}"
+         class="cat-chip {% if categoria_actual == cat.id|stringformat:'s' %}active{% endif %}">
+        {{ cat.icono }} {{ cat.nombre }}
+      </a>
+    {% endfor %}
+  </div>
+
+  <div class="grid-objetos">
+    {% for obj in objetos %}
+    <article class="card card-obj">
+      <div class="media">
+        {% if obj.foto %}<img src="{{ obj.foto.url }}" alt="{{ obj.nombre_objeto }}">{% else %}{{ obj.icono }}{% endif %}
+      </div>
+      <div class="body">
+        <div class="flex" style="justify-content:space-between;align-items:flex-start">
+          <h3>{{ obj.nombre_objeto|default:'Objeto sin nombre' }}</h3>
+          {% if obj.categoria %}<span class="badge badge-cat">{{ obj.categoria.nombre }}</span>{% endif %}
+        </div>
+        <p>{{ obj.descripcion_objeto|truncatechars:80 }}</p>
+        <div class="meta">
+          <span class="muted" style="font-size:.82rem">📍 {{ obj.lugar_encontrado|default:'Sin lugar' }}</span>
+        </div>
+        <a href="{% url 'detalle_objeto' obj.pk %}" class="btn btn-primary btn-sm btn-block mt-2">Ver detalles</a>
+      </div>
+    </article>
+    {% empty %}
+    <div class="vacio">
+      <span class="emoji">📭</span>
+      <h3 style="margin:0 0 6px">No hay objetos que coincidan</h3>
+      <p>Prueba con otra búsqueda o revisa más tarde.</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

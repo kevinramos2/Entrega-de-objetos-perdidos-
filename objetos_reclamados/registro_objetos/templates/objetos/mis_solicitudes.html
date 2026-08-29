@@ -1,0 +1,58 @@
+{% extends 'objetos/base.html' %}
+{% block title %}Mis reclamos · Perdidos y Encontrados{% endblock %}
+
+{% block content %}
+<section class="page-inner">
+  <div class="page-head">
+    <h1>📬 Mis solicitudes de reclamo</h1>
+    <p>Aquí puedes dar seguimiento a cada objeto que crees que es tuyo.</p>
+  </div>
+
+  {% if solicitudes %}
+  <div class="card" style="overflow:auto">
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Objeto</th>
+          <th>Categoría</th>
+          <th>Solicitado</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in solicitudes %}
+        <tr>
+          <td>
+            <div class="flex">
+              <span style="font-size:1.4rem">{{ s.objeto.icono }}</span>
+              <div>
+                <b>{{ s.objeto.nombre_objeto }}</b>
+                {% if s.mensaje %}<br><span class="muted" style="font-size:.82rem">{{ s.mensaje|truncatechars:60 }}</span>{% endif %}
+              </div>
+            </div>
+          </td>
+          <td>{{ s.objeto.etiqueta_categoria }}</td>
+          <td>{{ s.fecha|date:'d M Y, H:i' }}</td>
+          <td><span class="badge badge-{{ s.estado }}">{{ s.get_estado_display }}</span></td>
+          <td>
+            {% if s.objeto.esta_disponible %}
+              <a href="{% url 'detalle_objeto' s.objeto.pk %}" class="btn btn-sm btn-outline">Ver objeto</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="vacio">
+    <span class="emoji">🗂️</span>
+    <h3 style="margin:0 0 6px">Aún no has solicitado ningún objeto</h3>
+    <p>Explora los objetos perdidos y solicita el que creas que es tuyo.</p>
+    <a href="{% url 'lista_objetos' %}" class="btn btn-primary mt-2">Ver objetos disponibles</a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

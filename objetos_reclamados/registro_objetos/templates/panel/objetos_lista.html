@@ -1,0 +1,90 @@
+{% extends 'panel/base.html' %}
+{% block title %}Objetos · Panel{% endblock %}
+
+{% block panel_content %}
+<div class="panel-titulo">
+  <div>
+    <div class="crumb">Gestión</div>
+    <h1>Objetos registrados</h1>
+  </div>
+  <a href="{% url 'panel_objeto_nuevo' %}" class="btn btn-primary">➕ Registrar objeto</a>
+</div>
+
+<form method="get" class="filtros-busqueda" autocomplete="off">
+  <div class="caja-busqueda" style="max-width:340px">
+    <span>🔍</span>
+    <input type="search" name="q" value="{{ q }}" placeholder="Buscar objeto o persona…">
+  </div>
+  <select name="estado" class="cat-chip" style="padding:10px 16px">
+    <option value="">Todos los estados</option>
+    {% for valor, etiqueta in estados %}
+      <option value="{{ valor }}" {% if estado == valor %}selected{% endif %}>{{ etiqueta }}</option>
+    {% endfor %}
+  </select>
+  <select name="categoria" class="cat-chip" style="padding:10px 16px">
+    <option value="">Todas las categorías</option>
+    {% for cat in categorias %}
+      <option value="{{ cat.id }}" {% if categoria_id == cat.id|stringformat:'s' %}selected{% endif %}>{{ cat.nombre }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
+  {% if q or estado or categoria_id %}<a href="{% url 'panel_objetos' %}" class="btn btn-ghost btn-sm">Limpiar</a>{% endif %}
+</form>
+
+<div class="card" style="overflow:auto">
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Objeto</th>
+        <th>Categoría</th>
+        <th>Estado</th>
+        <th>Fecha</th>
+        <th>Lugar</th>
+        <th>Solicitudes</th>
+        <th style="width:230px">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for obj in objetos %}
+      <tr>
+        <td>
+          <div class="flex">
+            <span style="font-size:1.5rem">{{ obj.icono }}</span>
+            <div>
+              <b>{{ obj.nombre_objeto }}</b>
+              {% if obj.nombre_persona %}<br><span class="muted" style="font-size:.8rem">👤 {{ obj.nombre_persona }}</span>{% endif %}
+            </div>
+          </div>
+        </td>
+        <td><span class="badge badge-cat">{{ obj.etiqueta_categoria }}</span></td>
+        <td><span class="badge badge-{{ obj.estado }}">{{ obj.get_estado_display }}</span></td>
+        <td>{{ obj.fecha_registro|date:'d M Y'|default:'—' }}</td>
+        <td>{{ obj.lugar_encontrado|default:'—' }}</td>
+        <td>{{ obj.solicitudes.count }}</td>
+        <td>
+          <div class="acciones" style="flex-wrap:wrap">
+            <a href="{% url 'panel_objeto_editar' obj.pk %}" class="btn btn-sm btn-outline">Editar</a>
+            <form method="post" action="{% url 'panel_objeto_estado' obj.pk %}" style="display:flex;gap:6px;align-items:center">
+              {% csrf_token %}
+              <select name="estado" onchange="this.form.submit()" style="padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:.82rem">
+                {% for valor, etiqueta in estados %}
+                  <option value="{{ valor }}" {% if obj.estado == valor %}selected{% endif %}>{{ etiqueta }}</option>
+                {% endfor %}
+              </select>
+            </form>
+            <form method="post" action="{% url 'panel_objeto_eliminar' obj.pk %}" data-confirm="¿Eliminar este objeto? La acción no se puede deshacer.">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">🗑️</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7">
+        <div class="vacio"><span class="emoji">📦</span><p>Aún no hay objetos que coincidan con el filtro.</p></div>
+      </td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

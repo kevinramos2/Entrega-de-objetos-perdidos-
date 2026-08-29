@@ -1,0 +1,12 @@
+{% extends 'objetos/base.html' %}
+{% block title %}Página no encontrada · Perdidos y Encontrados{% endblock %}
+{% block content %}
+<section class="page-inner">
+  <div class="vacio">
+    <span class="emoji">🧭</span>
+    <h1 style="margin:0 0 6px">404 · Página no encontrada</h1>
+    <p>Parece que esta página se perdió… ¡así como algunos objetos!</p>
+    <a href="{% url 'inicio' %}" class="btn btn-primary mt-2">Volver al inicio</a>
+  </div>
+</section>
+{% endblock %}
