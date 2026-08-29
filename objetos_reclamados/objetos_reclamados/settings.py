@@ -47,6 +47,15 @@ if not SECRET_KEY:
 allowed_hosts = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost')
 ALLOWED_HOSTS = [h.strip() for h in allowed_hosts.split(',') if h.strip()]
 
+# En Render el hostname real lo inyecta la plataforma y las URLs son *.onrender.com.
+# Los blueprints pueden asignar nombres con sufijos (ej. objetos-perdidos-d7uh.onrender.com).
+render_host = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+if render_host:
+    ALLOWED_HOSTS.append(render_host)
+
+if os.getenv('RENDER'):
+    ALLOWED_HOSTS.append('.onrender.com')
+
 if DEBUG:
     # El cliente de pruebas de Django usa el host 'testserver'
     ALLOWED_HOSTS.append('testserver')
