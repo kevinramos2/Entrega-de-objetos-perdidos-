@@ -219,6 +219,12 @@ SOCIALACCOUNT_PROVIDERS = {
 # Restricción de dominio del correo institucional (adapter personalizado)
 ALLOWED_EMAIL_DOMAINS = ALLOWED_EMAIL_DOMAINS or ['unal.edu.co']
 SOCIALACCOUNT_ADAPTER = 'registro_objetos.adapters.CorreoInstitucionalAdapter'
+
+# Cuentas que ya existen con el mismo correo institucional (p. ej. el admin)
+# deben enlazarse a su cuenta de Google en lugar de pedir un alta nueva.
+# Google + restricción de dominio hacen esto seguro.
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 ACCOUNT_ADAPTER = 'registro_objetos.adapters.CuentaDominioAdapter'
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
