@@ -57,7 +57,8 @@ services:
         sync: false
       - key: GOOGLE_OAUTH_CLIENT_SECRET
         sync: false
-
-    # Vincula la base de datos: Render inyecta DATABASE_URL automáticamente
-    databases:
-      - name: objetos-perdidos-db
+      # Vincula la base de datos: Render inyecta la connection string como DATABASE_URL
+      - key: DATABASE_URL
+        fromDatabase:
+          name: objetos-perdidos-db
+          property: connectionString
