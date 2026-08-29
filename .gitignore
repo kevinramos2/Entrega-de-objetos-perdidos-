@@ -19,6 +19,11 @@ staticfiles/
 # Base de datos (mantener db.sqlite3 versionado solo para datos demo)
 # db.sqlite3
 
+# Variables de entorno (el .env real nunca se sube)
+.env
+.env.*
+!.env.example
+
 # IDE / SO
 .idea/
 .vscode/

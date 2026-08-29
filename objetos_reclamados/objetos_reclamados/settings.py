@@ -20,18 +20,29 @@ Variables de entorno (opcionales en desarrollo, obligatorias en producción):
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+RAIZ_PROYECTO = BASE_DIR.parent
+
+# Carga variables desde un archivo .env si existe (raíz del repo o del proyecto).
+# Las variables de entorno reales (p. ej. las de Render) tienen prioridad.
+load_dotenv(RAIZ_PROYECTO / '.env')
+load_dotenv(BASE_DIR / '.env')
 
 # ---------------------------------------------------------------------------
 # Seguridad
 # ---------------------------------------------------------------------------
-SECRET_KEY = os.getenv(
-    'DJANGO_SECRET_KEY',
-    # Dev only: nunca cambiar por un valor hardcodeado en producción.
-    'django-insecure-#9fa_rv7^=0%r4jkdt24p@oe%1w6+=wcxkm0+reunx6urbz$7#'
-)
-
 DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes')
+
+# En producción la clave debe venir de una variable de entorno o .env.
+# Nunca uses una clave hardcodeada en producción.
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = 'django-insecure-dev-only-no-usar-en-produccion'  # solo local
+    else:
+        raise RuntimeError('DJANGO_SECRET_KEY es obligatoria cuando DJANGO_DEBUG=False.')
 
 allowed_hosts = os.getenv('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost')
 ALLOWED_HOSTS = [h.strip() for h in allowed_hosts.split(',') if h.strip()]
@@ -100,11 +111,29 @@ WSGI_APPLICATION = 'objetos_reclamados.wsgi.application'
 # ---------------------------------------------------------------------------
 # Base de datos
 # ---------------------------------------------------------------------------
-DATABASES = {
+# Si existe DATABASE_URL se usa PostgreSQL (p. ej. el PostgreSQL de Render).
+# En desarrollo local, sin DATABASE_URL, se usa SQLite.
+import dj_database_url  # noqa: E402
+
+DATABASES = {'default': dj_database_url.config(conn_max_age=600)} if os.getenv('DATABASE_URL') else {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+}
+
+# ---------------------------------------------------------------------------
+# Emails con rol de administrador automático
+# Una cuenta cuyo correo esté en DJANGO_ADMIN_EMAILS se promueve a
+# administrador (is_staff=True) en el momento en que se crea o inicia sesión.
+# ---------------------------------------------------------------------------
+EMAILS_ADMINISTRADOR = {
+    e.strip().lower()
+    for e in os.getenv(
+        'DJANGO_ADMIN_EMAILS',
+        'keramosl@unal.edu.co',  # Cuenta institucional del autor del proyecto
+    ).split(',')
+    if e.strip()
 }
 
 AUTH_PASSWORD_VALIDATORS = [
