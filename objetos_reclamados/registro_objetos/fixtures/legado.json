@@ -1,0 +1,842 @@
+[
+  {
+    "model": "registro_objetos.categoria",
+    "pk": 1,
+    "fields": {
+      "nombre": "Termos y cafeteras",
+      "icono": "",
+      "color": "#f59e0b",
+      "orden": 1
+    }
+  },
+  {
+    "model": "registro_objetos.categoria",
+    "pk": 2,
+    "fields": {
+      "nombre": "Documentos",
+      "icono": "",
+      "color": "#3b82f6",
+      "orden": 2
+    }
+  },
+  {
+    "model": "registro_objetos.categoria",
+    "pk": 3,
+    "fields": {
+      "nombre": "Cargadores",
+      "icono": "",
+      "color": "#10b981",
+      "orden": 3
+    }
+  },
+  {
+    "model": "registro_objetos.categoria",
+    "pk": 4,
+    "fields": {
+      "nombre": "Tecnología",
+      "icono": "",
+      "color": "#6366f1",
+      "orden": 4
+    }
+  },
+  {
+    "model": "registro_objetos.categoria",
+    "pk": 5,
+    "fields": {
+      "nombre": "Loncheras",
+      "icono": "",
+      "color": "#8b5cf6",
+      "orden": 5
+    }
+  },
+  {
+    "model": "registro_objetos.categoria",
+    "pk": 6,
+    "fields": {
+      "nombre": "Comida",
+      "icono": "",
+      "color": "#ef4444",
+      "orden": 6
+    }
+  },
+  {
+    "model": "registro_objetos.categoria",
+    "pk": 7,
+    "fields": {
+      "nombre": "Sombrillas",
+      "icono": "",
+      "color": "#06b6d4",
+      "orden": 7
+    }
+  },
+  {
+    "model": "registro_objetos.categoria",
+    "pk": 8,
+    "fields": {
+      "nombre": "Cartucheras",
+      "icono": "",
+      "color": "#ec4899",
+      "orden": 8
+    }
+  },
+  {
+    "model": "registro_objetos.categoria",
+    "pk": 9,
+    "fields": {
+      "nombre": "Ropa y accesorios",
+      "icono": "",
+      "color": "#14b8a6",
+      "orden": 9
+    }
+  },
+  {
+    "model": "registro_objetos.categoria",
+    "pk": 10,
+    "fields": {
+      "nombre": "Libros y cuadernos",
+      "icono": "",
+      "color": "#92400e",
+      "orden": 10
+    }
+  },
+  {
+    "model": "registro_objetos.categoria",
+    "pk": 11,
+    "fields": {
+      "nombre": "Llaves",
+      "icono": "",
+      "color": "#eab308",
+      "orden": 11
+    }
+  },
+  {
+    "model": "registro_objetos.categoria",
+    "pk": 12,
+    "fields": {
+      "nombre": "Otros",
+      "icono": "",
+      "color": "#64748b",
+      "orden": 99
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 1,
+    "fields": {
+      "nombre_objeto": "Termo",
+      "categoria": 1,
+      "descripcion_objeto": "Termo de agua negro y buso negro con capucha",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "2-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 2,
+    "fields": {
+      "nombre_objeto": "Documentos",
+      "categoria": 2,
+      "descripcion_objeto": "Cédula",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "2-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 3,
+    "fields": {
+      "nombre_objeto": "Cargador",
+      "categoria": 3,
+      "descripcion_objeto": "Cargador de computador portátil",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "2-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 4,
+    "fields": {
+      "nombre_objeto": "Termo",
+      "categoria": 1,
+      "descripcion_objeto": "Termo de agua color rojo y transparente",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "2-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 5,
+    "fields": {
+      "nombre_objeto": "Lonchera",
+      "categoria": 5,
+      "descripcion_objeto": "Lonchera rosada con coca y termo",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "3-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 6,
+    "fields": {
+      "nombre_objeto": "Termo",
+      "categoria": 1,
+      "descripcion_objeto": "Termo negro",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "3-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 7,
+    "fields": {
+      "nombre_objeto": "Termo",
+      "categoria": 1,
+      "descripcion_objeto": "Termo azul y verde",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "4-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 8,
+    "fields": {
+      "nombre_objeto": "Comida",
+      "categoria": 6,
+      "descripcion_objeto": "Almuerzo",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "4-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 9,
+    "fields": {
+      "nombre_objeto": "Sombrilla",
+      "categoria": 7,
+      "descripcion_objeto": "Sombrilla blanca y negra",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "7-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 11,
+    "fields": {
+      "nombre_objeto": "Cartuchera",
+      "categoria": 8,
+      "descripcion_objeto": "Cartuchera roja y cartuchera negra",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "7-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 12,
+    "fields": {
+      "nombre_objeto": "Gafas",
+      "categoria": 12,
+      "descripcion_objeto": "Gafas negras y moradas",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "7-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 13,
+    "fields": {
+      "nombre_objeto": "Nevera Icopor",
+      "categoria": 12,
+      "descripcion_objeto": "nevera icopor con vasos, jarra, canasta, pitillos, gramera y agenda",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "8-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 14,
+    "fields": {
+      "nombre_objeto": "Billetera",
+      "categoria": 12,
+      "descripcion_objeto": "Billetera con documentos y dinero",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "8-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 15,
+    "fields": {
+      "nombre_objeto": "Termo",
+      "categoria": 1,
+      "descripcion_objeto": "Termo de aluminio",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "8-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 16,
+    "fields": {
+      "nombre_objeto": "Termo",
+      "categoria": 1,
+      "descripcion_objeto": "Termo negro y verde",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "11-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 17,
+    "fields": {
+      "nombre_objeto": "Audífonos",
+      "categoria": 12,
+      "descripcion_objeto": "Estuche de audífonos",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "11-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 18,
+    "fields": {
+      "nombre_objeto": "Billetera",
+      "categoria": 12,
+      "descripcion_objeto": "billetera negra marca velez, con dinero y documentos",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "21-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 19,
+    "fields": {
+      "nombre_objeto": "Audífonos",
+      "categoria": 12,
+      "descripcion_objeto": "Caja de audífonos blanca Airpods",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "21-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 20,
+    "fields": {
+      "nombre_objeto": "Ropa",
+      "categoria": 12,
+      "descripcion_objeto": "Chaqueta Blanca marca tenis talla M",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "22-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 21,
+    "fields": {
+      "nombre_objeto": "Billetera",
+      "categoria": 12,
+      "descripcion_objeto": "Billetera con el dinero y los documentos",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "22-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 23,
+    "fields": {
+      "nombre_objeto": "Cartuchera",
+      "categoria": 8,
+      "descripcion_objeto": "Cartuchera azul rey doble bolsillo con marcadores",
+      "lugar_encontrado": "",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "entregado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "23-abr",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 24,
+    "fields": {
+      "nombre_objeto": "Termo negro con detalles plateados",
+      "categoria": 1,
+      "descripcion_objeto": "Termo de acero inoxidable, negro mate, con un sticker circular.",
+      "lugar_encontrado": "Biblioteca Gabriel García Márquez",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "disponible",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 25,
+    "fields": {
+      "nombre_objeto": "Carpeta de documentos",
+      "categoria": 2,
+      "descripcion_objeto": "Carpeta azul con hojas y un certificado de estudios.",
+      "lugar_encontrado": "Facultad de Ciencias",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "disponible",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 26,
+    "fields": {
+      "nombre_objeto": "Cargador USB-C blanco",
+      "categoria": 3,
+      "descripcion_objeto": "Cargador de pared blanco USB-C de 65W con cable trenzado.",
+      "lugar_encontrado": "Auditorio principal",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "disponible",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 27,
+    "fields": {
+      "nombre_objeto": "Lonchera térmica gris",
+      "categoria": 5,
+      "descripcion_objeto": "Lonchera gris con bolsillo frontal, contiene un termo pequeño.",
+      "lugar_encontrado": "Cafetería central",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "disponible",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "",
+      "responsable_entrega": "",
+      "fecha_reclamo": null,
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 28,
+    "fields": {
+      "nombre_objeto": "Gafas de lectura",
+      "categoria": 12,
+      "descripcion_objeto": "Gafas con marco rojo oscuro, estuche duro.",
+      "lugar_encontrado": "Sala de sistemas",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "reclamado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "",
+      "responsable_entrega": "",
+      "fecha_reclamo": "2026-08-29T20:20:50.984058+00:00",
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 29,
+    "fields": {
+      "nombre_objeto": "Sombrilla negra",
+      "categoria": 7,
+      "descripcion_objeto": "Sombrilla plegable color negro con mango curvo de madera.",
+      "lugar_encontrado": "Estación de buses",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "reclamado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "",
+      "responsable_entrega": "",
+      "fecha_reclamo": "2026-08-29T19:58:06.506031+00:00",
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 30,
+    "fields": {
+      "nombre_objeto": "Estuche de lápices",
+      "categoria": 8,
+      "descripcion_objeto": "Cartuchera azul con varios marcadores y lapiceros.",
+      "lugar_encontrado": "Edificio de Ingeniería",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "reclamado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "",
+      "responsable_entrega": "",
+      "fecha_reclamo": "2026-08-29T19:57:11.339688+00:00",
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 31,
+    "fields": {
+      "nombre_objeto": "Llaves con llavero verde",
+      "categoria": 11,
+      "descripcion_objeto": "Tres llaves en un llavero de tela color verde con argolla.",
+      "lugar_encontrado": "Canchas deportivas",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "reclamado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "",
+      "responsable_entrega": "",
+      "fecha_reclamo": "2026-08-29T19:55:54.660233+00:00",
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  },
+  {
+    "model": "registro_objetos.objetoreclamado",
+    "pk": 32,
+    "fields": {
+      "nombre_objeto": "Cuaderno de apuntes",
+      "categoria": 10,
+      "descripcion_objeto": "Cuaderno de espiral con carátula personalizada.",
+      "lugar_encontrado": "Bloque 1, salón 204",
+      "fecha_registro": "2026-08-29",
+      "foto": null,
+      "estado": "reclamado",
+      "nombre_persona": "",
+      "tipo_documento": "",
+      "numero_documento": "",
+      "telefono": "",
+      "suministro_correo": false,
+      "correo": null,
+      "fecha_entrega": "",
+      "responsable_entrega": "",
+      "fecha_reclamo": "2026-08-29T19:55:28.178053+00:00",
+      "registrado_por": null,
+      "reclamado_por": null
+    }
+  }
+]

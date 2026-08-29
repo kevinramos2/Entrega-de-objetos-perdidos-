@@ -11,7 +11,7 @@
 
 <form method="post" class="form-card" style="max-width:640px">
   {% csrf_token %}
-  {% if es_self %}<p class="muted" style="font-size:.86rem">⚠️ Es tu propia cuenta: evita desactivarla o quitarte el rol de administrador.</p>{% endif %}
+  {% if es_self %}<p class="muted" style="font-size:.86rem">Importante: es tu propia cuenta. Evita desactivarla o quitarte el rol de administrador.</p>{% endif %}
   {% if form.errors %}
   <div class="errores-form">
     <ul style="margin:0;padding-left:18px">
@@ -48,7 +48,7 @@
   </div>
 
   <div class="flex mt-3">
-    <button type="submit" class="btn btn-primary">💾 Guardar cambios</button>
+    <button type="submit" class="btn btn-primary">Guardar cambios</button>
     <a href="{% url 'panel_usuarios' %}" class="btn btn-ghost">Cancelar</a>
   </div>
 </form>

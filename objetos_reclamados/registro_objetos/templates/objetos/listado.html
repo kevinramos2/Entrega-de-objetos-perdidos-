@@ -4,7 +4,7 @@
 {% block content %}
 <section class="page-inner">
   <div class="page-head">
-    <h1>🔎 Objetos que buscan dueño</h1>
+    <h1>Objetos que buscan dueño</h1>
     <p>{{ resumen.disponibles }} objetos disponibles ahora mismo. ¿Reconoces alguno?</p>
   </div>
 
@@ -12,7 +12,21 @@
   <div class="insights mb-3">
     {% for m in mensajes %}
     <div class="insight">
-      <div class="ico">{{ m.icono }}</div>
+      <div class="ico">
+        {% if m.tipo == 'reportes' %}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>
+        {% elif m.tipo == 'recuperados' %}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        {% elif m.tipo == 'disponibles' %}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        {% elif m.tipo == 'solicitudes' %}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+        {% elif m.tipo == 'categoria' %}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        {% else %}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        {% endif %}
+      </div>
       <div><b>{{ m.titulo }}</b><span>{{ m.detalle }}</span></div>
     </div>
     {% endfor %}
@@ -22,7 +36,7 @@
   <form method="get" class="filtros-busqueda" autocomplete="off">
     {% if categoria_actual %}<input type="hidden" name="categoria" value="{{ categoria_actual }}">{% endif %}
     <div class="caja-busqueda">
-      <span>🔍</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="search" name="q" value="{{ q }}" placeholder="Buscar por nombre, descripción o lugar…" aria-label="Buscar objetos">
     </div>
     <button type="submit" class="btn btn-primary">Buscar</button>
@@ -36,7 +50,7 @@
     {% for cat in categorias %}
       <a href="{% url 'lista_objetos' %}?{% if q %}q={{ q }}&{% endif %}categoria={{ cat.id }}"
          class="cat-chip {% if categoria_actual == cat.id|stringformat:'s' %}active{% endif %}">
-        {{ cat.icono }} {{ cat.nombre }}
+        {{ cat.nombre }}
       </a>
     {% endfor %}
   </div>
@@ -45,7 +59,11 @@
     {% for obj in objetos %}
     <article class="card card-obj">
       <div class="media">
-        {% if obj.foto %}<img src="{{ obj.foto.url }}" alt="{{ obj.nombre_objeto }}">{% else %}{{ obj.icono }}{% endif %}
+        {% if obj.foto %}
+          <img src="{{ obj.foto.url }}" alt="{{ obj.nombre_objeto }}">
+        {% else %}
+          <span class="chip-icono lg" style="background:{{ obj.categoria.color|default:'#0b7a54' }};color:#fff">{{ obj.nombre_objeto|slice:":2"|default:'—'|upper }}</span>
+        {% endif %}
       </div>
       <div class="body">
         <div class="flex" style="justify-content:space-between;align-items:flex-start">
@@ -54,14 +72,16 @@
         </div>
         <p>{{ obj.descripcion_objeto|truncatechars:80 }}</p>
         <div class="meta">
-          <span class="muted" style="font-size:.82rem">📍 {{ obj.lugar_encontrado|default:'Sin lugar' }}</span>
+          <span class="muted" style="font-size:.82rem">{{ obj.lugar_encontrado|default:'Sin lugar' }}</span>
         </div>
         <a href="{% url 'detalle_objeto' obj.pk %}" class="btn btn-primary btn-sm btn-block mt-2">Ver detalles</a>
       </div>
     </article>
     {% empty %}
     <div class="vacio">
-      <span class="emoji">📭</span>
+      <span class="marca-vacio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
       <h3 style="margin:0 0 6px">No hay objetos que coincidan</h3>
       <p>Prueba con otra búsqueda o revisa más tarde.</p>
     </div>

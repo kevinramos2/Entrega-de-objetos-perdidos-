@@ -23,7 +23,6 @@ from .forms import (
     CategoriaForm,
     InicioSesionForm,
     ObjetoReclamadoForm,
-    RegistroUsuarioForm,
     SolicitudForm,
     UsuarioPanelForm,
 )
@@ -102,44 +101,10 @@ def inicio(request):
 
 
 def registro_usuario(request):
+    """El registro manual se deshabilitó: el acceso es con correo institucional."""
     if request.user.is_authenticated:
         return redirigir_por_rol(request.user)
-    form = RegistroUsuarioForm(request.POST or None)
-    if request.method == 'POST' and form.is_valid():
-        datos = form.cleaned_data
-        base = datos['email'].split('@')[0]
-        username = base
-        contador = 1
-        while User.objects.filter(username__iexact=username).exists():
-            contador += 1
-            username = f'{base}{contador}'
-        try:
-            usuario = User.objects.create_user(
-                username=username,
-                email=datos['email'],
-                password=datos['primera_contrasena'],
-                first_name=datos.get('first_name', '').strip(),
-                last_name=datos.get('last_name', '').strip(),
-            )
-        except IntegrityError:
-            messages.error(request, 'Ya existe una cuenta con esos datos.')
-            return render(request, 'registro/registro.html', {'form': form})
-
-        perfil = usuario.perfil
-        perfil.tipo_documento = datos.get('tipo_documento', '')
-        perfil.numero_documento = datos.get('numero_documento', '').strip()
-        perfil.telefono = datos.get('telefono', '').strip()
-        perfil.programa = datos.get('programa', '').strip()
-        perfil.save()
-
-        login(request, usuario, backend='django.contrib.auth.backends.ModelBackend')
-        messages.success(
-            request,
-            f'¡Bienvenido, {usuario.first_name or usuario.username}! '
-            'Tu cuenta fue creada correctamente.',
-        )
-        return redirect('lista_objetos')
-    return render(request, 'registro/registro.html', {'form': form})
+    return redirect('login')
 
 
 def iniciar_sesion(request):
@@ -284,11 +249,15 @@ def panel_inicio(request):
     actividad = stats.actividad_reciente(limite=8)
 
     nombres_estado = dict(ObjetoReclamado.Estados.choices)
+
+    def iniciales_categoria(nombre):
+        return (nombre or '—').strip()[:2].upper() or '—'
+
     context = {
         'resumen': resumen,
         'actividad': actividad,
         'chart_categoria_labels': serializar_json([c['categoria__nombre'] or 'Sin categoría' for c in por_categoria]),
-        'chart_categoria_iconos': serializar_json([c['categoria__icono'] or '📦' for c in por_categoria]),
+        'chart_categoria_iconos': serializar_json([iniciales_categoria(c['categoria__nombre']) for c in por_categoria]),
         'chart_categoria_values': serializar_json([c['total'] for c in por_categoria]),
         'chart_estado_labels': serializar_json([nombres_estado.get(e['estado'], e['estado']) for e in por_estado]),
         'chart_estado_values': serializar_json([e['total'] for e in por_estado]),

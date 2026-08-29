@@ -2,24 +2,30 @@
 <aside class="panel-menu">
   <div class="m-titulo">General</div>
   <a href="{% url 'panel_inicio' %}" class="{% if request.resolver_match.url_name == 'panel_inicio' %}active{% endif %}">
-    <span>📊</span> Resumen
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Resumen
   </a>
   <div class="m-titulo">Gestión</div>
   <a href="{% url 'panel_objetos' %}" class="{% if request.resolver_match.url_name in 'panel_objetos,panel_objeto_nuevo,panel_objeto_editar' %}active{% endif %}">
-    <span>📦</span> Objetos
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>
+    Objetos
   </a>
   <a href="{% url 'panel_objeto_nuevo' %}" class="{% if request.resolver_match.url_name == 'panel_objeto_nuevo' %}active{% endif %}">
-    <span>➕</span> Registrar objeto
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Registrar objeto
   </a>
   <a href="{% url 'panel_solicitudes' %}" class="{% if request.resolver_match.url_name in 'panel_solicitudes,panel_solicitud_detalle' %}active{% endif %}">
-    <span>📬</span> Solicitudes
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+    Solicitudes
     {% if solicitudes_pendientes %}<span class="contador">{{ solicitudes_pendientes }}</span>{% endif %}
   </a>
   <div class="m-titulo">Configuración</div>
   <a href="{% url 'panel_categorias' %}" class="{% if request.resolver_match.url_name in 'panel_categorias,panel_categoria_editar' %}active{% endif %}">
-    <span>🏷️</span> Categorías
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+    Categorías
   </a>
   <a href="{% url 'panel_usuarios' %}" class="{% if request.resolver_match.url_name in 'panel_usuarios,panel_usuario_editar' %}active{% endif %}">
-    <span>👥</span> Cuentas
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Cuentas
   </a>
 </aside>

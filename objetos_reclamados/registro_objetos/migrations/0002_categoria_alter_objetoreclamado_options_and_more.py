@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('nombre', models.CharField(max_length=100, unique=True, verbose_name='Nombre')),
-                ('icono', models.CharField(default='📦', max_length=10, verbose_name='Icono')),
+                ('icono', models.CharField(blank=True, default='', max_length=10, verbose_name='Seña (opcional)')),
                 ('color', models.CharField(default='#4f46e5', max_length=7, verbose_name='Color (hex)')),
                 ('orden', models.PositiveIntegerField(default=0, verbose_name='Orden')),
             ],

@@ -11,18 +11,18 @@ from django.db.models import Count
 
 
 CATEGORIAS = [
-    {'nombre': 'Termos y cafeteras', 'icono': '🥤', 'color': '#f59e0b', 'orden': 1},
-    {'nombre': 'Documentos', 'icono': '📄', 'color': '#3b82f6', 'orden': 2},
-    {'nombre': 'Cargadores', 'icono': '🔌', 'color': '#10b981', 'orden': 3},
-    {'nombre': 'Tecnología', 'icono': '💻', 'color': '#6366f1', 'orden': 4},
-    {'nombre': 'Loncheras', 'icono': '🎒', 'color': '#8b5cf6', 'orden': 5},
-    {'nombre': 'Comida', 'icono': '🍱', 'color': '#ef4444', 'orden': 6},
-    {'nombre': 'Sombrillas', 'icono': '☂️', 'color': '#06b6d4', 'orden': 7},
-    {'nombre': 'Cartucheras', 'icono': '👝', 'color': '#ec4899', 'orden': 8},
-    {'nombre': 'Ropa y accesorios', 'icono': '🧥', 'color': '#14b8a6', 'orden': 9},
-    {'nombre': 'Libros y cuadernos', 'icono': '📚', 'color': '#92400e', 'orden': 10},
-    {'nombre': 'Llaves', 'icono': '🔑', 'color': '#eab308', 'orden': 11},
-    {'nombre': 'Otros', 'icono': '📦', 'color': '#64748b', 'orden': 99},
+    {'nombre': 'Termos y cafeteras', 'icono': '', 'color': '#f59e0b', 'orden': 1},
+    {'nombre': 'Documentos', 'icono': '', 'color': '#3b82f6', 'orden': 2},
+    {'nombre': 'Cargadores', 'icono': '', 'color': '#10b981', 'orden': 3},
+    {'nombre': 'Tecnología', 'icono': '', 'color': '#6366f1', 'orden': 4},
+    {'nombre': 'Loncheras', 'icono': '', 'color': '#8b5cf6', 'orden': 5},
+    {'nombre': 'Comida', 'icono': '', 'color': '#ef4444', 'orden': 6},
+    {'nombre': 'Sombrillas', 'icono': '', 'color': '#06b6d4', 'orden': 7},
+    {'nombre': 'Cartucheras', 'icono': '', 'color': '#ec4899', 'orden': 8},
+    {'nombre': 'Ropa y accesorios', 'icono': '', 'color': '#14b8a6', 'orden': 9},
+    {'nombre': 'Libros y cuadernos', 'icono': '', 'color': '#92400e', 'orden': 10},
+    {'nombre': 'Llaves', 'icono': '', 'color': '#eab308', 'orden': 11},
+    {'nombre': 'Otros', 'icono': '', 'color': '#64748b', 'orden': 99},
 ]
 
 # Mapeo de los tipos históricos a categorías

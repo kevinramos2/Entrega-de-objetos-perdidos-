@@ -12,18 +12,18 @@ from django.utils import timezone
 from registro_objetos.models import Categoria, ObjetoReclamado, PerfilUsuario
 
 CATEGORIAS = [
-    ('Termos y cafeteras', '🥤', '#f59e0b', 1),
-    ('Documentos', '📄', '#3b82f6', 2),
-    ('Cargadores', '🔌', '#10b981', 3),
-    ('Tecnología', '💻', '#6366f1', 4),
-    ('Loncheras', '🎒', '#8b5cf6', 5),
-    ('Comida', '🍱', '#ef4444', 6),
-    ('Sombrillas', '☂️', '#06b6d4', 7),
-    ('Cartucheras', '👝', '#ec4899', 8),
-    ('Ropa y accesorios', '🧥', '#14b8a6', 9),
-    ('Libros y cuadernos', '📚', '#92400e', 10),
-    ('Llaves', '🔑', '#eab308', 11),
-    ('Otros', '📦', '#64748b', 99),
+    ('Termos y cafeteras', '', '#f59e0b', 1),
+    ('Documentos', '', '#3b82f6', 2),
+    ('Cargadores', '', '#10b981', 3),
+    ('Tecnología', '', '#6366f1', 4),
+    ('Loncheras', '', '#8b5cf6', 5),
+    ('Comida', '', '#ef4444', 6),
+    ('Sombrillas', '', '#06b6d4', 7),
+    ('Cartucheras', '', '#ec4899', 8),
+    ('Ropa y accesorios', '', '#14b8a6', 9),
+    ('Libros y cuadernos', '', '#92400e', 10),
+    ('Llaves', '', '#eab308', 11),
+    ('Otros', '', '#64748b', 99),
 ]
 
 OBJETOS_DEMO = [

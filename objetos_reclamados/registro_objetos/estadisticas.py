@@ -109,46 +109,46 @@ def informacion_para_estudiantes():
     mensajes = []
     if total_30 > 0:
         mensajes.append({
-            'icono': '🕓',
-            'titulo': f'{total_30} objetos perdidos en el último mes',
+            'tipo': 'reportes',
+            'titulo': f'{total_30} objetos reportados en el último mes',
             'detalle': 'Reportados por la comunidad universitaria en los últimos 30 días.',
         })
     else:
         mensajes.append({
-            'icono': '📦',
+            'tipo': 'reportes',
             'titulo': f'{resumen.get("total", 0)} objetos reportados hasta ahora',
             'detalle': 'Cada reporte ayuda a que alguien recupere lo que perdió.',
         })
 
     mensajes.append({
-        'icono': '🎯',
+        'tipo': 'recuperados',
         'titulo': f'{resumen.get("tasa_recuperacion", 0)}% recuperados por sus dueños',
         'detalle': 'De los objetos reportados, este porcentaje ya fue reclamado y entregado.',
     })
 
     mensajes.append({
-        'icono': '🔎',
+        'tipo': 'disponibles',
         'titulo': f'{resumen.get("disponibles", 0)} objetos esperan a su dueño',
         'detalle': 'Revisa la lista y confirma si alguno es tuyo.',
     })
 
     if resumen.get('solicitudes_pendientes', 0) > 0:
         mensajes.append({
-            'icono': '⏳',
+            'tipo': 'solicitudes',
             'titulo': f'{resumen.get("solicitudes_pendientes", 0)} reclamos en revisión',
             'detalle': 'La coordinación está verificando estas solicitudes.',
         })
 
     if top_categoria['total'] > 0:
         mensajes.append({
-            'icono': '📊',
+            'tipo': 'categoria',
             'titulo': f'Los {top_categoria["nombre"].lower()} son lo más extraviado',
             'detalle': f'{top_categoria["total"]} registros en esta categoría. ¡Cuida los tuyos!',
         })
 
     if promedio_dias is not None:
         mensajes.append({
-            'icono': '⚡',
+            'tipo': 'plazo',
             'titulo': f'Se recuperan en ~{promedio_dias} días',
             'detalle': 'Tiempo promedio entre el reporte y la entrega al dueño.',
         })

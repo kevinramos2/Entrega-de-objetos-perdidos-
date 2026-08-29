@@ -1,0 +1,36 @@
+{% extends 'objetos/base.html' %}
+{% load socialaccount %}
+{% block title %}Confirma tu ingreso · Perdidos y Encontrados{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <span class="brand-mark" style="width:56px;height:56px;border-radius:16px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px" aria-hidden="true">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+          <path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/>
+        </svg>
+      </span>
+    </div>
+    <div class="form-card" style="text-align:center">
+      <h2 style="margin:0 0 8px">Inicio de sesión mediante Google</h2>
+      <p style="color:var(--muted);margin:0 0 22px">
+        Vas a iniciar sesión con tu cuenta de Google. Recuerda que solo se
+        permiten cuentas institucionales
+        <strong>@{{ DOMINIOS_PERMITIDOS.0 }}</strong>.
+      </p>
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline btn-lg btn-block">
+          {% include 'registro/icono_google.html' %}
+          Continuar con Google
+        </button>
+      </form>
+      <div class="mt-3">
+        <a href="{% url 'inicio' %}" class="btn btn-ghost btn-sm">Cancelar</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

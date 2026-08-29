@@ -3,9 +3,11 @@
 {% block content %}
 <section class="page-inner">
   <div class="vacio">
-    <span class="emoji">🧭</span>
+    <span class="marca-vacio">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </span>
     <h1 style="margin:0 0 6px">404 · Página no encontrada</h1>
-    <p>Parece que esta página se perdió… ¡así como algunos objetos!</p>
+    <p>No encontramos lo que buscas. Verifica la dirección o vuelve al inicio.</p>
     <a href="{% url 'inicio' %}" class="btn btn-primary mt-2">Volver al inicio</a>
   </div>
 </section>

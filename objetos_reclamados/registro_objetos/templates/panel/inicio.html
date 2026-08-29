@@ -5,20 +5,20 @@
 <div class="panel-titulo">
   <div>
     <div class="crumb">Panel de administración</div>
-    <h1>Hola, {{ user.first_name|default:user.username }} 👋</h1>
+    <h1>Hola, {{ user.first_name|default:user.username }}</h1>
   </div>
   <div class="flex">
-    <a href="{% url 'panel_exportar_csv' %}" class="btn btn-outline">⬇️ Exportar CSV (Excel / Power BI)</a>
-    <a href="{% url 'panel_objeto_nuevo' %}" class="btn btn-primary">➕ Registrar objeto</a>
+    <a href="{% url 'panel_exportar_csv' %}" class="btn btn-outline">Exportar CSV</a>
+    <a href="{% url 'panel_objeto_nuevo' %}" class="btn btn-primary">Registrar objeto</a>
   </div>
 </div>
 
 <div class="kpis">
-  <div class="kpi"><span class="pie">📦</span><div class="valor">{{ resumen.total }}</div><div class="etiqueta">Objetos registrados</div></div>
-  <div class="kpi kpi-verde"><span class="pie">🔎</span><div class="valor">{{ resumen.disponibles }}</div><div class="etiqueta">Disponibles</div></div>
-  <div class="kpi kpi-amarillo"><span class="pie">⏳</span><div class="valor">{{ resumen.reclamados }}</div><div class="etiqueta">Reclamados</div></div>
-  <div class="kpi kpi-azul"><span class="pie">✅</span><div class="valor">{{ resumen.entregados }}</div><div class="etiqueta">Entregados</div></div>
-  <div class="kpi"><span class="pie">🎯</span><div class="valor">{{ resumen.tasa_recuperacion }}%</div><div class="etiqueta">Tasa de recuperación</div></div>
+  <div class="kpi"><span class="pie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg></span><div class="valor">{{ resumen.total }}</div><div class="etiqueta">Objetos registrados</div></div>
+  <div class="kpi kpi-verde"><span class="pie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><div class="valor">{{ resumen.disponibles }}</div><div class="etiqueta">Disponibles</div></div>
+  <div class="kpi kpi-amarillo"><span class="pie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><div class="valor">{{ resumen.reclamados }}</div><div class="etiqueta">Reclamados</div></div>
+  <div class="kpi kpi-azul"><span class="pie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div class="valor">{{ resumen.entregados }}</div><div class="etiqueta">Entregados</div></div>
+  <div class="kpi"><span class="pie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span><div class="valor">{{ resumen.tasa_recuperacion }}%</div><div class="etiqueta">Tasa de recuperación</div></div>
 </div>
 
 <div class="grid-charts">
@@ -45,7 +45,7 @@
     <p class="sub">Últimos movimientos en la plataforma</p>
     {% for obj in actividad.objetos %}
     <div class="actividad-item">
-      <div class="ico">{{ obj.icono }}</div>
+      <span class="ico" style="background:{{ obj.categoria.color|default:'#0b7a54' }};color:#fff">{{ obj.nombre_objeto|slice:":2"|default:'—'|upper }}</span>
       <div>
         <b>{{ obj.nombre_objeto }}</b>
         <span class="muted" style="font-size:.82rem">registrado como {{ obj.get_estado_display|lower }}

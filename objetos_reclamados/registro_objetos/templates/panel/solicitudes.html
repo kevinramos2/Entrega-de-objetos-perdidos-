@@ -36,7 +36,7 @@
         </td>
         <td>
           <div class="flex">
-            <span style="font-size:1.3rem">{{ s.objeto.icono }}</span>
+            <span class="chip-icono sm" style="background:{{ s.objeto.categoria.color|default:'#0b7a54' }};color:#fff">{{ s.objeto.nombre_objeto|slice:":2"|default:'—'|upper }}</span>
             <div>
               <b>{{ s.objeto.nombre_objeto }}</b><br>
               <span class="muted" style="font-size:.8rem">{{ s.objeto.etiqueta_categoria }}</span>
@@ -49,7 +49,7 @@
         <td><a href="{% url 'panel_solicitud_detalle' s.pk %}" class="btn btn-sm btn-outline">Revisar</a></td>
       </tr>
       {% empty %}
-      <tr><td colspan="6"><div class="vacio"><span class="emoji">📬</span><p>No hay solicitudes en esta vista.</p></div></td></tr>
+      <tr><td colspan="6"><div class="vacio"><p>No hay solicitudes en esta vista.</p></div></td></tr>
       {% endfor %}
     </tbody>
   </table>

@@ -6,24 +6,26 @@
   <div class="container">
     <div class="hero-grid">
       <div>
-        <span class="kicker">🎓 Comunidad universitaria</span>
+        <span class="kicker">Comunidad universitaria</span>
         <h1>¿Perdiste algo?<br>Aquí puede estar esperándote.</h1>
         <p class="sub">
           Centralizamos los objetos perdidos y encontrados de la universidad.
-          Reporta lo que encontraste, busca lo que perdiste y recupera lo
-          que es tuyo, sin vueltas.
+          Busca lo que perdiste, solicita su reclamo y recupera lo que es tuyo.
         </p>
         <div class="hero-ctas">
           {% if user.is_authenticated %}
-            <a href="{% url 'lista_objetos' %}" class="btn btn-white btn-lg">🔎 Ver objetos perdidos</a>
+            <a href="{% url 'lista_objetos' %}" class="btn btn-white btn-lg">Ver objetos perdidos</a>
             {% if not user.is_staff %}
-              <a href="{% url 'mis_solicitudes' %}" class="btn btn-sm btn-lg" style="background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25)">Mis reclamos</a>
+              <a href="{% url 'mis_solicitudes' %}" class="btn btn-lg" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.25)">Mis reclamos</a>
             {% endif %}
           {% else %}
-            <a href="{% url 'registro' %}" class="btn btn-white btn-lg">Crear cuenta gratis</a>
-            <a href="{% url 'login' %}" class="btn btn-lg" style="background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25)">Iniciar sesión</a>
+            <a href="{% url 'login' %}" class="btn btn-white btn-lg">Ingresar con tu correo institucional</a>
           {% endif %}
         </div>
+        <p class="nota" style="color:#bfe3d2;margin-top:16px">
+          Acceso exclusivo para la comunidad con correo
+          <b style="color:#fff">@{{ DOMINIOS_PERMITIDOS.0 }}</b>.
+        </p>
         <div class="hero-stats">
           <div class="hero-stat"><b>{{ resumen.total }}</b><span>objetos reportados</span></div>
           <div class="hero-stat"><b>{{ resumen.disponibles }}</b><span>esperando dueño</span></div>
@@ -31,11 +33,11 @@
         </div>
       </div>
       <div class="hero-demo">
-        <div class="demo-title">🆕 Fueron encontrados recientemente</div>
+        <div class="demo-title">Encontrados recientemente</div>
         <div class="demo-list">
           {% for obj in recientes %}
           <div class="demo-item">
-            <div class="demo-icon">{{ obj.icono }}</div>
+            <span class="chip-icono">{{ obj.nombre_objeto|slice:":2"|upper }}</span>
             <div>
               <b>{{ obj.nombre_objeto }}</b>
               <span>{{ obj.etiqueta_categoria }} · {{ obj.lugar_encontrado|default:'Sin lugar' }}</span>
@@ -45,7 +47,10 @@
             {% endif %}
           </div>
           {% empty %}
-          <div class="demo-item"><div class="demo-icon">📦</div><div><b>Aún no hay reportes</b><span>El primero lo puedes hacer tú.</span></div></div>
+          <div class="demo-item">
+            <span class="chip-icono">—</span>
+            <div><b>Aún no hay reportes</b><span>Los objetos registrados aparecerán aquí.</span></div>
+          </div>
           {% endfor %}
         </div>
       </div>
@@ -62,18 +67,18 @@
     <div class="pasos">
       <div class="card paso">
         <div class="num">1</div>
-        <h3>Reporta</h3>
-        <p>¿Encontraste un objeto? Regístralo con su descripción, foto y lugar.</p>
+        <h3>Explora</h3>
+        <p>Revisa los objetos encontrados y filtra por categoría o lugar.</p>
       </div>
       <div class="card paso">
         <div class="num">2</div>
-        <h3>Consulta</h3>
-        <p>¿Perdiste algo? Explora los objetos reportados y filtra por categoría.</p>
+        <h3>Solicita</h3>
+        <p>¿Reconoces el objeto? Envía tu solicitud de reclamo.</p>
       </div>
       <div class="card paso">
         <div class="num">3</div>
         <h3>Recupera</h3>
-        <p>Solicita tu reclamo; la administración verifica y coordina la entrega.</p>
+        <p>La coordinación verifica la entrega y coordina la devolución.</p>
       </div>
     </div>
   </div>
@@ -83,21 +88,35 @@
   <div class="container">
     <div class="seccion-header">
       <h2>La situación, en números</h2>
-      <p>Datos reales de nuestra comunidad (se actualizan automáticamente).</p>
+      <p>Datos reales de la plataforma, actualizados en cada consulta.</p>
     </div>
     <div class="insights">
       {% for m in mensajes %}
       <div class="insight">
-        <div class="ico">{{ m.icono }}</div>
+        <div class="ico">
+          {% if m.tipo == 'reportes' %}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>
+          {% elif m.tipo == 'recuperados' %}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          {% elif m.tipo == 'disponibles' %}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          {% elif m.tipo == 'solicitudes' %}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+          {% elif m.tipo == 'categoria' %}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          {% else %}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {% endif %}
+        </div>
         <div><b>{{ m.titulo }}</b><span>{{ m.detalle }}</span></div>
       </div>
       {% endfor %}
     </div>
     <div class="text-center mt-4">
       {% if user.is_authenticated %}
-        <a href="{% url 'lista_objetos' %}" class="btn btn-primary btn-lg">Empezar a buscar 🔎</a>
+        <a href="{% url 'lista_objetos' %}" class="btn btn-primary btn-lg">Ver objetos disponibles</a>
       {% else %}
-        <a href="{% url 'registro' %}" class="btn btn-primary btn-lg">Únete a la comunidad</a>
+        <a href="{% url 'login' %}" class="btn btn-primary btn-lg">Ingresar con tu correo institucional</a>
       {% endif %}
     </div>
   </div>

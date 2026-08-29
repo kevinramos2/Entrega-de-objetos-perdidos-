@@ -7,12 +7,12 @@
     <div class="crumb">Gestión</div>
     <h1>Objetos registrados</h1>
   </div>
-  <a href="{% url 'panel_objeto_nuevo' %}" class="btn btn-primary">➕ Registrar objeto</a>
+  <a href="{% url 'panel_objeto_nuevo' %}" class="btn btn-primary">Registrar objeto</a>
 </div>
 
 <form method="get" class="filtros-busqueda" autocomplete="off">
   <div class="caja-busqueda" style="max-width:340px">
-    <span>🔍</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input type="search" name="q" value="{{ q }}" placeholder="Buscar objeto o persona…">
   </div>
   <select name="estado" class="cat-chip" style="padding:10px 16px">
@@ -49,10 +49,10 @@
       <tr>
         <td>
           <div class="flex">
-            <span style="font-size:1.5rem">{{ obj.icono }}</span>
+            <span class="chip-icono sm" style="background:{{ obj.categoria.color|default:'#0b7a54' }};color:#fff">{{ obj.nombre_objeto|slice:":2"|default:'—'|upper }}</span>
             <div>
               <b>{{ obj.nombre_objeto }}</b>
-              {% if obj.nombre_persona %}<br><span class="muted" style="font-size:.8rem">👤 {{ obj.nombre_persona }}</span>{% endif %}
+              {% if obj.nombre_persona %}<br><span class="muted" style="font-size:.8rem">{{ obj.nombre_persona }}</span>{% endif %}
             </div>
           </div>
         </td>
@@ -74,14 +74,14 @@
             </form>
             <form method="post" action="{% url 'panel_objeto_eliminar' obj.pk %}" data-confirm="¿Eliminar este objeto? La acción no se puede deshacer.">
               {% csrf_token %}
-              <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">🗑️</button>
+              <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">Eliminar</button>
             </form>
           </div>
         </td>
       </tr>
       {% empty %}
       <tr><td colspan="7">
-        <div class="vacio"><span class="emoji">📦</span><p>Aún no hay objetos que coincidan con el filtro.</p></div>
+        <div class="vacio"><p>Aún no hay objetos que coincidan con el filtro.</p></div>
       </td></tr>
       {% endfor %}
     </tbody>

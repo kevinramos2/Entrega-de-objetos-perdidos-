@@ -16,9 +16,16 @@
 
   <header class="navbar">
     <div class="container">
-      <button class="nav-toggle" aria-label="Abrir menú">☰</button>
+      <button class="nav-toggle" aria-label="Abrir menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+      </button>
       <a href="{% url 'inicio' %}" class="brand">
-        <span class="brand-mark">🗺️</span>
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/>
+          </svg>
+        </span>
         <span>Perdidos &amp; Encontrados</span>
       </a>
       <nav class="nav-links">
@@ -45,8 +52,7 @@
             <button type="submit" class="btn btn-ghost btn-sm">Salir</button>
           </form>
         {% else %}
-          <a href="{% url 'login' %}" class="btn btn-sm btn-outline">Iniciar sesión</a>
-          <a href="{% url 'registro' %}" class="btn btn-sm btn-primary">Crear cuenta</a>
+          <a href="{% url 'login' %}" class="btn btn-sm btn-primary">Iniciar sesión</a>
         {% endif %}
       </div>
     </div>
@@ -55,16 +61,7 @@
   {% if messages %}
   <div class="toasts">
     {% for mensaje in messages %}
-      <div class="toast {{ mensaje.tags }}">
-        <span class="t-ico">
-          {% if 'success' in mensaje.tags %}✅
-          {% elif 'error' in mensaje.tags %}⚠️
-          {% elif 'warning' in mensaje.tags %}🕐
-          {% else %}ℹ️{% endif %}
-        </span>
-        <span>{{ mensaje }}</span>
-        <button class="cerrar" aria-label="Cerrar">&times;</button>
-      </div>
+      <div class="toast {{ mensaje.tags }}">{{ mensaje }}<button class="cerrar" aria-label="Cerrar">&times;</button></div>
     {% endfor %}
   </div>
   {% endif %}
@@ -74,7 +71,15 @@
   <footer class="footer">
     <div class="container">
       <div>
-        <a href="{% url 'inicio' %}" class="brand"><span class="brand-mark">🗺️</span> Perdidos &amp; Encontrados</a>
+        <a href="{% url 'inicio' %}" class="brand">
+          <span class="brand-mark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+              <path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/>
+            </svg>
+          </span>
+          Perdidos &amp; Encontrados
+        </a>
         <p style="max-width:340px">
           Una herramienta creada por y para la comunidad universitaria para
           reducir los objetos que quedan sin dueño. Encuentra lo que perdiste
@@ -88,20 +93,15 @@
           <a href="{% url 'lista_objetos' %}">Objetos perdidos</a>
           {% if user.is_staff %}<a href="{% url 'panel_inicio' %}">Panel de administración</a>{% endif %}
         {% else %}
-          <a href="{% url 'registro' %}">Crear cuenta</a>
           <a href="{% url 'login' %}">Iniciar sesión</a>
         {% endif %}
       </div>
       <div>
-        <h4>Universidad</h4>
-        <a href="#">Biblioteca central</a>
-        <a href="#">Bienestar universitario</a>
-        <a href="#">Atención al estudiante</a>
+        <h4>Contacto</h4>
+        <span style="color:#9dc4b2;font-size:.88rem;line-height:1.8">Coordinación de Bienestar<br>Universidad Nacional de Colombia<br>objetos.perdidos@unal.edu.co</span>
       </div>
     </div>
-    <div class="bottom">
-      Hecho con 💜 para la comunidad · {% now "Y" %}
-    </div>
+    <div class="bottom">Plataforma académica de la comunidad universitaria · {% now "Y" %}</div>
   </footer>
 
   <script src="{% static 'js/app.js' %}"></script>

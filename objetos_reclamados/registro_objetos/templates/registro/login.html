@@ -4,51 +4,55 @@
 {% block content %}
 <div class="auth-wrap">
   <div class="auth-box">
-    <div class="auth-logo"><span class="brand-mark" style="width:52px;height:52px;font-size:1.5rem">🗺️</span></div>
+    <div class="auth-logo">
+      <span class="brand-mark" style="width:56px;height:56px;border-radius:16px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px" aria-hidden="true">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+          <path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/>
+        </svg>
+      </span>
+    </div>
     <div class="form-card">
-      <h2 style="margin:0 0 6px">Bienvenido de nuevo</h2>
-      <p style="color:var(--muted);margin:0 0 22px">Ingresa con tu cuenta institucional o con el login de Google.</p>
-
-      {% if form.errors %}
-      <div class="errores-form">
-        Encontramos algunos inconvenientes. Revisa tu usuario y contraseña.
-      </div>
-      {% endif %}
-
-      <form method="post" novalidate>
-        {% csrf_token %}
-        <div class="form-campo">
-          <label for="{{ form.identificador.id_for_label }}">{{ form.identificador.label }}</label>
-          {{ form.identificador }}
-        </div>
-        <div class="form-campo">
-          <label for="{{ form.contrasena.id_for_label }}">{{ form.contrasena.label }}</label>
-          {{ form.contrasena }}
-        </div>
-        <button type="submit" class="btn btn-primary btn-block btn-lg">Entrar</button>
-      </form>
+      <h2 style="margin:0 0 6px">Inicia sesión</h2>
+      <p style="color:var(--muted);margin:0 0 22px">
+        El acceso es únicamente con tu correo institucional
+        <strong>@{{ DOMINIOS_PERMITIDOS.0 }}</strong>.
+      </p>
 
       {% if GOOGLE_OAUTH_CONFIGURADO %}
-        <div class="separador">o continúa con</div>
         {% load socialaccount %}
-        <a href="{% provider_login_url 'google' %}" class="btn btn-outline btn-block">
-          <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
-            <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.1 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.3 6.4 29.4 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
-            <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 18.9 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.3 6.4 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
-            <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.1 0-9.3-3.1-11-7.5l-6.4 5C9.5 39.6 16.2 44 24 44z"/>
-            <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C40.1 35.8 44 30.5 44 24c0-1.3-.1-2.6-.4-3.9z"/>
-          </svg>
+        <a href="{% provider_login_url 'google' %}" class="btn btn-outline btn-lg btn-block">
+          {% include 'registro/icono_google.html' %}
           Continuar con Google (@{{ DOMINIOS_PERMITIDOS.0 }})
         </a>
       {% endif %}
+
+      <details class="plegable">
+        <summary>Acceso administrativo (usuario y contraseña)</summary>
+        <div class="plegable-cuerpo">
+          {% if form.errors %}
+          <div class="errores-form" style="margin-bottom:14px">
+            Usuario o contraseña incorrectos. Revisa tus datos.
+          </div>
+          {% endif %}
+          <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="form-campo">
+              <label for="{{ form.identificador.id_for_label }}">{{ form.identificador.label }}</label>
+              {{ form.identificador }}
+            </div>
+            <div class="form-campo">
+              <label for="{{ form.contrasena.id_for_label }}">{{ form.contrasena.label }}</label>
+              {{ form.contrasena }}
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+          </form>
+        </div>
+      </details>
     </div>
-    <div class="auth-foot">
-      ¿Aún no tienes cuenta?
-      <a href="{% url 'registro' %}" style="font-weight:700">Crea una gratis</a>
-    </div>
-    <div class="text-center mt-3">
-      <a href="{% url 'inicio' %}" class="btn btn-sm btn-ghost">← Volver al inicio</a>
-    </div>
+    <p class="nota text-center" style="margin-top:16px">
+      ¿Problemas para ingresar? Escribe a <b>objetos.perdidos@unal.edu.co</b>.
+    </p>
   </div>
 </div>
 {% endblock %}

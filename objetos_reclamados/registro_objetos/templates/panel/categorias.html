@@ -12,11 +12,11 @@
 <div class="grid-charts-2" style="grid-template-columns:1.2fr .8fr;margin-top:0">
   <div class="card" style="overflow:auto">
     <table class="tabla">
-      <thead><tr><th>Icono</th><th>Nombre</th><th>Objetos</th><th>Acciones</th></tr></thead>
+      <thead><tr><th>Seña</th><th>Nombre</th><th>Objetos</th><th>Acciones</th></tr></thead>
       <tbody>
         {% for cat in categorias %}
         <tr>
-          <td style="font-size:1.4rem">{{ cat.icono }}</td>
+          <td><span class="chip-icono" style="background:{{ cat.color|default:'#0b7a54' }};color:#fff">{{ cat.nombre|slice:":2"|default:'—'|upper }}</span></td>
           <td><b>{{ cat.nombre }}</b></td>
           <td>{{ cat.total_objetos }}</td>
           <td>
@@ -24,7 +24,7 @@
               <a href="{% url 'panel_categoria_editar' cat.pk %}" class="btn btn-sm btn-outline">Editar</a>
               <form method="post" action="{% url 'panel_categoria_eliminar' cat.pk %}" data-confirm="¿Eliminar esta categoría?">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm btn-danger">🗑️</button>
+                <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
               </form>
             </div>
           </td>

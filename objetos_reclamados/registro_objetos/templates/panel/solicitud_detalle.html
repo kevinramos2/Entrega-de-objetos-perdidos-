@@ -13,7 +13,7 @@
 <div class="detalle-grid">
   <div class="card" style="padding:24px">
     <h3 style="margin-top:0">Objeto solicitado</h3>
-    <div class="flex mb-2" style="font-size:2.4rem">{{ solicitud.objeto.icono }}</div>
+    <span class="chip-icono lg mb-2" style="background:{{ solicitud.objeto.categoria.color|default:'#0b7a54' }};color:#fff">{{ solicitud.objeto.nombre_objeto|slice:":2"|default:'—'|upper }}</span>
     <ul class="lista-clave">
       <li><b>Nombre</b><span>{{ solicitud.objeto.nombre_objeto }}</span></li>
       <li><b>Categoría</b><span>{{ solicitud.objeto.etiqueta_categoria }}</span></li>
@@ -52,11 +52,11 @@
   <div class="flex">
     <form method="post" action="{% url 'panel_solicitud_decision' solicitud.pk 'aprobar' %}" data-confirm="¿Confirmas que el objeto es de este estudiante?">
       {% csrf_token %}
-      <button type="submit" class="btn btn-success btn-lg">✅ Aprobar reclamo</button>
+      <button type="submit" class="btn btn-success btn-lg">Aprobar reclamo</button>
     </form>
     <form method="post" action="{% url 'panel_solicitud_decision' solicitud.pk 'rechazar' %}" data-confirm="¿Rechazar esta solicitud?">
       {% csrf_token %}
-      <button type="submit" class="btn btn-danger btn-lg">✖️ Rechazar</button>
+      <button type="submit" class="btn btn-danger btn-lg">Rechazar</button>
     </form>
   </div>
 </div>
