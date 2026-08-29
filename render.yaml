@@ -6,7 +6,7 @@
 #   2) Render detecta este archivo y crea el Web Service + PostgreSQL.
 #   3) Escribe el valor de DJANGO_SECRET_KEY cuando Render lo pida.
 #   4) "Apply" y espera el despliegue.
-# El primer despliegue ejecuta las migraciones (preDeployCommand).
+# En el primer arranque se ejecutan las migraciones (startCommand).
 # ---------------------------------------------------------------------------
 
 databases:
@@ -25,10 +25,7 @@ services:
     # Dependencias + estáticos
     buildCommand: "pip install -r ../requirements.txt && python manage.py collectstatic --noinput"
 
-    # Se ejecuta justo antes de arrancar el servicio (con la BD conectada)
-    preDeployCommand: "python manage.py migrate && python manage.py promocionar_admins"
-
-    startCommand: "gunicorn objetos_reclamados.wsgi:application --bind 0.0.0.0:$PORT"
+    startCommand: "python manage.py migrate && python manage.py promocionar_admins && gunicorn objetos_reclamados.wsgi:application --bind 0.0.0.0:$PORT"
 
     healthCheckPath: /
 
