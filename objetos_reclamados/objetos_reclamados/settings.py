@@ -287,6 +287,9 @@ EMAIL_HOST_USER = _smtp_user
 EMAIL_HOST_PASSWORD = os.getenv('SMTP_PASSWORD', '')
 EMAIL_USE_TLS = os.getenv('SMTP_USE_TLS', 'True').lower() in ('1', 'true', 'yes')
 EMAIL_USE_SSL = os.getenv('SMTP_USE_SSL', 'False').lower() in ('1', 'true', 'yes')
+# Limita el tiempo de intento de conexión; sin esto un servidor que no responde
+# puede colgar el worker (Gunicorn lo terminaria con un 500 en produccion).
+EMAIL_TIMEOUT = int(os.getenv('SMTP_TIMEOUT', '10'))
 DEFAULT_FROM_EMAIL = os.getenv(
     'DEFAULT_FROM_EMAIL', 'kevin.ralu22@gmail.com'
 )

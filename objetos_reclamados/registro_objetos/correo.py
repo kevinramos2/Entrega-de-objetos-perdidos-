@@ -4,6 +4,7 @@ Hasta ahora la única notificación es para el estudiante cuando el
 administrador responde (aprueba o rechaza) su solicitud de reclamo.
 """
 import logging
+import threading
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
@@ -25,9 +26,12 @@ def _datos_para_entrega(solicitud):
 def notificar_respuesta_solicitud(solicitud, accion):
     """Envía al estudiante el resultado (aprobada/rechazada) de su solicitud.
 
-    Retorna True si el correo se encoló/envió; False si no hay destinatario
-    o si falló el envío (en ese caso se registra el error y se continúa,
-    porque la decisión del administrador ya quedó guardada).
+    El mensaje se compone al momento y el envío se hace en un hilo de fondo
+    (solo cuando el backend es SMTP) para que un servidor de correo lento o
+    caído no cuelgue ni tumbe la petición del administrador. La decisión ya
+    quedó guardada antes de llamar a esta función.
+
+    Retorna True si el correo se encoló/envió; False si no hay destinatario.
     """
     destinatario = (solicitud.usuario.email or '').strip()
     if not destinatario:
@@ -67,9 +71,26 @@ def notificar_respuesta_solicitud(solicitud, accion):
     )
     correo.attach_alternative(html, 'text/html')
 
+    es_smtp = bool(settings.EMAIL_BACKEND) and (
+        settings.EMAIL_BACKEND.endswith('smtp.EmailBackend')
+    )
+    if es_smtp:
+        # En segundo plano: la respuesta del admin no espera al proveedor SMTP.
+        threading.Thread(
+            target=_enviar_correo,
+            args=(correo, destinatario, solicitud, accion),
+            daemon=True,
+        ).start()
+    else:
+        # Consola / locmem (local y pruebas): envío inmediato y sincrónico.
+        _enviar_correo(correo, destinatario, solicitud, accion)
+    return True
+
+
+def _enviar_correo(correo, destinatario, solicitud, accion):
     try:
         correo.send(fail_silently=True)
-    except Exception:  # noqa: BLE001 - un fallo de correo no debe tumbar la decisión
+    except Exception:  # noqa: BLE001 - un fallo de correo no debe tumbar nada
         logger.exception(
             'No se pudo notificar al estudiante %s por la solicitud %s.',
             solicitud.usuario.username, solicitud.pk,

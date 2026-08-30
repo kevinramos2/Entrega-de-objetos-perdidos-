@@ -200,10 +200,11 @@ Toda la configuración sensible se lee desde variables de entorno o desde un arc
 | `SMTP_PORT` | Puerto SMTP. | `587` |
 | `SMTP_USE_TLS` | Usa TLS (STARTTLS). | `True` |
 | `SMTP_USE_SSL` | Usa SSL directo. | `False` |
+| `SMTP_TIMEOUT` | Segundos máximos para conectar con el servidor SMTP (evita colgar el servicio si no responde). | `10` |
 | `DEFAULT_FROM_EMAIL` | Remitente de los correos de notificación. | `kevin.ralu22@gmail.com` |
 | `SITE_URL` | URL pública del sitio para los enlaces dentro de los correos. | `http://127.0.0.1:8000` local / `https://…onrender.com` en Render |
 
-> **Correos en desarrollo**: sin `SMTP_HOST`/`SMTP_USER` definidos, Django usa el backend de **consola**, así que al aprobar/rechazar una solicitud verás el correo en la terminal. En **Render**, define `SMTP_HOST`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_PORT` y `SITE_URL` (p. ej. `https://objetos-perdidos-d7uh.onrender.com`) para enviar avisos reales.
+> **Correos en desarrollo**: sin `SMTP_HOST`/`SMTP_USER` definidos, Django usa el backend de **consola**, así que al aprobar/rechazar una solicitud verás el correo en la terminal. En **Render**, define `SMTP_HOST`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_PORT` y `SITE_URL` (p. ej. `https://objetos-perdidos-d7uh.onrender.com`) para enviar avisos reales. El envío ocurre **en segundo plano** (no bloquea la respuesta del administrador) y con `SMTP_TIMEOUT` para no colgar el servicio si el servidor de correo no responde; ante un fallo, la decisión se guarda igual y el error queda en los logs de Render.
 
 ### ¿Dónde consigo la SECRET_KEY?
 
