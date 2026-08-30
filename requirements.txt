@@ -1,6 +1,8 @@
 Django==5.2.5
 Pillow==12.3.0
 django-allauth==65.19.1
+# Requerido por allauth para decodificar el id_token de Google (extra socialaccount)
+PyJWT[crypto]==2.10.1
 whitenoise==6.12.0
 gunicorn==26.2.0
 psycopg[binary]==3.2.13
