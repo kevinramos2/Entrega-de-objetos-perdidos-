@@ -21,17 +21,21 @@ import json
 
 from . import estadisticas as stats
 from .forms import (
+    ApelacionForm,
     CategoriaForm,
     InicioSesionForm,
+    InstruccionesEntregaForm,
     ObjetoReclamadoForm,
     SolicitudForm,
     UsuarioPanelForm,
 )
 from .models import (
     Categoria,
+    InstruccionesEntrega,
     ObjetoReclamado,
     PerfilUsuario,
     SolicitudReclamacion,
+    obtener_instrucciones_entrega,
 )
 
 # ---------------------------------------------------------------------------
@@ -175,6 +179,14 @@ def lista_objetos(request):
     })
 
 
+def _estados_activos_solicitud():
+    """Estados que impiden crear una nueva solicitud para el mismo objeto."""
+    return [
+        SolicitudReclamacion.Estados.PENDIENTE,
+        SolicitudReclamacion.Estados.APELADA,
+    ]
+
+
 @login_required
 def detalle_objeto(request, pk):
     objeto = get_object_or_404(
@@ -184,7 +196,7 @@ def detalle_objeto(request, pk):
     )
     ya_solicito = SolicitudReclamacion.objects.filter(
         usuario=request.user, objeto=objeto,
-        estado=SolicitudReclamacion.Estados.PENDIENTE,
+        estado__in=_estados_activos_solicitud(),
     ).exists()
     return render(request, 'objetos/detalle.html', {
         'objeto': objeto,
@@ -203,7 +215,7 @@ def solicitar_reclamacion(request, pk):
 
     ya_existe = SolicitudReclamacion.objects.filter(
         usuario=request.user, objeto=objeto,
-        estado=SolicitudReclamacion.Estados.PENDIENTE,
+        estado__in=_estados_activos_solicitud(),
     ).exists()
     if ya_existe:
         messages.warning(request, 'Ya tienes una solicitud pendiente para este objeto.')
@@ -234,7 +246,35 @@ def mis_solicitudes(request):
     )
     return render(request, 'objetos/mis_solicitudes.html', {
         'solicitudes': solicitudes,
+        'instrucciones': obtener_instrucciones_entrega(),
     })
+
+
+@login_required
+@require_POST
+def apelar_solicitud(request, pk):
+    solicitud = get_object_or_404(
+        SolicitudReclamacion, pk=pk, usuario=request.user,
+    )
+    if not solicitud.puede_apelar:
+        messages.warning(
+            request,
+            'Esta solicitud ya no admite apelación: solo puedes apelar una vez '
+            'y únicamente cuando la respuesta fue un rechazo.',
+        )
+        return redirect('mis_solicitudes')
+
+    form = ApelacionForm(request.POST)
+    if not form.is_valid():
+        messages.error(request, 'Escribe el motivo de tu apelación para continuar.')
+    else:
+        solicitud.apelar(request.user, form.cleaned_data['motivo'])
+        messages.success(
+            request,
+            'Tu apelación fue enviada. La coordinación la revisará de nuevo y '
+            'te responderá por este mismo medio.',
+        )
+    return redirect('mis_solicitudes')
 
 # ---------------------------------------------------------------------------
 # Panel del administrador
@@ -368,16 +408,23 @@ def panel_solicitudes(request):
     if estado:
         qs = qs.filter(estado=estado)
     else:
-        qs = qs.filter(estado=SolicitudReclamacion.Estados.PENDIENTE)
+        # Por revisar: pendientes y apelaciones pendientes de respuesta.
+        qs = qs.filter(estado__in=[
+            SolicitudReclamacion.Estados.PENDIENTE,
+            SolicitudReclamacion.Estados.APELADA,
+        ])
+    conteo = {
+        'pendiente': SolicitudReclamacion.objects.filter(estado=SolicitudReclamacion.Estados.PENDIENTE).count(),
+        'apelada': SolicitudReclamacion.objects.filter(estado=SolicitudReclamacion.Estados.APELADA).count(),
+        'aprobada': SolicitudReclamacion.objects.filter(estado=SolicitudReclamacion.Estados.APROBADA).count(),
+        'rechazada': SolicitudReclamacion.objects.filter(estado=SolicitudReclamacion.Estados.RECHAZADA).count(),
+    }
+    conteo['por_revisar'] = conteo['pendiente'] + conteo['apelada']
     return render(request, 'panel/solicitudes.html', {
         'solicitudes': qs,
         'estado': estado,
         'estados': SolicitudReclamacion.Estados.choices,
-        'conteos': {
-            'pendiente': SolicitudReclamacion.objects.filter(estado=SolicitudReclamacion.Estados.PENDIENTE).count(),
-            'aprobada': SolicitudReclamacion.objects.filter(estado=SolicitudReclamacion.Estados.APROBADA).count(),
-            'rechazada': SolicitudReclamacion.objects.filter(estado=SolicitudReclamacion.Estados.RECHAZADA).count(),
-        },
+        'conteos': conteo,
     })
 
 
@@ -394,23 +441,49 @@ def panel_solicitud_detalle(request, pk):
 
 @staff_member_required
 @require_POST
-def panel_solicitud_decision(request, pk, accion):
+def panel_solicitud_decision(request, pk, accion=None):
     solicitud = get_object_or_404(SolicitudReclamacion, pk=pk)
-    if solicitud.estado != SolicitudReclamacion.Estados.PENDIENTE:
+    accion = accion or request.POST.get('accion')
+    comentario = (request.POST.get('comentario') or '').strip()
+    es_apelacion = solicitud.fue_apelada
+
+    if solicitud.estado not in (
+        SolicitudReclamacion.Estados.PENDIENTE,
+        SolicitudReclamacion.Estados.APELADA,
+    ):
         messages.warning(request, 'Esta solicitud ya fue respondida.')
     elif accion == 'aprobar':
-        solicitud.aprobar(request.user)
+        solicitud.aprobar(request.user, comentario=comentario)
+        prefijo = 'Apelación ' if es_apelacion else ''
         messages.success(
             request,
-            f'Solicitud aprobada. El objeto pasó a «reclamado» y se vinculó '
-            f'el perfil de {solicitud.usuario.get_full_name() or solicitud.usuario.username}.',
+            f'{prefijo}Aprobada. El objeto pasó a «reclamado» y se vinculó el '
+            f'perfil de {solicitud.usuario.get_full_name() or solicitud.usuario.username}.',
         )
     elif accion == 'rechazar':
-        solicitud.rechazar(request.user)
-        messages.info(request, 'La solicitud fue rechazada.')
+        solicitud.rechazar(request.user, comentario=comentario)
+        prefijo = 'Apelación ' if es_apelacion else ''
+        finale = ' La apelación quedó cerrada.' if es_apelacion else ''
+        messages.info(request, f'{prefijo}Rechazada. Se notificó al estudiante.{finale}')
     else:
         messages.error(request, 'Acción no válida.')
     return redirect('panel_solicitud_detalle', pk=solicitud.pk)
+
+
+@staff_member_required
+def panel_configuracion_entrega(request):
+    """Instrucciones globales de dónde reclamar un objeto aprobado."""
+    config = obtener_instrucciones_entrega()
+    form = InstruccionesEntregaForm(request.POST or None, instance=config)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(
+            request,
+            'Instrucciones de entrega actualizadas: el estudiante las verá en '
+            'sus solicitudes aprobadas.',
+        )
+        return redirect('panel_configuracion_entrega')
+    return render(request, 'panel/configuracion_entrega.html', {'form': form, 'config': config})
 
 
 @staff_member_required

@@ -1,0 +1,32 @@
+{% extends 'panel/base.html' %}
+{% block title %}Entrega del objeto · Panel{% endblock %}
+
+{% block panel_content %}
+<div class="panel-titulo">
+  <div>
+    <div class="crumb">Configuración</div>
+    <h1>Entrega del objeto</h1>
+  </div>
+</div>
+
+<div class="card mt-2" style="max-width:720px;padding:24px">
+  <p class="muted" style="margin-top:0">
+    Este texto lo verá el estudiante en su solicitud cuando la respuesta sea
+    <b>Aprobada</b>. Indica dónde, cuándo y cómo debe reclamar el objeto.
+  </p>
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-campo">
+      <label for="{{ form.texto.id_for_label }}">Instrucciones de entrega</label>
+      {{ form.texto }}
+      {% if form.texto.help_text %}
+        <div class="help">{{ form.texto.help_text }}</div>
+      {% endif %}
+    </div>
+    <div class="flex" style="gap:10px">
+      <button type="submit" class="btn btn-primary">Guardar instrucciones</button>
+      <a href="{% url 'panel_solicitudes' %}" class="btn btn-ghost">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

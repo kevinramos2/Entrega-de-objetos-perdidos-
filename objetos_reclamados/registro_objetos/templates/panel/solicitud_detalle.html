@@ -42,23 +42,46 @@
   <p class="muted" style="font-size:.84rem;margin-top:12px">Solicitado el {{ solicitud.fecha|date:'d M Y, H:i' }}</p>
 </div>
 
-{% if solicitud.estado == 'pendiente' %}
-<div class="card mt-3" style="padding:24px">
-  <h3 style="margin-top:0">Decisión</h3>
-  <p class="muted" style="margin-top:0">
-    Al aprobar, el objeto pasa a estado <b>Reclamado</b>, se vincula al estudiante
-    y sus datos de contacto se guardan automáticamente para la entrega.
+{% if solicitud.fue_apelada %}
+<div class="card mt-3" style="padding:24px;border-left:4px solid #7c3aed">
+  <h3 style="margin-top:0">Apelación del estudiante</h3>
+  <p style="margin:0">{{ solicitud.apelacion|default:'No dejó un motivo.' }}</p>
+  <p class="muted" style="font-size:.84rem;margin-top:12px">
+    Apeló el {{ solicitud.fecha_apelacion|date:'d M Y, H:i' }} · Esta es la única apelación permitida.
   </p>
-  <div class="flex">
-    <form method="post" action="{% url 'panel_solicitud_decision' solicitud.pk 'aprobar' %}" data-confirm="¿Confirmas que el objeto es de este estudiante?">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-success btn-lg">Aprobar reclamo</button>
-    </form>
-    <form method="post" action="{% url 'panel_solicitud_decision' solicitud.pk 'rechazar' %}" data-confirm="¿Rechazar esta solicitud?">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-danger btn-lg">Rechazar</button>
-    </form>
-  </div>
+</div>
+{% endif %}
+
+{% if solicitud.comentario_admin %}
+<div class="card mt-3" style="padding:24px;border-left:4px solid var(--primary)">
+  <h3 style="margin-top:0">Lo que se le respondió al estudiante</h3>
+  <p style="margin:0">{{ solicitud.comentario_admin }}</p>
+</div>
+{% endif %}
+
+{% if solicitud.estado == 'pendiente' or solicitud.estado == 'apelada' %}
+<div class="card mt-3" style="padding:24px">
+  <h3 style="margin-top:0">{% if solicitud.estado == 'apelada' %}Revisión de la apelación{% else %}Decisión{% endif %}</h3>
+  <p class="muted" style="margin-top:0">
+    Escribe un comentario (opcional). Lo verá el estudiante junto al resultado.
+    {% if solicitud.estado == 'pendiente' %}
+    Al aprobar, el objeto pasa a estado <b>Reclamado</b> y se vincula al estudiante.
+    {% else %}
+    Al mantener el rechazo, la apelación queda cerrada y no se puede volver a apelar.
+    {% endif %}
+  </p>
+  <form method="post" action="{% url 'panel_solicitud_decidir' solicitud.pk %}">
+    {% csrf_token %}
+    <textarea name="comentario" rows="3" placeholder="Ej. Verificamos el reporte de pérdida y no coincide con tu descripción…" class="form-control" style="width:100%"></textarea>
+    <div class="flex" style="margin-top:14px;gap:10px">
+      <button type="submit" name="accion" value="aprobar" class="btn btn-success btn-lg" {% if solicitud.estado == 'apelada' %}data-confirm="¿Confirmas que, tras revisar la apelación, el objeto es de este estudiante?"{% else %}data-confirm="¿Confirmas que el objeto es de este estudiante?"{% endif %}>
+        {% if solicitud.estado == 'apelada' %}Aprobar la apelación{% else %}Aprobar reclamo{% endif %}
+      </button>
+      <button type="submit" name="accion" value="rechazar" class="btn btn-danger btn-lg" data-confirm="{% if solicitud.estado == 'apelada' %}¿Mantener el rechazo y cerrar la apelación?{% else %}¿Rechazar esta solicitud?{% endif %}">
+        {% if solicitud.estado == 'apelada' %}Mantener rechazo{% else %}Rechazar{% endif %}
+      </button>
+    </div>
+  </form>
 </div>
 {% else %}
 <div class="card mt-3" style="padding:24px">

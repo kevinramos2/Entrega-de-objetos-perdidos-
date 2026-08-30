@@ -56,7 +56,10 @@ def resumen_global():
     reclamados = ObjetoReclamado.objects.filter(estado=ObjetoReclamado.Estados.RECLAMADO).count()
     entregados = ObjetoReclamado.objects.filter(estado=ObjetoReclamado.Estados.ENTREGADO).count()
     recuperados = reclamados + entregados
-    solicitudes_pendientes = SolicitudReclamacion.objects.filter(estado=SolicitudReclamacion.Estados.PENDIENTE).count()
+    solicitudes_pendientes = SolicitudReclamacion.objects.filter(estado__in=[
+        SolicitudReclamacion.Estados.PENDIENTE,
+        SolicitudReclamacion.Estados.APELADA,
+    ]).count()
     tasa = _porcentaje(recuperados, total)
     return {
         'total': total,

@@ -16,6 +16,7 @@ urlpatterns = [
     path('objetos/<int:pk>/', views.detalle_objeto, name='detalle_objeto'),
     path('objetos/<int:pk>/solicitar/', views.solicitar_reclamacion, name='solicitar_reclamacion'),
     path('mis-solicitudes/', views.mis_solicitudes, name='mis_solicitudes'),
+    path('solicitudes/<int:pk>/apelar/', views.apelar_solicitud, name='apelar_solicitud'),
 
     # Panel del administrador
     path('panel/', views.panel_inicio, name='panel_inicio'),
@@ -26,7 +27,9 @@ urlpatterns = [
     path('panel/objetos/<int:pk>/estado/', views.panel_objeto_estado, name='panel_objeto_estado'),
     path('panel/solicitudes/', views.panel_solicitudes, name='panel_solicitudes'),
     path('panel/solicitudes/<int:pk>/', views.panel_solicitud_detalle, name='panel_solicitud_detalle'),
+    path('panel/solicitudes/<int:pk>/decidir/', views.panel_solicitud_decision, name='panel_solicitud_decidir'),
     path('panel/solicitudes/<int:pk>/<str:accion>/', views.panel_solicitud_decision, name='panel_solicitud_decision'),
+    path('panel/configuracion-entrega/', views.panel_configuracion_entrega, name='panel_configuracion_entrega'),
     path('panel/categorias/', views.panel_categorias, name='panel_categorias'),
     path('panel/categorias/<int:pk>/', views.panel_categoria_editar, name='panel_categoria_editar'),
     path('panel/categorias/<int:pk>/eliminar/', views.panel_categoria_eliminar, name='panel_categoria_eliminar'),

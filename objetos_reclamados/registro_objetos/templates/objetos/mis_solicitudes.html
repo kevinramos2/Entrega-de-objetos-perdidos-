@@ -5,46 +5,68 @@
 <section class="page-inner">
   <div class="page-head">
     <h1>Mis solicitudes de reclamo</h1>
-    <p>Aquí puedes dar seguimiento a cada objeto que crees que es tuyo.</p>
+    <p>Aquí puedes dar seguimiento a cada objeto que crees que es tuyo y apelar un rechazo.</p>
   </div>
 
   {% if solicitudes %}
-  <div class="card" style="overflow:auto">
-    <table class="tabla">
-      <thead>
-        <tr>
-          <th>Objeto</th>
-          <th>Categoría</th>
-          <th>Solicitado</th>
-          <th>Estado</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for s in solicitudes %}
-        <tr>
-          <td>
-            <div class="flex">
-              <span class="chip-icono sm" style="background:{{ s.objeto.categoria.color|default:'#0b7a54' }};color:#fff">{{ s.objeto.nombre_objeto|slice:":2"|default:'—'|upper }}</span>
-              <div>
-                <b>{{ s.objeto.nombre_objeto }}</b>
-                {% if s.mensaje %}<br><span class="muted" style="font-size:.82rem">{{ s.mensaje|truncatechars:60 }}</span>{% endif %}
-              </div>
-            </div>
-          </td>
-          <td>{{ s.objeto.etiqueta_categoria }}</td>
-          <td>{{ s.fecha|date:'d M Y, H:i' }}</td>
-          <td><span class="badge badge-{{ s.estado }}">{{ s.get_estado_display }}</span></td>
-          <td>
-            {% if s.objeto.esta_disponible %}
-              <a href="{% url 'detalle_objeto' s.objeto.pk %}" class="btn btn-sm btn-outline">Ver objeto</a>
-            {% endif %}
-          </td>
-        </tr>
-        {% empty %}
-        {% endfor %}
-      </tbody>
-    </table>
+  <div class="grid-solicitudes">
+    {% for s in solicitudes %}
+    <div class="card" style="padding:22px">
+      <div class="flex" style="justify-content:space-between;gap:12px">
+        <div class="flex" style="gap:12px">
+          <span class="chip-icono" style="background:{{ s.objeto.categoria.color|default:'#0b7a54' }};color:#fff">{{ s.objeto.nombre_objeto|slice:":2"|default:'—'|upper }}</span>
+          <div>
+            <b>{{ s.objeto.nombre_objeto }}</b>
+            <div class="muted" style="font-size:.82rem">{{ s.objeto.etiqueta_categoria }} · {{ s.fecha|date:'d M Y, H:i' }}</div>
+          </div>
+        </div>
+        <span class="badge badge-{{ s.estado }}">{{ s.get_estado_display }}</span>
+      </div>
+
+      {% if s.mensaje %}<p class="muted" style="margin:14px 0 0">{{ s.mensaje }}</p>{% endif %}
+
+      {% if s.comentario_admin %}
+      <div class="caja-nota" style="border-left:3px solid var(--primary);padding:8px 12px;margin-top:14px;background:var(--primary-50);border-radius:6px">
+        <b style="font-size:.84rem">Respuesta de la coordinación</b>
+        <p style="margin:4px 0 0">{{ s.comentario_admin }}</p>
+      </div>
+      {% endif %}
+
+      {% if s.apelacion %}
+      <div class="caja-nota" style="border-left:3px solid #7c3aed;padding:8px 12px;margin-top:12px;background:#f3e8ff;border-radius:6px">
+        <b style="font-size:.84rem">Tu apelación</b>
+        <p style="margin:4px 0 0">{{ s.apelacion }}</p>
+        {% if s.fecha_apelacion %}<span class="muted" style="font-size:.8rem">Enviada el {{ s.fecha_apelacion|date:'d M Y, H:i' }}</span>{% endif %}
+      </div>
+      {% endif %}
+
+      {% if s.estado == 'aprobada' %}
+        {% if instrucciones.texto %}
+        <div class="caja-nota" style="border-left:3px solid #0d7047;padding:8px 12px;margin-top:12px;background:var(--success-50);border-radius:6px">
+          <b style="font-size:.84rem">¿Cómo reclamar tu objeto?</b>
+          <p style="margin:4px 0 0;white-space:pre-line">{{ instrucciones.texto }}</p>
+        </div>
+        {% else %}
+        <p class="muted" style="font-size:.84rem;margin-top:12px">
+          Tu solicitud fue aprobada. La coordinación te contactará con los
+          datos para recibir tu objeto.
+        </p>
+        {% endif %}
+      {% endif %}
+
+      {% if s.estado == 'rechazada' and not s.fue_apelada %}
+      <details class="apelar" style="margin-top:14px">
+        <summary class="btn btn-sm btn-outline" style="display:inline-flex;cursor:pointer">Apelar la decisión</summary>
+        <form method="post" action="{% url 'apelar_solicitud' s.pk %}" style="margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px">
+          {% csrf_token %}
+          <label class="muted" style="font-size:.84rem;font-weight:600">¿Por qué no estás de acuerdo? Esta será tu única apelación.</label>
+          <textarea name="motivo" rows="3" maxlength="500" required class="form-control" style="width:100%;margin-top:8px" placeholder="Explica por qué crees que el objeto sí es tuyo o por qué la respuesta no es correcta…"></textarea>
+          <button type="submit" class="btn btn-primary mt-2">Enviar apelación</button>
+        </form>
+      </details>
+      {% endif %}
+    </div>
+    {% endfor %}
   </div>
   {% else %}
   <div class="vacio">

@@ -32,4 +32,15 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!window.confirm(msg)) e.preventDefault();
     });
   });
+
+  // Confirmación para botones con data-confirm (dentro de un formulario)
+  document.querySelectorAll('form button[data-confirm]').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      var msg = btn.getAttribute('data-confirm') || '¿Estás seguro?';
+      if (!window.confirm(msg)) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }
+    });
+  });
 });

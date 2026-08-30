@@ -10,7 +10,8 @@
 </div>
 
 <div class="chips mb-3">
-  <a href="{% url 'panel_solicitudes' %}" class="cat-chip {% if not estado %}active{% endif %}">Pendientes ({{ conteos.pendiente }})</a>
+  <a href="{% url 'panel_solicitudes' %}" class="cat-chip {% if not estado %}active{% endif %}">Por revisar ({{ conteos.por_revisar }})</a>
+  <a href="{% url 'panel_solicitudes' %}?estado=apelada" class="cat-chip {% if estado == 'apelada' %}active{% endif %}">Apeladas ({{ conteos.apelada }})</a>
   <a href="{% url 'panel_solicitudes' %}?estado=aprobada" class="cat-chip {% if estado == 'aprobada' %}active{% endif %}">Aprobadas ({{ conteos.aprobada }})</a>
   <a href="{% url 'panel_solicitudes' %}?estado=rechazada" class="cat-chip {% if estado == 'rechazada' %}active{% endif %}">Rechazadas ({{ conteos.rechazada }})</a>
 </div>

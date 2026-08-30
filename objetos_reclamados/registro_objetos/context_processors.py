@@ -13,7 +13,10 @@ def globales(request):
         from .models import SolicitudReclamacion
         datos['solicitudes_pendientes'] = (
             SolicitudReclamacion.objects
-            .filter(estado=SolicitudReclamacion.Estados.PENDIENTE)
+            .filter(estado__in=[
+                SolicitudReclamacion.Estados.PENDIENTE,
+                SolicitudReclamacion.Estados.APELADA,
+            ])
             .count()
         )
     return datos

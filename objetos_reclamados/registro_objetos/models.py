@@ -128,6 +128,7 @@ class SolicitudReclamacion(models.Model):
 
     class Estados(models.TextChoices):
         PENDIENTE = 'pendiente', 'Pendiente'
+        APELADA = 'apelada', 'Apelada'
         APROBADA = 'aprobada', 'Aprobada'
         RECHAZADA = 'rechazada', 'Rechazada'
 
@@ -150,6 +151,14 @@ class SolicitudReclamacion(models.Model):
         related_name='solicitudes_respondidas', verbose_name='Respondida por',
     )
     fecha_respuesta = models.DateTimeField('Fecha de respuesta', null=True, blank=True)
+    comentario_admin = models.TextField(
+        'Comentario del administrador', blank=True,
+        help_text='Motivo de la decisión que verá el estudiante.',
+    )
+    # Apelación: una sola vez por solicitud
+    fue_apelada = models.BooleanField('¿Fue apelada?', default=False)
+    apelacion = models.TextField('Motivo de la apelación', blank=True)
+    fecha_apelacion = models.DateTimeField('Fecha de apelación', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Solicitud de reclamación'
@@ -159,10 +168,30 @@ class SolicitudReclamacion(models.Model):
     def __str__(self):
         return f'{self.usuario} → {self.objeto} ({self.get_estado_display()})'
 
-    def aprobar(self, admin):
+    @property
+    def puede_apelar(self):
+        """Solo se puede apelar una vez y únicamente cuando fue rechazada."""
+        return (
+            self.estado == self.Estados.RECHAZADA
+            and not self.fue_apelada
+        )
+
+    def apelar(self, usuario, motivo):
+        if not self.puede_apelar:
+            raise ValueError('Esta solicitud ya no admite apelación.')
+        if usuario != self.usuario:
+            raise ValueError('Solo el estudiante solicitante puede apelar.')
+        self.estado = self.Estados.APELADA
+        self.fue_apelada = True
+        self.apelacion = (motivo or '').strip()
+        self.fecha_apelacion = timezone.now()
+        self.save()
+
+    def aprobar(self, admin, comentario=''):
         self.estado = self.Estados.APROBADA
         self.respondida_por = admin
         self.fecha_respuesta = timezone.now()
+        self.comentario_admin = (comentario or '').strip()
         self.save()
         objeto = self.objeto
         objeto.estado = ObjetoReclamado.Estados.RECLAMADO
@@ -179,8 +208,36 @@ class SolicitudReclamacion(models.Model):
                 objeto.suministro_correo = True
         objeto.save()
 
-    def rechazar(self, admin):
+    def rechazar(self, admin, comentario=''):
         self.estado = self.Estados.RECHAZADA
         self.respondida_por = admin
         self.fecha_respuesta = timezone.now()
+        self.comentario_admin = (comentario or '').strip()
         self.save()
+
+
+class InstruccionesEntrega(models.Model):
+    """Instrucciones globales sobre dónde y cómo reclamar un objeto aprobado.
+
+    Es un singleton (pk=1): el administrador la edita desde el panel y el
+    estudiante la ve en su solicitud aprobada.
+    """
+
+    texto = models.TextField(
+        'Instrucciones para reclamar el objeto', blank=True,
+        help_text='Lugar, horario, oficina o cualquier indicación para la entrega.',
+    )
+    fecha_actualizada = models.DateTimeField('Actualizado', auto_now=True)
+
+    class Meta:
+        verbose_name = 'Instrucciones de entrega'
+        verbose_name_plural = 'Instrucciones de entrega'
+
+    def __str__(self):
+        return 'Instrucciones de entrega'
+
+
+def obtener_instrucciones_entrega():
+    """Devuelve (creándola si no existe) la única fila del singleton."""
+    obj, _ = InstruccionesEntrega.objects.get_or_create(pk=1)
+    return obj

@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
-from .models import Categoria, ObjetoReclamado, PerfilUsuario
+from .models import Categoria, InstruccionesEntrega, ObjetoReclamado, PerfilUsuario
 
 MAX_IMAGEN_MB = 5
 
@@ -147,6 +147,30 @@ class SolicitudForm(forms.Form):
         max_length=500,
         widget=forms.Textarea(attrs={'rows': 3, 'placeholder': 'Ej. Es azul, tiene un sticker de… y lo perdí el lunes en la cafetería.'}),
     )
+
+
+class ApelacionForm(forms.Form):
+    """Motivo del estudiante al apelar una solicitud rechazada."""
+    motivo = forms.CharField(
+        label='¿Por qué no estás de acuerdo con la decisión?',
+        max_length=500,
+        widget=forms.Textarea(attrs={
+            'rows': 3,
+            'placeholder': 'Explica por qué crees que el objeto sí es tuyo o por qué la respuesta no es correcta…',
+        }),
+    )
+
+
+class InstruccionesEntregaForm(forms.ModelForm):
+    class Meta:
+        model = InstruccionesEntrega
+        fields = ['texto']
+        widgets = {
+            'texto': forms.Textarea(attrs={
+                'rows': 4,
+                'placeholder': 'Ej. Reclama tu objeto en la oficina de Bienestar, edificio 2, piso 1, entre 8:00 a.m. y 5:00 p.m. Lleva tu documento de identidad.',
+            }),
+        }
 
 
 class CategoriaForm(forms.ModelForm):
