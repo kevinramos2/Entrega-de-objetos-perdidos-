@@ -288,7 +288,7 @@ EMAIL_HOST_PASSWORD = os.getenv('SMTP_PASSWORD', '')
 EMAIL_USE_TLS = os.getenv('SMTP_USE_TLS', 'True').lower() in ('1', 'true', 'yes')
 EMAIL_USE_SSL = os.getenv('SMTP_USE_SSL', 'False').lower() in ('1', 'true', 'yes')
 DEFAULT_FROM_EMAIL = os.getenv(
-    'DEFAULT_FROM_EMAIL', 'objetos.perdidos@unal.edu.co'
+    'DEFAULT_FROM_EMAIL', 'kevin.ralu22@gmail.com'
 )
 # URL pública del sitio: se usa para construir enlaces dentro de los correos.
 SITE_URL = os.getenv(

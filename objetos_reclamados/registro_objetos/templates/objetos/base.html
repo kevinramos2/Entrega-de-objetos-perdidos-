@@ -70,8 +70,8 @@
   {% block content %}{% endblock %}
 
   <footer class="footer">
-    <div class="container">
-      <div>
+    <div class="container footer-grid">
+      <div class="f-intro">
         <a href="{% url 'inicio' %}" class="brand">
           <span class="brand-mark">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -79,30 +79,47 @@
               <path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/>
             </svg>
           </span>
-          Perdidos &amp; Encontrados
+          <span>Perdidos &amp; Encontrados</span>
         </a>
-        <p style="max-width:340px">
+        <p>
           Una herramienta creada por y para la comunidad universitaria para
           reducir los objetos que quedan sin dueño. Encuentra lo que perdiste
           o ayuda a devolver lo que encontraste.
         </p>
+        <span class="f-sello">Proyecto académico · Universidad Nacional de Colombia</span>
       </div>
-      <div>
+      <div class="f-col">
         <h4>Explora</h4>
         <a href="{% url 'inicio' %}">Inicio</a>
-        {% if user.is_authenticated %}
-          <a href="{% url 'lista_objetos' %}">Objetos perdidos</a>
-          {% if user.is_staff %}<a href="{% url 'panel_inicio' %}">Panel de administración</a>{% endif %}
-        {% else %}
-          <a href="{% url 'login' %}">Iniciar sesión</a>
+        <a href="{% url 'lista_objetos' %}">Objetos perdidos</a>
+        {% if user.is_authenticated and not user.is_staff %}
+          <a href="{% url 'mis_solicitudes' %}">Mis reclamos</a>
+        {% endif %}
+        {% if user.is_staff %}
+          <a href="{% url 'panel_inicio' %}">Panel de administración</a>
         {% endif %}
       </div>
-      <div>
+      <div class="f-col">
+        <h4>Institución</h4>
+        <a href="https://unal.edu.co" target="_blank" rel="noopener">Universidad Nacional</a>
+        <span class="f-oficina">Coordinación de Bienestar · Sede Medellín</span>
+        <a href="https://github.com/kevinramos2/Entrega-de-objetos-perdidos-" target="_blank" rel="noopener">GitHub del proyecto</a>
+      </div>
+      <div class="f-col">
         <h4>Contacto</h4>
-        <span style="color:#9dc4b2;font-size:.88rem;line-height:1.8">Coordinación de Bienestar<br>Universidad Nacional de Colombia<br>objetos.perdidos@unal.edu.co</span>
+        <a class="f-mail" href="mailto:kevin.ralu22@gmail.com">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+          kevin.ralu22@gmail.com
+        </a>
+        <p>¿Perdiste un objeto o tienes problemas para ingresar? Escríbenos y te ayudamos a resolverlo.</p>
       </div>
     </div>
-    <div class="bottom">Plataforma académica de la comunidad universitaria · {% now "Y" %}</div>
+    <div class="footer-bottom">
+      <div class="container bottom-in">
+        <span>Plataforma académica de la comunidad universitaria</span>
+        <span>&copy; {% now "Y" %} Perdidos &amp; Encontrados</span>
+      </div>
+    </div>
   </footer>
 
   <script src="{% static 'js/app.js' %}"></script>
