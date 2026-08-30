@@ -190,7 +190,7 @@ img { max-width: 100%; }
 .cat-chip.active { background: var(--primary); border-color: var(--primary); color: #fff; }
 
 .grid-solicitudes {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;
 }
 .apelar summary::-webkit-details-marker { display: none; }
 
@@ -390,6 +390,8 @@ img { max-width: 100%; }
 
 .grid-charts { display: grid; grid-template-columns: 2fr 1fr; gap: 18px; margin-top: 24px; }
 .grid-charts-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 24px; }
+.grid-charts-ancho { grid-template-columns: 1.3fr .7fr; }
+.grid-charts-medio { grid-template-columns: 1.2fr .8fr; }
 .grafico-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-xs); padding: 20px; }
 .grafico-card h3 { margin: 0 0 6px; font-size: 1rem; }
 .grafico-card .sub { color: var(--muted); font-size: .84rem; margin: 0 0 14px; }
@@ -398,7 +400,7 @@ img { max-width: 100%; }
 @media (max-width: 900px) {
   .hero-grid, .detalle-grid { grid-template-columns: 1fr; }
   .pasos { grid-template-columns: 1fr; }
-  .grid-charts, .grid-charts-2 { grid-template-columns: 1fr; }
+  .grid-charts, .grid-charts-2, .grid-charts-ancho, .grid-charts-medio { grid-template-columns: 1fr; }
   .panel-layout { grid-template-columns: 1fr; }
   .panel-menu { display: flex; gap: 4px; overflow-x: auto; padding: 10px; }
   .panel-menu .m-titulo { display: none; }
@@ -458,3 +460,30 @@ img { max-width: 100%; }
 /* Mensaje institucional discreto */
 .nota { font-size: .84rem; color: var(--muted); }
 .nota b { color: var(--ink-soft); }
+
+/* ---------- Responsive móvil / tablet ---------- */
+@media (max-width: 640px) {
+  .hero { padding: 56px 0 46px; }
+  .hero-stats { gap: 10px; margin-top: 28px; }
+  .hero-stat { padding: 14px; }
+  .hero-stat b { font-size: 1.35rem; }
+  .seccion { padding: 44px 0; }
+  .panel-main { padding: 18px 14px; }
+  .panel-titulo h1 { font-size: 1.25rem; }
+  .page-inner { margin: 26px auto; }
+  .flex { flex-wrap: wrap; }
+  .acciones { flex-wrap: wrap; }
+}
+
+@media (max-width: 560px) {
+  .lista-clave li { flex-direction: column; gap: 3px; }
+  .lista-clave li b { min-width: 0; }
+  .form-card { padding: 22px 18px; }
+  .grid-solicitudes { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .navbar .brand-text { display: none; }
+  .hero-stats { grid-template-columns: 1fr; }
+  .hero .sub { font-size: .98rem; }
+}
