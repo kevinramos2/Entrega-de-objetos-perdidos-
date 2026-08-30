@@ -270,6 +270,33 @@ ACCOUNT_SIGNUP_REDIRECT_URL = 'panel_inicio'
 LOGIN_REDIRECT_URL = 'panel_inicio'
 
 # ---------------------------------------------------------------------------
+# Correo electrónico (notificaciones a estudiantes)
+# Si no hay SMTP configurado, Django imprime los correos en la consola para
+# poder probar en desarrollo sin servidor de correo.
+# ---------------------------------------------------------------------------
+_smtp_host = os.getenv('SMTP_HOST', '').strip()
+_smtp_user = os.getenv('SMTP_USER', '').strip()
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', '').strip() or (
+    'django.core.mail.backends.smtp.EmailBackend'
+    if (_smtp_host and _smtp_user)
+    else 'django.core.mail.backends.console.EmailBackend'
+)
+EMAIL_HOST = _smtp_host
+EMAIL_PORT = int(os.getenv('SMTP_PORT', '587'))
+EMAIL_HOST_USER = _smtp_user
+EMAIL_HOST_PASSWORD = os.getenv('SMTP_PASSWORD', '')
+EMAIL_USE_TLS = os.getenv('SMTP_USE_TLS', 'True').lower() in ('1', 'true', 'yes')
+EMAIL_USE_SSL = os.getenv('SMTP_USE_SSL', 'False').lower() in ('1', 'true', 'yes')
+DEFAULT_FROM_EMAIL = os.getenv(
+    'DEFAULT_FROM_EMAIL', 'objetos.perdidos@unal.edu.co'
+)
+# URL pública del sitio: se usa para construir enlaces dentro de los correos.
+SITE_URL = os.getenv(
+    'SITE_URL',
+    f'https://{render_host}' if render_host else 'http://127.0.0.1:8000',
+)
+
+# ---------------------------------------------------------------------------
 # Seguridad HTTP (se activan en producción)
 # ---------------------------------------------------------------------------
 if not DEBUG:

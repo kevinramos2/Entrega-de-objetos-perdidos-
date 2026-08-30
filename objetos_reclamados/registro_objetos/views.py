@@ -20,6 +20,7 @@ from django.views.decorators.http import require_POST
 import json
 
 from . import estadisticas as stats
+from .correo import notificar_respuesta_solicitud
 from .forms import (
     ApelacionForm,
     CategoriaForm,
@@ -168,11 +169,14 @@ def cerrar_sesion(request):
 def lista_objetos(request):
     q = request.GET.get('q', '').strip()
     categoria_id = request.GET.get('categoria', '') or None
-    objetos = stats.buscar_objetos(q, categoria_id, solo_disponibles=True)
+    sede = request.GET.get('sede', '') or None
+    objetos = stats.buscar_objetos(q, categoria_id, sede=sede, solo_disponibles=True)
     return render(request, 'objetos/listado.html', {
         'objetos': objetos,
         'categorias': Categoria.objects.all(),
         'categoria_actual': categoria_id,
+        'sede': sede,
+        'sedes': ObjetoReclamado.Sedes.choices,
         'q': q,
         'resumen': stats.resumen_global(),
         'mensajes': stats.informacion_para_estudiantes(),
@@ -321,18 +325,27 @@ def panel_objetos(request):
     q = request.GET.get('q', '').strip()
     estado = request.GET.get('estado', '')
     categoria_id = request.GET.get('categoria', '') or None
+    sede = request.GET.get('sede', '') or None
     qs = ObjetoReclamado.objects.select_related('categoria', 'registrado_por').all()
     if estado:
         qs = qs.filter(estado=estado)
+    if sede:
+        qs = qs.filter(sede=sede)
     if categoria_id:
         qs = qs.filter(categoria_id=categoria_id)
     if q:
-        qs = stats.buscar_objetos(q)
+        qs = qs.filter(
+            Q(nombre_objeto__icontains=q)
+            | Q(descripcion_objeto__icontains=q)
+            | Q(lugar_encontrado__icontains=q)
+            | Q(categoria__nombre__icontains=q)
+        )
     return render(request, 'panel/objetos_lista.html', {
         'objetos': qs,
         'categorias': Categoria.objects.all(),
         'estados': ObjetoReclamado.Estados.choices,
-        'q': q, 'estado': estado, 'categoria_id': categoria_id,
+        'sedes': ObjetoReclamado.Sedes.choices,
+        'q': q, 'estado': estado, 'categoria_id': categoria_id, 'sede': sede,
     })
 
 
@@ -463,6 +476,7 @@ def panel_solicitud_decision(request, pk, accion=None):
         messages.warning(request, 'Esta solicitud ya fue respondida.')
     elif accion == 'aprobar':
         solicitud.aprobar(request.user, comentario=comentario, datos_entrega=datos_entrega)
+        notificar_respuesta_solicitud(solicitud, 'aprobar')
         prefijo = 'Apelación ' if es_apelacion else ''
         messages.success(
             request,
@@ -471,6 +485,7 @@ def panel_solicitud_decision(request, pk, accion=None):
         )
     elif accion == 'rechazar':
         solicitud.rechazar(request.user, comentario=comentario)
+        notificar_respuesta_solicitud(solicitud, 'rechazar')
         prefijo = 'Apelación ' if es_apelacion else ''
         finale = ' La apelación quedó cerrada.' if es_apelacion else ''
         messages.info(request, f'{prefijo}Rechazada. Se notificó al estudiante.{finale}')
@@ -642,7 +657,7 @@ def panel_exportar_csv(request):
 
     escritor = csv.writer(respuesta)
     escritor.writerow([
-        'id', 'fecha_registro', 'nombre_objeto', 'categoria', 'estado',
+        'id', 'fecha_registro', 'nombre_objeto', 'categoria', 'sede', 'estado',
         'lugar_encontrado', 'descripcion', 'registrado_por', 'fecha_reclamo',
         'reclamado_por', 'nombre_persona', 'tipo_documento', 'numero_documento',
         'telefono', 'correo', 'suministro_correo', 'fecha_entrega',
@@ -654,6 +669,7 @@ def panel_exportar_csv(request):
             obj.fecha_registro.isoformat() if obj.fecha_registro else '',
             obj.nombre_objeto,
             obj.etiqueta_categoria,
+            obj.get_sede_display(),
             obj.get_estado_display(),
             obj.lugar_encontrado,
             obj.descripcion_objeto,

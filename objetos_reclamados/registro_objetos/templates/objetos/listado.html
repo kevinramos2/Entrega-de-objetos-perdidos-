@@ -35,20 +35,29 @@
 
   <form method="get" class="filtros-busqueda" autocomplete="off">
     {% if categoria_actual %}<input type="hidden" name="categoria" value="{{ categoria_actual }}">{% endif %}
+    {% if sede %}<input type="hidden" name="sede" value="{{ sede }}">{% endif %}
     <div class="caja-busqueda">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="search" name="q" value="{{ q }}" placeholder="Buscar por nombre, descripción o lugar…" aria-label="Buscar objetos">
     </div>
     <button type="submit" class="btn btn-primary">Buscar</button>
-    {% if q or categoria_actual %}
+    {% if q or categoria_actual or sede %}
       <a href="{% url 'lista_objetos' %}" class="btn btn-ghost">Limpiar</a>
     {% endif %}
   </form>
 
+  <div class="chips" aria-label="Filtrar por sede">
+    <span class="chips-label">Sede:</span>
+    <a href="{% url 'lista_objetos' %}?{% if q %}q={{ q }}&{% endif %}{% if categoria_actual %}categoria={{ categoria_actual }}&{% endif %}" class="cat-chip {% if not sede %}active{% endif %}">Todas</a>
+    {% for valor, etiqueta in sedes %}
+      <a href="{% url 'lista_objetos' %}?{% if q %}q={{ q }}&{% endif %}{% if categoria_actual %}categoria={{ categoria_actual }}&{% endif %}sede={{ valor }}" class="cat-chip {% if sede == valor %}active{% endif %}">{{ etiqueta }}</a>
+    {% endfor %}
+  </div>
+
   <div class="chips">
-    <a href="{% url 'lista_objetos' %}" class="cat-chip {% if not categoria_actual %}active{% endif %}">Todas</a>
+    <a href="{% url 'lista_objetos' %}?{% if q %}q={{ q }}&{% endif %}{% if sede %}sede={{ sede }}&{% endif %}" class="cat-chip {% if not categoria_actual %}active{% endif %}">Todas las categorías</a>
     {% for cat in categorias %}
-      <a href="{% url 'lista_objetos' %}?{% if q %}q={{ q }}&{% endif %}categoria={{ cat.id }}"
+      <a href="{% url 'lista_objetos' %}?{% if q %}q={{ q }}&{% endif %}{% if sede %}sede={{ sede }}&{% endif %}categoria={{ cat.id }}"
          class="cat-chip {% if categoria_actual == cat.id|stringformat:'s' %}active{% endif %}">
         {{ cat.nombre }}
       </a>
@@ -72,6 +81,7 @@
         </div>
         <p>{{ obj.descripcion_objeto|truncatechars:80 }}</p>
         <div class="meta">
+          {% if obj.sede %}<span class="badge badge-sede badge-sede-{{ obj.sede }}">{{ obj.get_sede_display }}</span>{% endif %}
           <span class="muted" style="font-size:.82rem">{{ obj.lugar_encontrado|default:'Sin lugar' }}</span>
         </div>
         <a href="{% url 'detalle_objeto' obj.pk %}" class="btn btn-primary btn-sm btn-block mt-2">Ver detalles</a>

@@ -16,6 +16,7 @@
     <span class="chip-icono lg mb-2" style="background:{{ solicitud.objeto.categoria.color|default:'#0b7a54' }};color:#fff">{{ solicitud.objeto.nombre_objeto|slice:":2"|default:'—'|upper }}</span>
     <ul class="lista-clave">
       <li><b>Nombre</b><span>{{ solicitud.objeto.nombre_objeto }}</span></li>
+      <li><b>Sede</b><span>{{ solicitud.objeto.get_sede_display }}</span></li>
       <li><b>Categoría</b><span>{{ solicitud.objeto.etiqueta_categoria }}</span></li>
       <li><b>Descripción</b><span>{{ solicitud.objeto.descripcion_objeto|default:'—' }}</span></li>
       <li><b>Lugar</b><span>{{ solicitud.objeto.lugar_encontrado|default:'—' }}</span></li>

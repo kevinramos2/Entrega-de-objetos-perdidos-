@@ -180,6 +180,9 @@ img { max-width: 100%; }
 .badge-aprobada { background: var(--success-50); color: #0d7047; }
 .badge-rechazada { background: var(--danger-50); color: #b42318; }
 .badge-cat { background: var(--primary-50); color: var(--primary-600); }
+.badge-sede { background: #eef2f6; color: #48566b; }
+.badge-sede-minas { background: #eef3ff; color: #1d4ed8; }
+.badge-sede-volador { background: var(--accent-50); color: var(--accent-600); }
 
 .cat-chip {
   display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px;
@@ -188,6 +191,18 @@ img { max-width: 100%; }
 }
 .cat-chip:hover { border-color: var(--primary); color: var(--primary); }
 .cat-chip.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+.chips-label { display: inline-flex; align-items: center; font-weight: 700; font-size: .82rem; color: var(--muted); padding: 0 4px; letter-spacing: .02em; }
+.chips + .chips { margin-top: -12px; }
+
+/* Cajas de nota (respuesta, apelación, entrega) */
+.nota-caja { border-radius: 12px; padding: 13px 16px; margin-top: 14px; background: var(--surface); border: 1px solid var(--line); border-left-width: 4px; font-size: .9rem; }
+.nota-caja b { display: block; font-size: .8rem; margin-bottom: 5px; }
+.nota-admin { border-left-color: var(--primary); background: var(--primary-50); }
+.nota-admin b { color: var(--primary-600); }
+.nota-apelacion { border-left-color: #7c3aed; background: #f8f0ff; }
+.nota-apelacion b { color: #6d28d9; }
+.nota-entrega { border-left-color: #0d7047; background: var(--success-50); }
+.nota-entrega b { color: #0d7047; }
 
 .grid-solicitudes {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;
@@ -460,6 +475,35 @@ img { max-width: 100%; }
 /* Mensaje institucional discreto */
 .nota { font-size: .84rem; color: var(--muted); }
 .nota b { color: var(--ink-soft); }
+
+/* ---------- Detalles de interfaz ---------- */
+::selection { background: var(--primary); color: #fff; }
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 8px; }
+body { text-rendering: optimizeLegibility; }
+h1, h2, h3 { text-wrap: balance; }
+.btn:active { transform: translateY(0); }
+.navbar { box-shadow: 0 1px 0 rgba(16, 24, 40, .05); }
+
+input[type="checkbox"] { accent-color: var(--primary); }
+
+.kpi, .insight { transition: transform .18s ease, box-shadow .18s ease; }
+.kpi:hover, .insight:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+
+.demo-list .chip-icono { font-size: .68rem; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .card-obj, .kpi, .insight, .grafico-card {
+    animation: subir-suave .4s ease both;
+  }
+}
+@keyframes subir-suave {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
 
 /* ---------- Responsive móvil / tablet ---------- */
 @media (max-width: 640px) {

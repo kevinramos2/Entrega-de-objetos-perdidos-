@@ -1,0 +1,23 @@
+Hola{% if solicitud.usuario.first_name %} {{ solicitud.usuario.first_name }}{% endif %}:
+
+Tu solicitud para el objeto «{{ objeto.nombre_objeto }}» fue {{ resultado|lower }}.
+
+Respuesta de la coordinacion:
+{% if comentario_admin %}
+{{ comentario_admin }}
+{% else %}
+No se agregaron comentarios adicionales.
+{% endif %}
+{% if aprobada and datos_entrega %}
+Donde reclamar tu objeto:
+{{ datos_entrega }}
+{% endif %}{% if es_apelacion %}
+(Esta respuesta corresponde a la apelacion que enviaste.)
+{% endif %}
+
+Revisa el detalle en: {{ site_url }}{% url 'mis_solicitudes' %}
+{% if not aprobada %}
+Recuerda que puedes apelar la decision una sola vez si consideras que no fue correcta.
+{% endif %}
+
+Plataforma academica de la comunidad universitaria.

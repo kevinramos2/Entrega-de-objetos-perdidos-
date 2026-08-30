@@ -51,6 +51,7 @@ class Command(BaseCommand):
                     'nombre_objeto': obj.nombre_objeto,
                     'categoria': obj.categoria_id,
                     'descripcion_objeto': descripcion,
+                    'sede': obj.sede,
                     'lugar_encontrado': obj.lugar_encontrado,
                     'fecha_registro': obj.fecha_registro.isoformat() if obj.fecha_registro else None,
                     'foto': None,

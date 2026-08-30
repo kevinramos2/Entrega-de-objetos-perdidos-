@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.core import mail
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from .models import (
@@ -197,3 +198,107 @@ class InstruccionesEntregaTest(TestCase):
         self.assertEqual(respuesta.status_code, 302)
         config = InstruccionesEntrega.objects.get(pk=1)
         self.assertEqual(config.texto, 'Entrega en oficina central, 9-12.')
+
+
+class NotificacionCorreoTest(TestCase):
+    def setUp(self):
+        self.estudiante = crear_usuario('laura', 'laura@unal.edu.co')
+        self.admin = crear_usuario('adminmail', 'adminmail@unal.edu.co', is_staff=True)
+        self.categoria = Categoria.objects.create(nombre='Papelería', color='#123456')
+        self.objeto = ObjetoReclamado.objects.create(
+            nombre_objeto='Carpeta azul',
+            categoria=self.categoria,
+            estado=ObjetoReclamado.Estados.DISPONIBLE,
+        )
+
+    def _solicitar(self):
+        self.client.force_login(self.estudiante)
+        self.client.post(
+            reverse('solicitar_reclamacion', args=[self.objeto.pk]),
+            {'mensaje': 'Perdí una carpeta azul.'},
+        )
+        return SolicitudReclamacion.objects.get(usuario=self.estudiante)
+
+    @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    def test_aprobar_envia_correo_con_comentario_y_datos_de_entrega(self):
+        solicitud = self._solicitar()
+        self.client.force_login(self.admin)
+        self.client.post(
+            reverse('panel_solicitud_decidir', args=[solicitud.pk]),
+            {
+                'accion': 'aprobar',
+                'comentario': 'Verificamos y sí es tuyo.',
+                'datos_entrega': 'Recógelo en Bienestar, edificio 2.',
+            },
+        )
+        self.assertEqual(len(mail.outbox), 1)
+        correo = mail.outbox[0]
+        self.assertEqual(correo.to, ['laura@unal.edu.co'])
+        self.assertIn('aprobada', correo.subject.lower())
+        contenido = ' '.join(correo.body.split()) + correo.alternatives[0][0]
+        self.assertIn('Verificamos y sí es tuyo.', contenido)
+        self.assertIn('Recógelo en Bienestar, edificio 2.', contenido)
+
+    @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    def test_rechazar_envia_correo_sin_datos_de_entrega(self):
+        solicitud = self._solicitar()
+        self.client.force_login(self.admin)
+        self.client.post(
+            reverse('panel_solicitud_decidir', args=[solicitud.pk]),
+            {'accion': 'rechazar', 'comentario': 'No coincide con el reporte.'},
+        )
+        self.assertEqual(len(mail.outbox), 1)
+        correo = mail.outbox[0]
+        self.assertIn('rechazada', correo.subject.lower())
+        self.assertIn('No coincide con el reporte.', correo.body)
+
+    def test_sin_email_del_estudiante_no_envia(self):
+        self.estudiante.email = ''
+        self.estudiante.save(update_fields=['email'])
+        solicitud = self._solicitar()
+        self.client.force_login(self.admin)
+        with override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend'):
+            self.client.post(
+                reverse('panel_solicitud_decidir', args=[solicitud.pk]),
+                {'accion': 'aprobar', 'comentario': 'ok'},
+            )
+        self.assertEqual(len(mail.outbox), 0)
+
+
+class FiltroSedeTest(TestCase):
+    def setUp(self):
+        self.estudiante = crear_usuario('pedro', 'pedro@unal.edu.co')
+        self.categoria = Categoria.objects.create(nombre='Gafas', color='#123456')
+        self.minas = ObjetoReclamado.objects.create(
+            nombre_objeto='Llaves en Minas', categoria=self.categoria,
+            sede=ObjetoReclamado.Sedes.MINAS,
+            estado=ObjetoReclamado.Estados.DISPONIBLE,
+        )
+        self.volador = ObjetoReclamado.objects.create(
+            nombre_objeto='Llaves en Volador', categoria=self.categoria,
+            sede=ObjetoReclamado.Sedes.VOLADOR,
+            estado=ObjetoReclamado.Estados.DISPONIBLE,
+        )
+
+    def test_lista_filtra_por_sede(self):
+        self.client.force_login(self.estudiante)
+        respuesta = self.client.get(reverse('lista_objetos'), {'sede': 'minas'})
+        self.assertContains(respuesta, 'Llaves en Minas')
+        self.assertNotContains(respuesta, 'Llaves en Volador')
+
+        respuesta = self.client.get(reverse('lista_objetos'), {'sede': 'volador'})
+        self.assertContains(respuesta, 'Llaves en Volador')
+        self.assertNotContains(respuesta, 'Llaves en Minas')
+
+    def test_sin_filtro_muestra_ambas(self):
+        self.client.force_login(self.estudiante)
+        respuesta = self.client.get(reverse('lista_objetos'))
+        self.assertContains(respuesta, 'Llaves en Minas')
+        self.assertContains(respuesta, 'Llaves en Volador')
+
+    def test_panel_filtra_por_sede(self):
+        admin = crear_usuario('adminse', 'adminse@unal.edu.co', is_staff=True)
+        self.client.force_login(admin)
+        respuesta = self.client.get(reverse('panel_objetos'), {'sede': 'volador'})
+        self.assertContains(respuesta, 'Llaves en Volador')
+        self.assertNotContains(respuesta, 'Llaves en Minas')

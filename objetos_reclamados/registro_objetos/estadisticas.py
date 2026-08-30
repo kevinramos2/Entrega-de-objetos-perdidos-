@@ -166,13 +166,15 @@ def actividad_reciente(limite=6):
     }
 
 
-def buscar_objetos(q='', categoria_id=None, solo_disponibles=False):
+def buscar_objetos(q='', categoria_id=None, sede=None, solo_disponibles=False):
     """Búsqueda con filtros; siempre usa el ORM (consultas parametrizadas)."""
     qs = ObjetoReclamado.objects.select_related('categoria').all()
     if solo_disponibles:
         qs = qs.filter(estado=ObjetoReclamado.Estados.DISPONIBLE)
     if categoria_id:
         qs = qs.filter(categoria_id=categoria_id)
+    if sede:
+        qs = qs.filter(sede=sede)
     if q:
         qs = qs.filter(
             Q(nombre_objeto__icontains=q)

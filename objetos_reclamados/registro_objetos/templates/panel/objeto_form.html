@@ -39,18 +39,24 @@
   </div>
   <div class="form-grid-2">
     <div class="form-campo">
+      <label for="{{ form.sede.id_for_label }}">{{ form.sede.label }}</label>
+      {{ form.sede }}
+    </div>
+    <div class="form-campo">
       <label for="{{ form.lugar_encontrado.id_for_label }}">{{ form.lugar_encontrado.label }}</label>
       {{ form.lugar_encontrado }}
     </div>
+  </div>
+  <div class="form-grid-2">
     <div class="form-campo">
       <label for="{{ form.foto.id_for_label }}">{{ form.foto.label }}</label>
       {{ form.foto }}
       <div class="help">JPG, PNG o WEBP · máx. 5 MB</div>
     </div>
-  </div>
-  <div class="form-campo">
-    <label for="{{ form.estado.id_for_label }}">{{ form.estado.label }}</label>
-    {{ form.estado }}
+    <div class="form-campo">
+      <label for="{{ form.estado.id_for_label }}">{{ form.estado.label }}</label>
+      {{ form.estado }}
+    </div>
   </div>
 
   {% if es_nuevo %}<p class="muted" style="font-size:.86rem">Si el objeto es <b>reclamado</b> o <b>entregado</b>, completa también la sección de abajo. Si está <b>disponible</b>, puedes dejarla vacía.</p>{% endif %}

@@ -41,18 +41,19 @@ Cada día se pierden y se recogen decenas de objetos en las instalaciones (termo
 ### Rol estudiante
 - Registro e inicio de sesión con **correo institucional** obligatorio (`@unal.edu.co`).
 - Inicio de sesión con **Google (SSO)** restringido al dominio institucional.
-- Explorar objetos disponibles con **búsqueda por texto** y **filtros por categoría**.
-- Ver el detalle de cada objeto (foto, lugar, fecha, descripción).
+- Explorar objetos disponibles con **búsqueda por texto**, **filtros por categoría** y **filtro por sede** (Sede Minas / Sede El Volador).
+- Ver el detalle de cada objeto (foto, lugar, fecha, descripción, sede).
 - **Solicitar el reclamo** de un objeto y consultar el estado en *Mis solicitudes*.
+- **Notificación por correo** cuando el administrador aprueba o rechaza una solicitud (con datos de recogida y respuesta).
 - Recuadros de **estadísticas** visibles para el estudiante ("+3 termos perdidos este mes", "28 % recuperados", etc.).
 
 ### Rol administrador
 - **Dashboard** con indicadores y gráficas (Chart.js) del estado de los objetos y solicitudes.
-- **CRUD completo de objetos** (categoría, foto, lugar, estado, datos del reclamante).
-- **Aprobar o rechazar solicitudes** de reclamo; al aprobar se registra al reclamante automáticamente.
+- **CRUD completo de objetos** (categoría, foto, lugar, **sede**, estado, datos del reclamante).
+- **Aprobar o rechazar solicitudes** de reclamo; al aprobar se registra al reclamante automáticamente y se le **notifica por correo**.
 - **Gestión de cuentas** (crear/editar/activar/desactivar, asignar rol).
 - **Gestión de categorías**.
-- **Exportar datos en CSV** para análisis en Power BI / Excel.
+- **Exportar datos en CSV** (incluye la sede) para análisis en Power BI / Excel.
 
 ---
 
@@ -193,6 +194,16 @@ Toda la configuración sensible se lee desde variables de entorno o desde un arc
 | `DJANGO_ADMIN_EMAILS` | Correos que se **promueven automáticamente a administrador** al crear la cuenta o iniciar sesión (separados por coma). | `keramosl@unal.edu.co` |
 | `GOOGLE_OAUTH_CLIENT_ID` | Client ID de Google OAuth 2.0. | *(vacío → oculta el botón de Google)* |
 | `GOOGLE_OAUTH_CLIENT_SECRET` | Client Secret de Google OAuth 2.0. | *(vacío → oculta el botón de Google)* |
+| `SMTP_HOST` | Servidor SMTP de salida. Si está vacío (o falta `SMTP_USER`), los correos se imprimen en la **consola** (útil en desarrollo). | *(vacío → consola)* |
+| `SMTP_USER` | Usuario SMTP (correo). Delimitador: si está vacío, no hay envío real. | *(vacío)* |
+| `SMTP_PASSWORD` | Contraseña o *app password* del usuario SMTP. | *(vacío)* |
+| `SMTP_PORT` | Puerto SMTP. | `587` |
+| `SMTP_USE_TLS` | Usa TLS (STARTTLS). | `True` |
+| `SMTP_USE_SSL` | Usa SSL directo. | `False` |
+| `DEFAULT_FROM_EMAIL` | Remitente de los correos de notificación. | `objetos.perdidos@unal.edu.co` |
+| `SITE_URL` | URL pública del sitio para los enlaces dentro de los correos. | `http://127.0.0.1:8000` local / `https://…onrender.com` en Render |
+
+> **Correos en desarrollo**: sin `SMTP_HOST`/`SMTP_USER` definidos, Django usa el backend de **consola**, así que al aprobar/rechazar una solicitud verás el correo en la terminal. En **Render**, define `SMTP_HOST`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_PORT` y `SITE_URL` (p. ej. `https://objetos-perdidos-d7uh.onrender.com`) para enviar avisos reales.
 
 ### ¿Dónde consigo la SECRET_KEY?
 

@@ -1,0 +1,83 @@
+{% load i18n %}{% autoescape off %}
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ resultado }} · {{ objeto.nombre_objeto }}</title>
+</head>
+<body style="margin:0;padding:0;background:#f6f7f9;font-family:'Segoe UI',Arial,sans-serif;color:#101828;font-size:15px;line-height:1.55">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f7f9;padding:28px 0">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#ffffff;border:1px solid #e4e7ec;border-radius:16px;overflow:hidden;box-shadow:0 10px 28px rgba(16,24,40,.08)">
+          <tr>
+            <td style="padding:26px 32px;background:linear-gradient(135deg,#0b7a54 0%,#0d6b8c 100%)">
+              <table role="presentation" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="padding-right:10px">
+                    <span style="display:inline-block;width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.16);text-align:center;line-height:34px;font-weight:800;color:#fff;font-size:15px">P</span>
+                  </td>
+                  <td>
+                    <span style="color:#ffffff;font-weight:700;font-size:16px">Perdidos &amp; Encontrados</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:30px 32px 8px">
+              <p style="margin:0 0 6px;color:#667085">Hola{% if solicitud.usuario.first_name %} {{ solicitud.usuario.first_name }}{% endif %}:</p>
+              <h1 style="margin:0 0 4px;font-size:21px;color:#101828">Tu solicitud fue {{ resultado|lower }}</h1>
+              <p style="margin:0;color:#667085">Objeto: <b style="color:#101828">{{ objeto.nombre_objeto }}</b>{% if objeto.sede %} · {{ objeto.get_sede_display }}{% endif %}</p>
+              {% if es_apelacion %}
+              <p style="margin:10px 0 0;background:#f3e8ff;color:#6d28d9;border-radius:8px;padding:10px 14px;font-size:13px">Esta respuesta corresponde a la apelacion que enviaste.</p>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:16px 32px">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #e4e7ec">
+                <tr>
+                  <td style="padding:18px 0 6px;font-size:13px;color:#667085;text-transform:uppercase;letter-spacing:.04em;font-weight:700">Respuesta de la coordinacion</td>
+                </tr>
+                <tr>
+                  <td style="padding:4px 0;color:#344054">
+                    {% if comentario_admin %}
+                      {{ comentario_admin|linebreaksbr }}
+                    {% else %}
+                      No se agregaron comentarios adicionales.
+                    {% endif %}
+                  </td>
+                </tr>
+                {% if aprobada and datos_entrega %}
+                <tr>
+                  <td style="padding:16px 0 6px;font-size:13px;color:#0d7047;text-transform:uppercase;letter-spacing:.04em;font-weight:700">Donde reclamar tu objeto</td>
+                </tr>
+                <tr>
+                  <td style="padding:4px 0;background:#e9f8f0;border-radius:10px;padding:12px 14px;color:#0d7047;white-space:pre-line">{{ datos_entrega }}</td>
+                </tr>
+                {% endif %}
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:14px 32px 28px">
+              <a href="{{ site_url }}{% url 'mis_solicitudes' %}" style="display:inline-block;background:#0b7a54;color:#ffffff;text-decoration:none;font-weight:600;padding:12px 22px;border-radius:10px">Ver mis reclamos</a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:14px 32px;background:#f6f7f9;border-top:1px solid #e4e7ec">
+              <p style="margin:0;color:#667085;font-size:12px">
+                Plataforma academica de la comunidad universitaria ·
+                {% if aprobada %}Presenta tu documento al reclamar el objeto.{% else %}Puedes apelar la decision una sola vez desde &laquo;Mis reclamos&raquo;.{% endif %}
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+{% endautoescape %}

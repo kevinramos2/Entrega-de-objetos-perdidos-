@@ -38,7 +38,7 @@ class ObjetoReclamadoForm(forms.ModelForm):
         model = ObjetoReclamado
         fields = [
             'nombre_objeto', 'categoria', 'descripcion_objeto',
-            'lugar_encontrado', 'foto', 'estado',
+            'sede', 'lugar_encontrado', 'foto', 'estado',
             'nombre_persona', 'tipo_documento', 'numero_documento',
             'telefono', 'suministro_correo', 'correo',
             'fecha_entrega', 'responsable_entrega',

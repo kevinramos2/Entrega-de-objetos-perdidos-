@@ -36,6 +36,10 @@ class ObjetoReclamado(models.Model):
         RECLAMADO = 'reclamado', 'Reclamado'
         ENTREGADO = 'entregado', 'Entregado'
 
+    class Sedes(models.TextChoices):
+        MINAS = 'minas', 'Sede Minas'
+        VOLADOR = 'volador', 'Sede El Volador'
+
     # Información del objeto
     nombre_objeto = models.CharField('Nombre del objeto', max_length=120, blank=True)
     categoria = models.ForeignKey(
@@ -43,6 +47,11 @@ class ObjetoReclamado(models.Model):
         related_name='objetos', verbose_name='Categoría',
     )
     descripcion_objeto = models.TextField('Descripción', blank=True)
+    sede = models.CharField(
+        'Sede', max_length=20, choices=Sedes.choices,
+        default=Sedes.MINAS, db_index=True,
+        help_text='Sede donde se encontró o se entrega el objeto.',
+    )
     lugar_encontrado = models.CharField('Lugar donde fue encontrado', max_length=150, blank=True)
     fecha_registro = models.DateField('Fecha de registro', auto_now_add=True, null=True)
     foto = models.ImageField('Foto', upload_to='objetos/', blank=True, null=True)

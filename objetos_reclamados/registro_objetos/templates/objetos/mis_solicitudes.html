@@ -17,7 +17,7 @@
           <span class="chip-icono" style="background:{{ s.objeto.categoria.color|default:'#0b7a54' }};color:#fff">{{ s.objeto.nombre_objeto|slice:":2"|default:'—'|upper }}</span>
           <div>
             <b>{{ s.objeto.nombre_objeto }}</b>
-            <div class="muted" style="font-size:.82rem">{{ s.objeto.etiqueta_categoria }} · {{ s.fecha|date:'d M Y, H:i' }}</div>
+            <div class="muted" style="font-size:.82rem">{{ s.objeto.etiqueta_categoria }}{% if s.objeto.sede %} · {{ s.objeto.get_sede_display }}{% endif %} · {{ s.fecha|date:'d M Y, H:i' }}</div>
           </div>
         </div>
         <span class="badge badge-{{ s.estado }}">{{ s.get_estado_display }}</span>
@@ -26,15 +26,15 @@
       {% if s.mensaje %}<p class="muted" style="margin:14px 0 0">{{ s.mensaje }}</p>{% endif %}
 
       {% if s.comentario_admin %}
-      <div class="caja-nota" style="border-left:3px solid var(--primary);padding:8px 12px;margin-top:14px;background:var(--primary-50);border-radius:6px">
-        <b style="font-size:.84rem">Respuesta de la coordinación</b>
+      <div class="nota-caja nota-admin">
+        <b>Respuesta de la coordinación</b>
         <p style="margin:4px 0 0">{{ s.comentario_admin }}</p>
       </div>
       {% endif %}
 
       {% if s.apelacion %}
-      <div class="caja-nota" style="border-left:3px solid #7c3aed;padding:8px 12px;margin-top:12px;background:#f3e8ff;border-radius:6px">
-        <b style="font-size:.84rem">Tu apelación</b>
+      <div class="nota-caja nota-apelacion">
+        <b>Tu apelación</b>
         <p style="margin:4px 0 0">{{ s.apelacion }}</p>
         {% if s.fecha_apelacion %}<span class="muted" style="font-size:.8rem">Enviada el {{ s.fecha_apelacion|date:'d M Y, H:i' }}</span>{% endif %}
       </div>
@@ -42,13 +42,13 @@
 
       {% if s.estado == 'aprobada' %}
         {% if s.datos_entrega %}
-        <div class="caja-nota" style="border-left:3px solid #0d7047;padding:8px 12px;margin-top:12px;background:var(--success-50);border-radius:6px">
-          <b style="font-size:.84rem">¿Cómo reclamar tu objeto?</b>
+        <div class="nota-caja nota-entrega">
+          <b>¿Cómo reclamar tu objeto?</b>
           <p style="margin:4px 0 0;white-space:pre-line">{{ s.datos_entrega }}</p>
         </div>
         {% elif instrucciones.texto %}
-        <div class="caja-nota" style="border-left:3px solid #0d7047;padding:8px 12px;margin-top:12px;background:var(--success-50);border-radius:6px">
-          <b style="font-size:.84rem">¿Cómo reclamar tu objeto?</b>
+        <div class="nota-caja nota-entrega">
+          <b>¿Cómo reclamar tu objeto?</b>
           <p style="margin:4px 0 0;white-space:pre-line">{{ instrucciones.texto }}</p>
         </div>
         {% else %}

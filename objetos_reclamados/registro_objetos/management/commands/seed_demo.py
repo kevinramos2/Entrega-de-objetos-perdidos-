@@ -27,15 +27,15 @@ CATEGORIAS = [
 ]
 
 OBJETOS_DEMO = [
-    ('Termo negro con detalles plateados', 'Termos y cafeteras', 'Termo de acero inoxidable, negro mate, con un sticker circular.', 'Biblioteca Gabriel García Márquez', 6),
-    ('Carpeta de documentos', 'Documentos', 'Carpeta azul con hojas y un certificado de estudios.', 'Facultad de Ciencias', 5),
-    ('Cargador USB-C blanco', 'Cargadores', 'Cargador de pared blanco USB-C de 65W con cable trenzado.', 'Auditorio principal', 4),
-    ('Lonchera térmica gris', 'Loncheras', 'Lonchera gris con bolsillo frontal, contiene un termo pequeño.', 'Cafetería central', 3),
-    ('Gafas de lectura', 'Otros', 'Gafas con marco rojo oscuro, estuche duro.', 'Sala de sistemas', 10),
-    ('Sombrilla negra', 'Sombrillas', 'Sombrilla plegable color negro con mango curvo de madera.', 'Estación de buses', 8),
-    ('Estuche de lápices', 'Cartucheras', 'Cartuchera azul con varios marcadores y lapiceros.', 'Edificio de Ingeniería', 2),
-    ('Llaves con llavero verde', 'Llaves', 'Tres llaves en un llavero de tela color verde con argolla.', 'Canchas deportivas', 1),
-    ('Cuaderno de apuntes', 'Libros y cuadernos', 'Cuaderno de espiral con carátula personalizada.', 'Bloque 1, salón 204', 9),
+    ('Termo negro con detalles plateados', 'Termos y cafeteras', 'Termo de acero inoxidable, negro mate, con un sticker circular.', 'Sede Minas', 'Biblioteca Gabriel García Márquez', 6),
+    ('Carpeta de documentos', 'Documentos', 'Carpeta azul con hojas y un certificado de estudios.', 'Sede Minas', 'Facultad de Ciencias', 5),
+    ('Cargador USB-C blanco', 'Cargadores', 'Cargador de pared blanco USB-C de 65W con cable trenzado.', 'Sede Minas', 'Auditorio principal', 4),
+    ('Lonchera térmica gris', 'Loncheras', 'Lonchera gris con bolsillo frontal, contiene un termo pequeño.', 'Sede El Volador', 'Cafetería central', 3),
+    ('Gafas de lectura', 'Otros', 'Gafas con marco rojo oscuro, estuche duro.', 'Sede El Volador', 'Sala de sistemas', 10),
+    ('Sombrilla negra', 'Sombrillas', 'Sombrilla plegable color negro con mango curvo de madera.', 'Sede Minas', 'Estación de buses', 8),
+    ('Estuche de lápices', 'Cartucheras', 'Cartuchera azul con varios marcadores y lapiceros.', 'Sede Minas', 'Edificio de Ingeniería', 2),
+    ('Llaves con llavero verde', 'Llaves', 'Tres llaves en un llavero de tela color verde con argolla.', 'Sede El Volador', 'Canchas deportivas', 1),
+    ('Cuaderno de apuntes', 'Libros y cuadernos', 'Cuaderno de espiral con carátula personalizada.', 'Sede Minas', 'Bloque 1, salón 204', 9),
 ]
 
 PASSWORD_ADMIN = 'CambiaEsteAdmin123!'
@@ -92,12 +92,13 @@ class Command(BaseCommand):
         # 4. Objetos disponibles de ejemplo
         hoy = timezone.now().date()
         creados = 0
-        for nombre, categoria, descripcion, lugar, dias in OBJETOS_DEMO:
+        for nombre, categoria, descripcion, sede, lugar, dias in OBJETOS_DEMO:
             _, sido_creado = ObjetoReclamado.objects.get_or_create(
                 nombre_objeto=nombre,
                 defaults={
                     'categoria': categorias[categoria],
                     'descripcion_objeto': descripcion,
+                    'sede': ObjetoReclamado.Sedes.MINAS if sede == 'Sede Minas' else ObjetoReclamado.Sedes.VOLADOR,
                     'lugar_encontrado': lugar,
                     'estado': ObjetoReclamado.Estados.DISPONIBLE,
                     'registrado_por': admin,

@@ -62,6 +62,7 @@ class Command(BaseCommand):
                     'nombre_objeto': campos.get('nombre_objeto') or '',
                     'categoria': categoria,
                     'descripcion_objeto': campos.get('descripcion_objeto') or '',
+                    'sede': campos.get('sede') or ObjetoReclamado.Sedes.MINAS,
                     'lugar_encontrado': campos.get('lugar_encontrado') or '',
                     'fecha_registro': campos.get('fecha_registro'),
                     'estado': campos.get('estado') or ObjetoReclamado.Estados.DISPONIBLE,
