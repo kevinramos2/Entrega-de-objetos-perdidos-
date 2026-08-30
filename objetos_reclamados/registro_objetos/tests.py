@@ -1,5 +1,8 @@
+import io
+from PIL import Image
 from django.contrib.auth.models import User
 from django.core import mail
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -369,3 +372,102 @@ class FiltroSedeTest(TestCase):
         respuesta = self.client.get(reverse('panel_objetos'), {'sede': 'volador'})
         self.assertContains(respuesta, 'Llaves en Volador')
         self.assertNotContains(respuesta, 'Llaves en Minas')
+
+
+class FormatoEntregaTest(TestCase):
+    """Formato de entrega en PDF para solicitudes aprobadas."""
+
+    @classmethod
+    def _png(cls, color=(0, 123, 84)):
+        buf = io.BytesIO()
+        Image.new('RGBA', (40, 22), color).save(buf, 'PNG')
+        return buf.getvalue()
+
+    def _solicitud_aprobada(self):
+        estudiante = crear_usuario('pablo', 'pablo@unal.edu.co')
+        admin = crear_usuario('adminform', 'adminform@unal.edu.co', is_staff=True)
+        objeto = ObjetoReclamado.objects.create(
+            nombre_objeto='Gafas', estado=ObjetoReclamado.Estados.DISPONIBLE,
+            lugar_encontrado='Biblioteca', sede=ObjetoReclamado.Sedes.MINAS,
+        )
+        solicitud = SolicitudReclamacion.objects.create(
+            usuario=estudiante, objeto=objeto,
+            estado=SolicitudReclamacion.Estados.APROBADA,
+            respondida_por=admin,
+            datos_entrega='Reclama en Bienestar, edificio 2.',
+        )
+        return solicitud, estudiante, admin
+
+    def test_admin_descarga_formato_aprobada(self):
+        solicitud, _estudiante, admin = self._solicitud_aprobada()
+        self.client.force_login(admin)
+        respuesta = self.client.get(reverse('panel_solicitud_formato', args=[solicitud.pk]))
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertEqual(respuesta['Content-Type'], 'application/pdf')
+        self.assertIn('formato_entrega', respuesta['Content-Disposition'])
+        self.assertGreater(len(respuesta.content), 1000)
+
+    def test_admin_no_ve_formato_si_no_esta_aprobada(self):
+        admin = crear_usuario('adminf2', 'adminf2@unal.edu.co', is_staff=True)
+        objeto = ObjetoReclamado.objects.create(
+            nombre_objeto='Cubo', estado=ObjetoReclamado.Estados.DISPONIBLE,
+        )
+        solicitud = SolicitudReclamacion.objects.create(
+            usuario=admin, objeto=objeto,
+            estado=SolicitudReclamacion.Estados.PENDIENTE,
+        )
+        self.client.force_login(admin)
+        respuesta = self.client.get(reverse('panel_solicitud_formato', args=[solicitud.pk]))
+        self.assertEqual(respuesta.status_code, 302)
+        self.assertRedirects(
+            respuesta, reverse('panel_solicitud_detalle', args=[solicitud.pk]),
+        )
+
+    def test_estudiante_descarga_su_formato(self):
+        solicitud, estudiante, _admin = self._solicitud_aprobada()
+        self.client.force_login(estudiante)
+        respuesta = self.client.get(reverse('formato_solicitud', args=[solicitud.pk]))
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertEqual(respuesta['Content-Type'], 'application/pdf')
+
+    def test_estudiante_no_ve_formato_ajeno_ni_pendiente(self):
+        solicitud, estudiante, _admin = self._solicitud_aprobada()
+        otro = crear_usuario('nadia', 'nadia@unal.edu.co')
+        self.client.force_login(otro)
+        respuesta = self.client.get(reverse('formato_solicitud', args=[solicitud.pk]))
+        self.assertEqual(respuesta.status_code, 404)
+
+        solicitud.estado = SolicitudReclamacion.Estados.PENDIENTE
+        solicitud.save(update_fields=['estado'])
+        self.client.force_login(estudiante)
+        respuesta = self.client.get(reverse('formato_solicitud', args=[solicitud.pk]))
+        self.assertEqual(respuesta.status_code, 404)
+
+    def test_pdf_con_firma_digital_del_encargado(self):
+        solicitud, _estudiante, admin = self._solicitud_aprobada()
+        admin.perfil.firma = SimpleUploadedFile('firma.png', self._png())
+        admin.perfil.save()
+        self.client.force_login(admin)
+        respuesta = self.client.get(reverse('panel_solicitud_formato', args=[solicitud.pk]))
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertGreater(len(respuesta.content), 1000)
+
+    def test_subir_firma_desde_el_panel(self):
+        admin = crear_usuario('adminfir', 'adminfir@unal.edu.co', is_staff=True)
+        self.client.force_login(admin)
+        respuesta = self.client.post(
+            reverse('panel_usuario_editar', args=[admin.pk]),
+            {
+                'username': admin.username,
+                'email': admin.email,
+                'first_name': admin.first_name,
+                'last_name': admin.last_name,
+                'rol': 'admin',
+                'is_active': 'on',
+                'firma': SimpleUploadedFile('firma.png', self._png()),
+            },
+        )
+        self.assertEqual(respuesta.status_code, 302)
+        admin.perfil.refresh_from_db()
+        self.assertTrue(admin.perfil.firma)
+        self.assertTrue(admin.perfil.firma.name.endswith('.png'))

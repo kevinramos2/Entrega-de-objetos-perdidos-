@@ -9,7 +9,7 @@
   </div>
 </div>
 
-<form method="post" class="form-card" style="max-width:640px">
+<form method="post" enctype="multipart/form-data" class="form-card" style="max-width:640px">
   {% csrf_token %}
   {% if es_self %}<p class="muted" style="font-size:.86rem">Importante: es tu propia cuenta. Evita desactivarla o quitarte el rol de administrador.</p>{% endif %}
   {% if form.errors %}
@@ -45,6 +45,18 @@
     <div class="form-campo"><label>{{ form.numero_documento.label }}</label>{{ form.numero_documento }}</div>
     <div class="form-campo"><label>{{ form.telefono.label }}</label>{{ form.telefono }}</div>
     <div class="form-campo"><label>{{ form.programa.label }}</label>{{ form.programa }}</div>
+  </div>
+  <hr class="divider">
+  <div class="form-campo">
+    <label>{{ form.firma.label }}</label>
+    {% if usuario.perfil.firma %}
+    <div class="flex" style="gap:12px;align-items:center;margin-bottom:10px">
+      <img src="{{ usuario.perfil.firma.url }}" alt="Firma actual" style="height:46px;max-width:190px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px">
+      <span class="muted" style="font-size:.82rem">Firma actual. Sube otra imagen para reemplazarla.</span>
+    </div>
+    {% endif %}
+    {{ form.firma }}
+    {% if form.firma.help_text %}<div class="help">{{ form.firma.help_text }}</div>{% endif %}
   </div>
 
   <div class="flex mt-3">

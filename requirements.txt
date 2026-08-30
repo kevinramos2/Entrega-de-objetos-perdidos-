@@ -12,3 +12,5 @@ requests==2.32.4
 # Envío de correos vía API HTTPS (Resend) — funciona en Render gratis,
 # que bloquea los puertos SMTP salientes (25/465/587).
 django-anymail==13.0
+# Generación del PDF "Formato de entrega de objetos" (impresión/firma).
+reportlab==5.0.1

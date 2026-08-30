@@ -217,6 +217,12 @@ class UsuarioPanelForm(forms.Form):
     numero_documento = forms.CharField(label='Número de documento', max_length=50, required=False)
     telefono = forms.CharField(label='Teléfono', max_length=20, required=False)
     programa = forms.CharField(label='Programa / Carrera', max_length=120, required=False)
+    firma = forms.ImageField(
+        label='Firma digital (solo administradores)· PNG con fondo transparente',
+        required=False,
+        help_text='Se estampa en los formatos de entrega para impresión. '
+                  'Déjalo vacío para conservar la firma actual.',
+    )
 
     def clean_email(self):
         correo = self.cleaned_data['email'].strip().lower()

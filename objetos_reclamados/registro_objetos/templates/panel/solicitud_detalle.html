@@ -8,7 +8,15 @@
     <div class="crumb"><a href="{% url 'panel_solicitudes' %}" style="color:var(--muted)">Solicitudes</a> → </div>
     <h1>Revisión de solicitud</h1>
   </div>
-  <a href="{% url 'panel_solicitudes' %}" class="btn btn-ghost">← Volver</a>
+  <div class="flex" style="gap:10px">
+    {% if solicitud.estado == 'aprobada' %}
+    <a href="{% url 'panel_solicitud_formato' solicitud.pk %}" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Formato de entrega
+    </a>
+    {% endif %}
+    <a href="{% url 'panel_solicitudes' %}" class="btn btn-ghost">← Volver</a>
+  </div>
 </div>
 
 <div class="detalle-grid">

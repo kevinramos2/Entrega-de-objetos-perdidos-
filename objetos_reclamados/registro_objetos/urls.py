@@ -16,6 +16,7 @@ urlpatterns = [
     path('objetos/<int:pk>/', views.detalle_objeto, name='detalle_objeto'),
     path('objetos/<int:pk>/solicitar/', views.solicitar_reclamacion, name='solicitar_reclamacion'),
     path('mis-solicitudes/', views.mis_solicitudes, name='mis_solicitudes'),
+    path('solicitudes/<int:pk>/formato/', views.formato_solicitud, name='formato_solicitud'),
     path('solicitudes/<int:pk>/apelar/', views.apelar_solicitud, name='apelar_solicitud'),
 
     # Panel del administrador
@@ -29,6 +30,7 @@ urlpatterns = [
     path('panel/solicitudes/', views.panel_solicitudes, name='panel_solicitudes'),
     path('panel/solicitudes/<int:pk>/', views.panel_solicitud_detalle, name='panel_solicitud_detalle'),
     path('panel/solicitudes/<int:pk>/decidir/', views.panel_solicitud_decision, name='panel_solicitud_decidir'),
+    path('panel/solicitudes/<int:pk>/formato/', views.panel_solicitud_formato, name='panel_solicitud_formato'),
     path('panel/solicitudes/<int:pk>/<str:accion>/', views.panel_solicitud_decision, name='panel_solicitud_decision'),
     path('panel/configuracion-entrega/', views.panel_configuracion_entrega, name='panel_configuracion_entrega'),
     path('panel/categorias/', views.panel_categorias, name='panel_categorias'),

@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.db import IntegrityError
 from django.db.models import Count, Q
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -21,6 +21,7 @@ import json
 
 from . import estadisticas as stats
 from .correo import notificar_respuesta_solicitud
+from .formato_entrega import generar_formato_entrega
 from .forms import (
     ApelacionForm,
     CategoriaForm,
@@ -533,6 +534,41 @@ def panel_solicitud_decision(request, pk, accion=None):
     return redirect('panel_solicitud_detalle', pk=solicitud.pk)
 
 
+def _pdf_formato_entrega(solicitud):
+    """Arma la respuesta HTTP con el PDF del formato de entrega."""
+    pdf = generar_formato_entrega(solicitud)
+    respuesta = HttpResponse(pdf, content_type='application/pdf')
+    respuesta['Content-Disposition'] = (
+        f'attachment; filename="formato_entrega_{solicitud.pk}.pdf"'
+    )
+    return respuesta
+
+
+@staff_member_required
+def panel_solicitud_formato(request, pk):
+    """Descarga del formato de entrega (para el administrador)."""
+    solicitud = get_object_or_404(SolicitudReclamacion, pk=pk)
+    if solicitud.estado != SolicitudReclamacion.Estados.APROBADA:
+        messages.warning(
+            request,
+            'El formato de entrega está disponible cuando la solicitud esté '
+            'aprobada.',
+        )
+        return redirect('panel_solicitud_detalle', pk=solicitud.pk)
+    return _pdf_formato_entrega(solicitud)
+
+
+@login_required
+def formato_solicitud(request, pk):
+    """El estudiante puede descargar el PDF de su solicitud aprobada."""
+    solicitud = get_object_or_404(
+        SolicitudReclamacion, pk=pk, usuario=request.user,
+    )
+    if solicitud.estado != SolicitudReclamacion.Estados.APROBADA:
+        raise Http404('El formato solo está disponible para solicitudes aprobadas.')
+    return _pdf_formato_entrega(solicitud)
+
+
 @staff_member_required
 def panel_configuracion_entrega(request):
     """Instrucciones globales de dónde reclamar un objeto aprobado."""
@@ -587,7 +623,7 @@ def panel_categoria_eliminar(request, pk):
 
 @staff_member_required
 def panel_usuarios(request):
-    form = UsuarioPanelForm(request.POST or None, requiere_contrasena=True)
+    form = UsuarioPanelForm(request.POST or None, request.FILES or None, requiere_contrasena=True)
     if request.method == 'POST' and form.is_valid():
         datos = form.cleaned_data
         try:
@@ -606,6 +642,8 @@ def panel_usuarios(request):
             perfil.numero_documento = datos.get('numero_documento', '').strip()
             perfil.telefono = datos.get('telefono', '').strip()
             perfil.programa = datos.get('programa', '').strip()
+            if datos.get('firma'):
+                perfil.firma = datos['firma']
             perfil.save()
             messages.success(request, f'Cuenta de {usuario.username} creada.')
             return redirect('panel_usuarios')
@@ -637,7 +675,7 @@ def panel_usuarios(request):
 def panel_usuario_editar(request, pk):
     usuario = get_object_or_404(User.objects.select_related('perfil'), pk=pk)
     if request.method == 'POST':
-        form = UsuarioPanelForm(request.POST, requiere_contrasena=False)
+        form = UsuarioPanelForm(request.POST, request.FILES, requiere_contrasena=False)
         if form.is_valid():
             datos = form.cleaned_data
             try:
@@ -658,6 +696,8 @@ def panel_usuario_editar(request, pk):
                 perfil.numero_documento = datos.get('numero_documento', '').strip()
                 perfil.telefono = datos.get('telefono', '').strip()
                 perfil.programa = datos.get('programa', '').strip()
+                if datos.get('firma'):
+                    perfil.firma = datos['firma']
                 perfil.save()
                 messages.success(request, 'Cuenta actualizada.')
                 return redirect('panel_usuarios')

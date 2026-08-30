@@ -104,7 +104,8 @@ class ObjetoReclamado(models.Model):
 
 
 class PerfilUsuario(models.Model):
-    """Datos extra del usuario (estudiante)."""
+    """Datos extra del usuario (estudiante). En los administradores también se
+    guarda la firma digital que se estampa en los formatos de entrega."""
     class TiposDocumento(models.TextChoices):
         CC = 'CC', 'Cédula de ciudadanía'
         TI = 'TI', 'Tarjeta de identidad'
@@ -120,6 +121,12 @@ class PerfilUsuario(models.Model):
     numero_documento = models.CharField('Número de documento', max_length=50, blank=True)
     telefono = models.CharField('Teléfono', max_length=20, blank=True)
     programa = models.CharField('Programa / Carrera', max_length=120, blank=True)
+    firma = models.ImageField(
+        'Firma digital (administradores)', upload_to='firmas/',
+        blank=True, null=True,
+        help_text='Imagen PNG con fondo transparente. Se estampa en los '
+                  'formatos de entrega que genere este encargado.',
+    )
 
     class Meta:
         verbose_name = 'Perfil de usuario'

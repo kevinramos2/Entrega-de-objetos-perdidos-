@@ -66,7 +66,7 @@
   </div>
 
   <div>
-    <form method="post" class="form-card">
+    <form method="post" enctype="multipart/form-data" class="form-card">
       {% csrf_token %}
       <h3 style="margin-top:0">Crear cuenta</h3>
       {% if form.errors %}
@@ -98,6 +98,11 @@
       <div class="form-grid-2">
         <div class="form-campo"><label>{{ form.telefono.label }}</label>{{ form.telefono }}</div>
         <div class="form-campo"><label>{{ form.programa.label }}</label>{{ form.programa }}</div>
+      </div>
+      <div class="form-campo">
+        <label>{{ form.firma.label }}</label>
+        {{ form.firma }}
+        {% if form.firma.help_text %}<div class="help">{{ form.firma.help_text }}</div>{% endif %}
       </div>
       <button type="submit" class="btn btn-primary btn-block">Crear cuenta</button>
     </form>
