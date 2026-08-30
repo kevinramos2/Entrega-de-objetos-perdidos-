@@ -41,7 +41,12 @@
       {% endif %}
 
       {% if s.estado == 'aprobada' %}
-        {% if instrucciones.texto %}
+        {% if s.datos_entrega %}
+        <div class="caja-nota" style="border-left:3px solid #0d7047;padding:8px 12px;margin-top:12px;background:var(--success-50);border-radius:6px">
+          <b style="font-size:.84rem">¿Cómo reclamar tu objeto?</b>
+          <p style="margin:4px 0 0;white-space:pre-line">{{ s.datos_entrega }}</p>
+        </div>
+        {% elif instrucciones.texto %}
         <div class="caja-nota" style="border-left:3px solid #0d7047;padding:8px 12px;margin-top:12px;background:var(--success-50);border-radius:6px">
           <b style="font-size:.84rem">¿Cómo reclamar tu objeto?</b>
           <p style="margin:4px 0 0;white-space:pre-line">{{ instrucciones.texto }}</p>

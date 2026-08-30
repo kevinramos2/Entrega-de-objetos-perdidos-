@@ -453,6 +453,7 @@ def panel_solicitud_decision(request, pk, accion=None):
     solicitud = get_object_or_404(SolicitudReclamacion, pk=pk)
     accion = accion or request.POST.get('accion')
     comentario = (request.POST.get('comentario') or '').strip()
+    datos_entrega = (request.POST.get('datos_entrega') or '').strip()
     es_apelacion = solicitud.fue_apelada
 
     if solicitud.estado not in (
@@ -461,7 +462,7 @@ def panel_solicitud_decision(request, pk, accion=None):
     ):
         messages.warning(request, 'Esta solicitud ya fue respondida.')
     elif accion == 'aprobar':
-        solicitud.aprobar(request.user, comentario=comentario)
+        solicitud.aprobar(request.user, comentario=comentario, datos_entrega=datos_entrega)
         prefijo = 'Apelación ' if es_apelacion else ''
         messages.success(
             request,

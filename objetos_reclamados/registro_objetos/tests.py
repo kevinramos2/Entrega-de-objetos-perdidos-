@@ -155,6 +155,38 @@ class InstruccionesEntregaTest(TestCase):
         self.assertContains(respuesta, '¿Cómo reclamar tu objeto?')
         self.assertContains(respuesta, 'Bienestar, edificio 2, piso 1')
 
+    def test_datos_de_entrega_especificos_del_admin_tienen_prioridad(self):
+        estudiante = crear_usuario('diana', 'diana@unal.edu.co')
+        admin = crear_usuario('admin4', 'admin4@unal.edu.co', is_staff=True)
+        objeto = ObjetoReclamado.objects.create(
+            nombre_objeto='Libro de cálculo',
+            estado=ObjetoReclamado.Estados.DISPONIBLE,
+        )
+        config = obtener_instrucciones_entrega()
+        config.texto = 'Texto general de configuración.'
+        config.save()
+
+        self.client.force_login(estudiante)
+        self.client.post(
+            reverse('solicitar_reclamacion', args=[objeto.pk]),
+            {'mensaje': 'Es mío.'},
+        )
+        solicitud = SolicitudReclamacion.objects.get(usuario=estudiante)
+        self.client.force_login(admin)
+        self.client.post(
+            reverse('panel_solicitud_decidir', args=[solicitud.pk]),
+            {
+                'accion': 'aprobar',
+                'comentario': 'Confirmado.',
+                'datos_entrega': 'Recógelo en la oficina 301, edificio 4, hoy 2-4 p.m.',
+            },
+        )
+
+        self.client.force_login(estudiante)
+        respuesta = self.client.get(reverse('mis_solicitudes'))
+        self.assertContains(respuesta, 'Recógelo en la oficina 301, edificio 4')
+        self.assertNotContains(respuesta, 'Texto general de configuración.')
+
     def test_vista_panel_guarda_instrucciones(self):
         admin = crear_usuario('admin3', 'admin3@unal.edu.co', is_staff=True)
         self.client.force_login(admin)

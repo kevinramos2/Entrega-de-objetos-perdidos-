@@ -163,6 +163,12 @@ class SolicitudReclamacion(models.Model):
     fue_apelada = models.BooleanField('¿Fue apelada?', default=False)
     apelacion = models.TextField('Motivo de la apelación', blank=True)
     fecha_apelacion = models.DateTimeField('Fecha de apelación', null=True, blank=True)
+    datos_entrega = models.TextField(
+        'Datos para reclamar el objeto', blank=True,
+        help_text='Información específica de esta entrega (lugar, horario). Se '
+                  'muestra al estudiante al aprobar; si está vacía se usa el '
+                  'texto general de configuración.',
+    )
 
     class Meta:
         verbose_name = 'Solicitud de reclamación'
@@ -191,11 +197,12 @@ class SolicitudReclamacion(models.Model):
         self.fecha_apelacion = timezone.now()
         self.save()
 
-    def aprobar(self, admin, comentario=''):
+    def aprobar(self, admin, comentario='', datos_entrega=''):
         self.estado = self.Estados.APROBADA
         self.respondida_por = admin
         self.fecha_respuesta = timezone.now()
         self.comentario_admin = (comentario or '').strip()
+        self.datos_entrega = (datos_entrega or '').strip()
         self.respuesta_vista = False
         self.save()
         objeto = self.objeto

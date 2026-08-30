@@ -56,6 +56,10 @@
 <div class="card mt-3" style="padding:24px;border-left:4px solid var(--primary)">
   <h3 style="margin-top:0">Lo que se le respondió al estudiante</h3>
   <p style="margin:0">{{ solicitud.comentario_admin }}</p>
+  {% if solicitud.datos_entrega %}
+    <h4 style="margin:16px 0 6px;font-size:.9rem">Datos para reclamar</h4>
+    <p style="margin:0;white-space:pre-line">{{ solicitud.datos_entrega }}</p>
+  {% endif %}
 </div>
 {% endif %}
 
@@ -72,8 +76,16 @@
   </p>
   <form method="post" action="{% url 'panel_solicitud_decidir' solicitud.pk %}">
     {% csrf_token %}
-    <textarea name="comentario" rows="3" placeholder="Ej. Verificamos el reporte de pérdida y no coincide con tu descripción…" class="form-control" style="width:100%"></textarea>
-    <div class="flex" style="margin-top:14px;gap:10px">
+    <div class="form-campo">
+      <label for="comentario">Comentario para el estudiante (opcional)</label>
+      <textarea name="comentario" id="comentario" rows="3" placeholder="Ej. Verificamos el reporte de pérdida y no coincide con tu descripción…" class="form-control"></textarea>
+    </div>
+    <div class="form-campo">
+      <label for="datos_entrega">Datos para reclamar el objeto (opcional)</label>
+      <textarea name="datos_entrega" id="datos_entrega" rows="3" placeholder="Ej. Recógelo en Bienestar, edificio 2 piso 1, lunes a viernes de 8 a.m. a 5 p.m., con tu documento. Si lo dejas vacío se usará el texto general de configuración." class="form-control"></textarea>
+      <div class="help">Se muestra al estudiante cuando la solicitud quede aprobada.</div>
+    </div>
+    <div class="flex" style="gap:10px">
       <button type="submit" name="accion" value="aprobar" class="btn btn-success btn-lg" {% if solicitud.estado == 'apelada' %}data-confirm="¿Confirmas que, tras revisar la apelación, el objeto es de este estudiante?"{% else %}data-confirm="¿Confirmas que el objeto es de este estudiante?"{% endif %}>
         {% if solicitud.estado == 'apelada' %}Aprobar la apelación{% else %}Aprobar reclamo{% endif %}
       </button>
