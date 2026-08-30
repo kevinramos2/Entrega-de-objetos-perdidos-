@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
@@ -23,6 +24,21 @@ class CuentaDominioAdapter(DefaultAccountAdapter):
                 'Solo se permiten cuentas con correo institucional autorizado.'
             )
         return email
+
+    def _destino_inicial(self, request):
+        """URL de destino según el rol: panel para administradores,
+        lista de objetos para estudiantes."""
+        if request.user.is_staff:
+            return reverse('panel_inicio')
+        return reverse('lista_objetos')
+
+    def get_login_redirect_url(self, request):
+        """Tras iniciar sesión (Google o contraseña)."""
+        return self._destino_inicial(request)
+
+    def get_signup_redirect_url(self, request):
+        """Al registrarse por primera vez (usuario nuevo)."""
+        return self._destino_inicial(request)
 
 
 class CorreoInstitucionalAdapter(DefaultSocialAccountAdapter):
