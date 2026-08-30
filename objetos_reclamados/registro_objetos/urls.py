@@ -2,6 +2,8 @@ from django.urls import path
 
 from . import views
 
+handler500 = 'registro_objetos.views.error_500'
+
 urlpatterns = [
     # Público / autenticación
     path('', views.inicio, name='inicio'),

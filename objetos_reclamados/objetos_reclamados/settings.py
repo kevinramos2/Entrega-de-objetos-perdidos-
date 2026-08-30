@@ -35,6 +35,36 @@ load_dotenv(BASE_DIR / '.env')
 # ---------------------------------------------------------------------------
 DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes')
 
+# Modo diagnóstico: con DJANGO_SHOW_ERRORS=1 se dibuja el traceback en la
+# página de error 500 (útil cuando Render no muestra logs). Nunca en producción.
+SHOW_TRACEBACKS = os.getenv('DJANGO_SHOW_ERRORS', '0').lower() in ('1', 'true', 'yes')
+
+# Los errores (500) siempre se imprimen a la consola para poder verlos en los
+# logs de Render, aunque DJANGO_DEBUG esté desactivado.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'consola_formato': {
+            'format': '[%(asctime)s] %(levelname)s %(name)s: %(message)s',
+        },
+    },
+    'handlers': {
+        'consola': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'consola_formato',
+        },
+    },
+    'loggers': {
+        'django': {'handlers': ['consola'], 'level': 'INFO'},
+        'django.request': {
+            'handlers': ['consola'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    },
+}
+
 # En producción la clave debe venir de una variable de entorno o .env.
 # Nunca uses una clave hardcodeada en producción.
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
