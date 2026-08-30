@@ -62,6 +62,12 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
         },
+        # App: visibilidad de los avisos de correo en los logs de Render.
+        'registro_objetos': {
+            'handlers': ['consola'],
+            'level': 'INFO',
+            'propagate': False,
+        },
     },
 }
 
@@ -271,16 +277,23 @@ LOGIN_REDIRECT_URL = 'panel_inicio'
 
 # ---------------------------------------------------------------------------
 # Correo electrónico (notificaciones a estudiantes)
-# Si no hay SMTP configurado, Django imprime los correos en la consola para
-# poder probar en desarrollo sin servidor de correo.
+# Prioridades:
+#  1) RESEND_API_KEY  -> envío por Resend vía HTTPS (funciona en Render gratis,
+#                        que bloquea los puertos SMTP 25/465/587 de salida).
+#  2) SMTP_HOST+USER  -> SMTP clásico (Gmail u otro) para hosts que lo permitan.
+#  3) Ninguna         -> consola (los correos se imprimen en la terminal local).
 # ---------------------------------------------------------------------------
+_resend_api_key = os.getenv('RESEND_API_KEY', '').strip()
 _smtp_host = os.getenv('SMTP_HOST', '').strip()
 _smtp_user = os.getenv('SMTP_USER', '').strip()
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', '').strip() or (
-    'django.core.mail.backends.smtp.EmailBackend'
-    if (_smtp_host and _smtp_user)
-    else 'django.core.mail.backends.console.EmailBackend'
-)
+if _resend_api_key:
+    _backend = 'anymail.backends.resend.EmailBackend'
+elif _smtp_host and _smtp_user:
+    _backend = 'django.core.mail.backends.smtp.EmailBackend'
+else:
+    _backend = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', '').strip() or _backend
+ANYMAIL = {'RESEND_API_KEY': _resend_api_key}
 EMAIL_HOST = _smtp_host
 EMAIL_PORT = int(os.getenv('SMTP_PORT', '587'))
 EMAIL_HOST_USER = _smtp_user
@@ -288,7 +301,7 @@ EMAIL_HOST_PASSWORD = os.getenv('SMTP_PASSWORD', '')
 EMAIL_USE_TLS = os.getenv('SMTP_USE_TLS', 'True').lower() in ('1', 'true', 'yes')
 EMAIL_USE_SSL = os.getenv('SMTP_USE_SSL', 'False').lower() in ('1', 'true', 'yes')
 # Limita el tiempo de intento de conexión; sin esto un servidor que no responde
-# puede colgar el worker (Gunicorn lo terminaria con un 500 en produccion).
+# puede colgar el worker (Gunicorn lo terminaría con un 500 en producción).
 EMAIL_TIMEOUT = int(os.getenv('SMTP_TIMEOUT', '10'))
 DEFAULT_FROM_EMAIL = os.getenv(
     'DEFAULT_FROM_EMAIL', 'kevin.ralu22@gmail.com'

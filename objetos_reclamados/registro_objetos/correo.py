@@ -28,7 +28,8 @@ def notificar_respuesta_solicitud(solicitud, accion):
 
     El mensaje se compone al momento y el envío se hace en un hilo de fondo
     (solo cuando el backend es SMTP) para que un servidor de correo lento o
-    caído no cuelgue ni tumbe la petición del administrador. La decisión ya
+    caído no cuelgue ni tumbe la petición del administrador. Con Resend
+    (HTTPS) o la consola el envío es inmediato y sincrónico. La decisión ya
     quedó guardada antes de llamar a esta función.
 
     Retorna True si el correo se encoló/envió; False si no hay destinatario.
@@ -82,18 +83,26 @@ def notificar_respuesta_solicitud(solicitud, accion):
             daemon=True,
         ).start()
     else:
-        # Consola / locmem (local y pruebas): envío inmediato y sincrónico.
+        # Consola / locmem / Resend (HTTPS): envío inmediato y sincrónico.
         _enviar_correo(correo, destinatario, solicitud, accion)
     return True
 
 
 def _enviar_correo(correo, destinatario, solicitud, accion):
     try:
-        correo.send(fail_silently=True)
+        # Sin fail_silently: cualquier rechazo del proveedor debe quedar
+        # registrado en el log (en Render el motivo se ve en los logs).
+        enviados = correo.send()
     except Exception:  # noqa: BLE001 - un fallo de correo no debe tumbar nada
         logger.exception(
             'No se pudo notificar al estudiante %s por la solicitud %s.',
             solicitud.usuario.username, solicitud.pk,
+        )
+        return False
+    if not enviados:
+        logger.warning(
+            'El proveedor no envió el aviso a %s (solicitud %s, %s).',
+            destinatario, solicitud.pk, accion,
         )
         return False
     logger.info(

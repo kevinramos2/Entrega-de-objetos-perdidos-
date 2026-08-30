@@ -194,7 +194,8 @@ Toda la configuración sensible se lee desde variables de entorno o desde un arc
 | `DJANGO_ADMIN_EMAILS` | Correos que se **promueven automáticamente a administrador** al crear la cuenta o iniciar sesión (separados por coma). | `keramosl@unal.edu.co` |
 | `GOOGLE_OAUTH_CLIENT_ID` | Client ID de Google OAuth 2.0. | *(vacío → oculta el botón de Google)* |
 | `GOOGLE_OAUTH_CLIENT_SECRET` | Client Secret de Google OAuth 2.0. | *(vacío → oculta el botón de Google)* |
-| `SMTP_HOST` | Servidor SMTP de salida. Si está vacío (o falta `SMTP_USER`), los correos se imprimen en la **consola** (útil en desarrollo). | *(vacío → consola)* |
+| `RESEND_API_KEY` | **Recomendado en Render**: API key de [Resend](https://resend.com) para enviar los correos **vía HTTPS (puerto 443)**. Render gratis **bloquea los puertos SMTP salientes** (25/465/587), por eso el SMTP no funciona ahí. Tiene prioridad sobre `SMTP_*`. | *(vacío → usa SMTP o consola)* |
+| `SMTP_HOST` | Servidor SMTP de salida (solo si no hay `RESEND_API_KEY`). Si está vacío (o falta `SMTP_USER`), los correos se imprimen en la **consola** (útil en desarrollo). | *(vacío → consola)* |
 | `SMTP_USER` | Usuario SMTP (correo). Delimitador: si está vacío, no hay envío real. | *(vacío)* |
 | `SMTP_PASSWORD` | Contraseña o *app password* del usuario SMTP. | *(vacío)* |
 | `SMTP_PORT` | Puerto SMTP. | `587` |
@@ -204,7 +205,11 @@ Toda la configuración sensible se lee desde variables de entorno o desde un arc
 | `DEFAULT_FROM_EMAIL` | Remitente de los correos de notificación. | `kevin.ralu22@gmail.com` |
 | `SITE_URL` | URL pública del sitio para los enlaces dentro de los correos. | `http://127.0.0.1:8000` local / `https://…onrender.com` en Render |
 
-> **Correos en desarrollo**: sin `SMTP_HOST`/`SMTP_USER` definidos, Django usa el backend de **consola**, así que al aprobar/rechazar una solicitud verás el correo en la terminal. En **Render**, define `SMTP_HOST`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_PORT` y `SITE_URL` (p. ej. `https://objetos-perdidos-d7uh.onrender.com`) para enviar avisos reales. El envío ocurre **en segundo plano** (no bloquea la respuesta del administrador) y con `SMTP_TIMEOUT` para no colgar el servicio si el servidor de correo no responde; ante un fallo, la decisión se guarda igual y el error queda en los logs de Render.
+> **Correos en desarrollo**: sin `RESEND_API_KEY` ni `SMTP_HOST`/`SMTP_USER`, Django usa el backend de **consola**, así que al aprobar/rechazar una solicitud verás el correo en la terminal.
+>
+> **Correos en Render (gratis)**: el plan gratis **bloquea el SMTP saliente** (puertos 25/465/587). Para enviar real, define `RESEND_API_KEY` (Resend, gratis, 100 correos/día) y `SITE_URL`. El envío por Resend es **HTTPS cifrado** y ocurre en el proceso sin bloquear la respuesta del administrador; ante un fallo la decisión se guarda igual y el **motivo sale en los logs de Render**. Puedes validar la configuración en cualquier momento con:
+>
+>     python manage.py probar_correo tu.correo@unal.edu.co
 
 ### ¿Dónde consigo la SECRET_KEY?
 
