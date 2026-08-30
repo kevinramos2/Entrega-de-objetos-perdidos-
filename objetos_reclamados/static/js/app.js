@@ -94,6 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('form[data-confirm]').forEach(function (form) {
     form.addEventListener('submit', function (e) {
       e.preventDefault();
+      cerrarMenusAcciones();
       abrirConfirmacion(form.getAttribute('data-confirm'), function () {
         form.submit();
       }, { tone: 'danger', etiqueta: 'Eliminar' });
@@ -127,16 +128,28 @@ document.addEventListener('DOMContentLoaded', function () {
   var checks = document.querySelectorAll('.seleccion-objeto');
   if (checks.length) {
     var todos = document.getElementById('seleccionar-todos');
+    var barra = document.getElementById('barra-borrado-masivo');
     var btnBorrar = document.getElementById('btn-borrar-seleccion');
+    var cancelar = document.getElementById('cancelar-seleccion');
     var conteo = document.getElementById('seleccion-conteo');
+    var palabra = document.getElementById('seleccion-palabra');
     var formMasivo = document.getElementById('form-borrado-seleccion');
     var idsMasivos = formMasivo ? formMasivo.querySelector('[name="ids"]') : null;
 
     function actualizarSeleccion() {
       var cuantos = document.querySelectorAll('.seleccion-objeto:checked').length;
       if (conteo) conteo.textContent = String(cuantos);
-      if (btnBorrar) btnBorrar.disabled = cuantos === 0;
+      if (palabra) palabra.textContent = cuantos === 1 ? 'seleccionado' : 'seleccionados';
+      if (barra) {
+        if (cuantos > 0) barra.removeAttribute('hidden');
+        else barra.setAttribute('hidden', 'hidden');
+      }
       if (todos) todos.checked = cuantos > 0 && cuantos === checks.length;
+    }
+
+    function limpiarSeleccion() {
+      checks.forEach(function (c) { c.checked = false; });
+      actualizarSeleccion();
     }
 
     checks.forEach(function (c) {
@@ -152,17 +165,43 @@ document.addEventListener('DOMContentLoaded', function () {
       btnBorrar.addEventListener('click', function (e) {
         e.preventDefault();
         if (!formMasivo || !idsMasivos) return;
-        var seleccionados = document.querySelectorAll('.seleccion-objeto:checked');
-        var ids = Array.prototype.map.call(seleccionados, function (c) { return c.value; });
+        var ids = [];
+        document.querySelectorAll('.seleccion-objeto:checked').forEach(function (c) { ids.push(c.value); });
         if (!ids.length) return;
         idsMasivos.value = ids.join(',');
-        var palabra = ids.length === 1 ? 'registro' : 'registros';
+        var palabraMsg = ids.length === 1 ? 'registro' : 'registros';
         abrirConfirmacion(
-          'Vas a eliminar ' + ids.length + ' ' + palabra + ' de forma permanente. Esta acción no se puede deshacer.',
+          'Vas a eliminar ' + ids.length + ' ' + palabraMsg + ' de forma permanente. Esta acción no se puede deshacer.',
           function () { formMasivo.submit(); },
           { tone: 'danger', etiqueta: 'Eliminar ' + ids.length }
         );
       });
     }
+    if (cancelar) cancelar.addEventListener('click', limpiarSeleccion);
   }
+
+  // ------------- Menú de acciones por fila -------------
+  function cerrarMenusAcciones() {
+    document.querySelectorAll('.menu-acciones-panel').forEach(function (panel) {
+      panel.setAttribute('hidden', 'hidden');
+    });
+  }
+  document.querySelectorAll('[data-menu-boton]').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var cont = btn.closest('.menu-acciones');
+      if (!cont) return;
+      var panel = cont.querySelector('.menu-acciones-panel');
+      if (!panel) return;
+      if (panel.hasAttribute('hidden')) {
+        cerrarMenusAcciones();
+        panel.removeAttribute('hidden');
+      } else {
+        panel.setAttribute('hidden', 'hidden');
+      }
+    });
+  });
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.menu-acciones')) cerrarMenusAcciones();
+  });
 });

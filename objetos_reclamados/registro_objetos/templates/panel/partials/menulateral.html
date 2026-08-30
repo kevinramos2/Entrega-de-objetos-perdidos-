@@ -6,7 +6,7 @@
     Resumen
   </a>
   <div class="m-titulo">Gestión</div>
-  <a href="{% url 'panel_objetos' %}" class="{% if request.resolver_match.url_name in 'panel_objetos,panel_objeto_nuevo,panel_objeto_editar' %}active{% endif %}">
+  <a href="{% url 'panel_objetos' %}" class="{% if request.resolver_match.url_name in 'panel_objetos,panel_objeto_editar' %}active{% endif %}">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>
     Objetos
   </a>

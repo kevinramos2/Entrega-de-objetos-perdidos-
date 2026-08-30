@@ -33,15 +33,6 @@
 </form>
 
 <div class="card">
-  <div class="tabla-toolbar">
-    <span class="tabla-toolbar-info">
-      <b id="seleccion-conteo">0</b> seleccionados
-    </span>
-    <button type="button" class="btn btn-sm btn-danger" id="btn-borrar-seleccion" disabled title="Eliminar los seleccionados">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:6px"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-      Eliminar seleccionados
-    </button>
-  </div>
   <div style="overflow:auto">
     <table class="tabla">
       <thead>
@@ -54,7 +45,7 @@
           <th>Fecha</th>
           <th>Lugar</th>
           <th>Solicitudes</th>
-          <th style="width:230px">Acciones</th>
+          <th style="width:70px">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -77,22 +68,32 @@
           <td>{{ obj.lugar_encontrado|default:'—' }}</td>
           <td>{{ obj.solicitudes.count }}</td>
           <td>
-            <div class="acciones" style="flex-wrap:wrap">
-              <a href="{% url 'panel_objeto_editar' obj.pk %}" class="btn btn-sm btn-outline">Editar</a>
-              <form method="post" action="{% url 'panel_objeto_estado' obj.pk %}" style="display:flex;gap:6px;align-items:center">
-                {% csrf_token %}
-                <select name="estado" onchange="this.form.submit()" style="padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:.82rem">
-                  {% for valor, etiqueta in estados %}
-                    <option value="{{ valor }}" {% if obj.estado == valor %}selected{% endif %}>{{ etiqueta }}</option>
-                  {% endfor %}
-                </select>
-              </form>
-              <form method="post" action="{% url 'panel_objeto_eliminar' obj.pk %}" data-confirm="¿Eliminar el registro «{{ obj.nombre_objeto }}»? Esta acción no se puede deshacer.">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-sm btn-danger btn-icon" title="Eliminar">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                </button>
-              </form>
+            <div class="menu-acciones">
+              <button type="button" class="btn btn-sm btn-outline btn-icon" data-menu-boton aria-label="Acciones de {{ obj.nombre_objeto }}" title="Acciones">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>
+              </button>
+              <div class="menu-acciones-panel" hidden>
+                <a href="{% url 'panel_objeto_editar' obj.pk %}" class="menu-item">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.83 2.83 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                  Editar
+                </a>
+                <form method="post" action="{% url 'panel_objeto_estado' obj.pk %}" data-menu-estado>
+                  {% csrf_token %}
+                  <span class="menu-label">Estado</span>
+                  <select name="estado" onchange="this.form.submit()" aria-label="Cambiar estado">
+                    {% for valor, etiqueta in estados %}
+                      <option value="{{ valor }}" {% if obj.estado == valor %}selected{% endif %}>{{ etiqueta }}</option>
+                    {% endfor %}
+                  </select>
+                </form>
+                <div class="menu-separador"></div>
+                <form method="post" action="{% url 'panel_objeto_eliminar' obj.pk %}" data-confirm="¿Eliminar el registro «{{ obj.nombre_objeto }}»? Esta acción no se puede deshacer.">
+                  {% csrf_token %}
+                  <button type="submit" class="menu-item menu-item-danger">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                  Eliminar
+                </form>
+              </div>
             </div>
           </td>
         </tr>
@@ -104,6 +105,15 @@
       </tbody>
     </table>
   </div>
+</div>
+
+<div class="borrado-masivo" id="barra-borrado-masivo" hidden>
+  <span class="borrado-masivo-info"><b id="seleccion-conteo">0</b> <span id="seleccion-palabra">seleccionados</span></span>
+  <button type="button" class="btn btn-ghost btn-sm" id="cancelar-seleccion">Cancelar</button>
+  <button type="button" class="btn btn-sm btn-danger" id="btn-borrar-seleccion" aria-label="Eliminar seleccionados">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:6px"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+    Eliminar
+  </button>
 </div>
 
 <form method="post" action="{% url 'panel_objetos_eliminar_seleccion' %}" id="form-borrado-seleccion" hidden>
