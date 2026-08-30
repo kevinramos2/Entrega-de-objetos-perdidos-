@@ -241,7 +241,12 @@ SOCIALACCOUNT_PROVIDERS = {
             'key': '',
         },
         'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {'access_type': 'online'},
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+            # prompt=login: obliga a Google a pedir credenciales de nuevo en
+            # cada inicio de sesión (no entra directo con la sesión guardada).
+            'prompt': 'login',
+        },
         'OAUTH_PKCE_ENABLED': True,
     }
 }
