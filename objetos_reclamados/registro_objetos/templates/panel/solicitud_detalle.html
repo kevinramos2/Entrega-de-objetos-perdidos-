@@ -1,4 +1,5 @@
 {% extends 'panel/base.html' %}
+{% load iconos %}
 {% block title %}Solicitud de {{ solicitud.usuario.get_full_name|default:solicitud.usuario.username }} · Panel{% endblock %}
 
 {% block panel_content %}
@@ -13,7 +14,7 @@
 <div class="detalle-grid">
   <div class="card" style="padding:24px">
     <h3 style="margin-top:0">Objeto solicitado</h3>
-    <span class="chip-icono lg mb-2" style="background:{{ solicitud.objeto.categoria.color|default:'#0b7a54' }};color:#fff">{{ solicitud.objeto.nombre_objeto|slice:":2"|default:'—'|upper }}</span>
+    <span class="chip-icono lg mb-2" style="background:{{ solicitud.objeto.categoria.color|default:'#0b7a54' }};color:#fff">{{ solicitud.objeto.categoria|icono_cat }}</span>
     <ul class="lista-clave">
       <li><b>Nombre</b><span>{{ solicitud.objeto.nombre_objeto }}</span></li>
       <li><b>Sede</b><span>{{ solicitud.objeto.get_sede_display }}</span></li>

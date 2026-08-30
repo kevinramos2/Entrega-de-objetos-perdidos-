@@ -1,4 +1,5 @@
 {% extends 'panel/base.html' %}
+{% load iconos %}
 {% block title %}Editar categoría · Panel{% endblock %}
 
 {% block panel_content %}
@@ -11,12 +12,27 @@
 
 <form method="post" class="form-card" style="max-width:520px">
   {% csrf_token %}
-  {% for campo in form %}
-    <div class="form-campo"><label>{{ campo.label }}</label>{{ campo }}</div>
-  {% endfor %}
+  {% if form.non_field_errors %}<div class="errores-form">{{ form.non_field_errors }}</div>{% endif %}
+  <div class="form-campo"><label>{{ form.nombre.label }}</label>{{ form.nombre }}</div>
+  <div class="form-campo">
+    <label>{{ form.icono.label }}</label>
+    <div class="flex" style="gap:10px">
+      <div style="flex:1">{{ form.icono }}</div>
+      <span class="chip-icono icono-vista" data-icono-preview data-icono-de="id_icono" style="background:{{ categoria.color|default:'#0b7a54' }};color:#fff"></span>
+    </div>
+    <div class="help">Elige el ícono que identificará esta categoría.</div>
+  </div>
+  <div class="form-grid-2">
+    <div class="form-campo"><label>{{ form.color.label }}</label>{{ form.color }}</div>
+    <div class="form-campo"><label>{{ form.orden.label }}</label>{{ form.orden }}</div>
+  </div>
   <div class="flex mt-3">
     <button type="submit" class="btn btn-primary">Guardar</button>
     <a href="{% url 'panel_categorias' %}" class="btn btn-ghost">Cancelar</a>
   </div>
 </form>
+{% endblock %}
+
+{% block extra_js %}
+<script>window.CATEGORIA_ICONOS = {% iconos_json %};</script>
 {% endblock %}

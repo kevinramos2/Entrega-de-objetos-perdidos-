@@ -99,9 +99,18 @@ def inicio(request):
         .select_related('categoria')
         .filter(estado=ObjetoReclamado.Estados.DISPONIBLE)[:3]
     )
+    categorias = (
+        Categoria.objects.annotate(
+            total_disponibles=Count(
+                'objetos', filter=Q(objetos__estado=ObjetoReclamado.Estados.DISPONIBLE),
+            ),
+        )
+        .order_by('orden')
+    )
     return render(request, 'objetos/home.html', {
         'resumen': resumen,
         'recientes': recientes,
+        'categorias': categorias,
         'mensajes': stats.informacion_para_estudiantes()[:3],
     })
 

@@ -164,14 +164,17 @@ img { max-width: 100%; }
 .card-obj p { margin: 0; color: var(--muted); font-size: .87rem; }
 .card-obj .meta { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
 
-/* Ficha de categoria (reemplaza los iconos de emoji) */
+/* Ficha de categoria: ícono SVG (o iniciales como respaldo) */
 .chip-icono {
   display: inline-grid; place-items: center; flex: none;
   width: 38px; height: 38px; border-radius: 10px;
   font-family: var(--font-title); font-weight: 700; font-size: .72rem; letter-spacing: .04em;
 }
+.chip-icono svg { width: 20px; height: 20px; }
 .chip-icono.lg { width: 52px; height: 52px; font-size: .9rem; border-radius: 14px; }
+.chip-icono.lg svg { width: 26px; height: 26px; }
 .chip-icono.sm { width: 30px; height: 30px; font-size: .62rem; border-radius: 8px; }
+.chip-icono.sm svg { width: 16px; height: 16px; }
 
 .badge {
   display: inline-flex; align-items: center; gap: 6px; padding: 3px 11px;
@@ -196,6 +199,7 @@ img { max-width: 100%; }
 }
 .cat-chip:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
 .cat-chip.active { background: var(--grad); border-color: transparent; color: #fff; box-shadow: var(--shadow-sm); }
+.cat-chip svg { width: 16px; height: 16px; flex: none; stroke-width: 2; }
 .chips-label { display: inline-flex; align-items: center; font-weight: 700; font-size: .82rem; color: var(--muted); padding: 0 4px; letter-spacing: .02em; }
 .chips + .chips { margin-top: -12px; }
 
@@ -573,4 +577,108 @@ input[type="checkbox"] { accent-color: var(--primary); }
   .navbar .brand-text { display: none; }
   .hero-stats { grid-template-columns: 1fr; }
   .hero .sub { font-size: .98rem; }
+}
+
+/* ============================================================
+   Rediseño: íconos de categoría y página de inicio más viva
+   ============================================================ */
+
+/* Etiqueta sobre títulos de sección */
+.seccion-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px; border-radius: 999px; margin-bottom: 14px;
+  background: var(--primary-50); color: var(--primary-600);
+  font-size: .76rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+}
+.seccion-header .seccion-eyebrow, .page-head .seccion-eyebrow { margin: 0 auto 16px; }
+
+/* Fondo alterno para secciones */
+.seccion-alt { background: linear-gradient(180deg, #f3f9f5, #eef6fa); }
+
+/* ---------- Hero enriquecido ---------- */
+.hero-orb {
+  position: absolute; border-radius: 50%; filter: blur(72px);
+  pointer-events: none; opacity: .55;
+}
+.hero-orb-a { width: 430px; height: 430px; left: -130px; top: -160px; background: rgba(13, 107, 140, .6); }
+.hero-orb-b { width: 380px; height: 380px; right: -110px; bottom: -140px; background: rgba(18, 138, 86, .55); }
+
+.hero-flotante {
+  position: absolute; display: grid; place-items: center;
+  width: 54px; height: 54px; border-radius: 18px; pointer-events: none;
+  color: rgba(255, 255, 255, .92);
+  background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .18);
+  backdrop-filter: blur(8px);
+  animation: flotar 6s ease-in-out infinite;
+}
+.hero-flotante svg { width: 24px; height: 24px; }
+.hf-1 { top: 56px; right: 7%; animation-delay: .3s; }
+.hf-2 { top: 46%; left: 1%; animation-delay: 1.2s; }
+.hf-3 { bottom: 64px; right: 24%; animation-delay: 2s; }
+.hf-4 { bottom: 130px; left: 28%; animation-delay: .8s; }
+@keyframes flotar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-flotante { animation: none; }
+}
+
+/* Panel "Encontrados recientemente" */
+.demo-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; }
+.demo-title { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+.demo-pill {
+  background: rgba(255, 255, 255, .14); border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 999px; padding: 4px 12px; font-size: .76rem; font-weight: 700; color: #fff;
+}
+.demo-cta { margin-top: 16px; }
+
+/* ---------- Tarjetas de categoría ---------- */
+.grid-categorias { display: grid; grid-template-columns: repeat(auto-fill, minmax(225px, 1fr)); gap: 14px; }
+.cat-card {
+  display: flex; align-items: center; gap: 12px; padding: 14px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  color: var(--ink); box-shadow: var(--shadow-xs); transition: transform .18s ease, box-shadow .18s ease;
+}
+.cat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); color: var(--ink); }
+.cat-card-ico {
+  width: 46px; height: 46px; flex: none; border-radius: 14px; display: grid; place-items: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), var(--shadow-xs);
+}
+.cat-card-ico svg { width: 22px; height: 22px; }
+.cat-card-info { display: flex; flex-direction: column; min-width: 0; }
+.cat-card-info b { font-size: .92rem; color: var(--ink); }
+.cat-card-info span { font-size: .78rem; color: var(--muted); }
+.cat-card-flecha {
+  width: 18px; height: 18px; flex: none; margin-left: auto; color: var(--muted);
+  opacity: 0; transform: translateX(-4px); transition: all .18s ease;
+}
+.cat-card:hover .cat-card-flecha { opacity: 1; transform: none; color: var(--primary); }
+
+/* ---------- Fallback de foto (ícono grande sobre degradado) ---------- */
+.media-ico {
+  width: 76px; height: 76px; border-radius: 22px; display: grid; place-items: center;
+  background: #fff; border: 1px solid var(--line); box-shadow: var(--shadow-sm);
+}
+.media-ico svg { width: 34px; height: 34px; }
+.media-ico-lg { width: 58%; max-width: 230px; aspect-ratio: 1/1; border-radius: 30px; }
+.media-ico-lg svg { width: 46px; height: 46px; }
+
+/* Ícono pequeño dentro de badges */
+.mini-ico { display: inline-flex; align-items: center; }
+.mini-ico svg { width: 14px; height: 14px; }
+
+/* Vista previa del ícono en el panel */
+.icono-vista svg { width: 20px; height: 20px; }
+
+/* Íconos en los pasos y en la actividad */
+.paso .num svg { width: 22px; height: 22px; }
+.actividad-item .ico svg { width: 18px; height: 18px; }
+
+/* Ocultar decoraciones del hero en pantallas pequeñas */
+@media (max-width: 900px) {
+  .hero-flotante { display: none; }
+}
+@media (max-width: 640px) {
+  .hero-orb { display: none; }
 }

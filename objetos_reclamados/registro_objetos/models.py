@@ -8,8 +8,8 @@ class Categoria(models.Model):
     """Categorías para clasificar los objetos (ej. Termos, Documentos, Cargadores)."""
     nombre = models.CharField('Nombre', max_length=100, unique=True)
     icono = models.CharField(
-        'Seña (opcional)', max_length=10, blank=True, default='',
-        help_text='Abreviatura corta. Las fichas muestran las iniciales del nombre.',
+        'Ícono', max_length=10, blank=True, default='',
+        help_text='Ícono del catálogo que identifica la categoría.',
     )
     color = models.CharField('Color (hex)', max_length=7, default='#0b7a54')
     orden = models.PositiveIntegerField('Orden', default=0)

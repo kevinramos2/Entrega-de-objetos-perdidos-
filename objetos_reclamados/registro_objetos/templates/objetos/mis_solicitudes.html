@@ -1,9 +1,11 @@
 {% extends 'objetos/base.html' %}
+{% load iconos %}
 {% block title %}Mis reclamos · Perdidos y Encontrados{% endblock %}
 
 {% block content %}
 <section class="page-inner">
   <div class="page-head">
+    <span class="seccion-eyebrow">Seguimiento</span>
     <h1>Mis solicitudes de reclamo</h1>
     <p>Aquí puedes dar seguimiento a cada objeto que crees que es tuyo y apelar un rechazo.</p>
   </div>
@@ -14,7 +16,7 @@
     <div class="card" style="padding:22px">
       <div class="flex" style="justify-content:space-between;gap:12px">
         <div class="flex" style="gap:12px">
-          <span class="chip-icono" style="background:{{ s.objeto.categoria.color|default:'#0b7a54' }};color:#fff">{{ s.objeto.nombre_objeto|slice:":2"|default:'—'|upper }}</span>
+          <span class="chip-icono" style="background:{{ s.objeto.categoria.color|default:'#0b7a54' }};color:#fff">{{ s.objeto.categoria|icono_cat }}</span>
           <div>
             <b>{{ s.objeto.nombre_objeto }}</b>
             <div class="muted" style="font-size:.82rem">{{ s.objeto.etiqueta_categoria }}{% if s.objeto.sede %} · {{ s.objeto.get_sede_display }}{% endif %} · {{ s.fecha|date:'d M Y, H:i' }}</div>

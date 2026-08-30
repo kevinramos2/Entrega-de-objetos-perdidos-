@@ -43,4 +43,18 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   });
+
+  // Vista previa del ícono de categoría en el panel
+  var catalogo = window.CATEGORIA_ICONOS || null;
+  function pintarIcono(select, span) {
+    if (!catalogo) return;
+    var interior = catalogo[select.value] || catalogo['otros'];
+    span.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + interior + '</svg>';
+  }
+  document.querySelectorAll('select[name="icono"]').forEach(function (select) {
+    var span = document.querySelector('[data-icono-preview][data-icono-de="' + select.id + '"]');
+    if (!span) return;
+    pintarIcono(select, span);
+    select.addEventListener('change', function () { pintarIcono(select, span); });
+  });
 });

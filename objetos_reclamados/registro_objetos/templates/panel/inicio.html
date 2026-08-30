@@ -1,4 +1,5 @@
 {% extends 'panel/base.html' %}
+{% load iconos %}
 {% block title %}Resumen · Panel{% endblock %}
 
 {% block panel_content %}
@@ -45,7 +46,7 @@
     <p class="sub">Últimos movimientos en la plataforma</p>
     {% for obj in actividad.objetos %}
     <div class="actividad-item">
-      <span class="ico" style="background:{{ obj.categoria.color|default:'#0b7a54' }};color:#fff">{{ obj.nombre_objeto|slice:":2"|default:'—'|upper }}</span>
+      <span class="ico" style="background:{{ obj.categoria.color|default:'#0b7a54' }};color:#fff">{{ obj.categoria|icono_cat }}</span>
       <div>
         <b>{{ obj.nombre_objeto }}</b>
         <span class="muted" style="font-size:.82rem">registrado como {{ obj.get_estado_display|lower }}

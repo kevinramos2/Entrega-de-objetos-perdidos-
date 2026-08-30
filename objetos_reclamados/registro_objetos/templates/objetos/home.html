@@ -1,58 +1,70 @@
 {% extends 'objetos/base.html' %}
+{% load iconos %}
 {% block title %}Inicio · Perdidos y Encontrados{% endblock %}
 
 {% block content %}
 <section class="hero">
+  <span class="hero-orb hero-orb-a" aria-hidden="true"></span>
+  <span class="hero-orb hero-orb-b" aria-hidden="true"></span>
+  <span class="hero-flotante hf-1" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+  </span>
+  <span class="hero-flotante hf-2" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/><path d="m9 11 3 3"/><path d="M9.2 10.8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg>
+  </span>
+  <span class="hero-flotante hf-3" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12a10 10 0 0 0-20 0Z"/><path d="M12 12v8a2 2 0 0 0 4 0"/></svg>
+  </span>
+  <span class="hero-flotante hf-4" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/></svg>
+  </span>
+
   <div class="container">
     <div class="hero-grid">
-      <div>
-        <span class="kicker">Comunidad universitaria</span>
+      <div class="hero-copy">
+        <span class="kicker">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>
+          Comunidad universitaria · UNAL Medellín
+        </span>
         <h1>¿Perdiste algo?<br>Aquí puede estar esperándote.</h1>
         <p class="sub">
           Centralizamos los objetos perdidos y encontrados de la universidad.
           Busca lo que perdiste, solicita su reclamo y recupera lo que es tuyo.
         </p>
         <div class="hero-ctas">
-          {% if user.is_authenticated %}
-            <a href="{% url 'lista_objetos' %}" class="btn btn-white btn-lg">Ver objetos perdidos</a>
-            {% if not user.is_staff %}
-              <a href="{% url 'mis_solicitudes' %}" class="btn btn-lg" style="background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.25)">Mis reclamos</a>
-            {% endif %}
-          {% else %}
-            <a href="{% url 'login' %}" class="btn btn-white btn-lg">Ingresar con tu correo institucional</a>
-          {% endif %}
+          <a href="{% url 'login' %}" class="btn btn-white btn-lg">Ingresar con tu correo institucional</a>
         </div>
-        <p class="nota" style="color:#bfe3d2;margin-top:16px">
-          Acceso exclusivo para la comunidad con correo
-          <b style="color:#fff">@{{ DOMINIOS_PERMITIDOS.0 }}</b>.
-        </p>
         <div class="hero-stats">
           <div class="hero-stat"><b>{{ resumen.total }}</b><span>objetos reportados</span></div>
           <div class="hero-stat"><b>{{ resumen.disponibles }}</b><span>esperando dueño</span></div>
           <div class="hero-stat"><b>{{ resumen.tasa_recuperacion }}%</b><span>recuperados</span></div>
         </div>
       </div>
+
       <div class="hero-demo">
-        <div class="demo-title">Encontrados recientemente</div>
+        <div class="demo-head">
+          <span class="demo-title">Encontrados recientemente</span>
+          <span class="demo-pill">{{ resumen.disponibles }} disponibles</span>
+        </div>
         <div class="demo-list">
           {% for obj in recientes %}
           <div class="demo-item">
-            <span class="chip-icono">{{ obj.nombre_objeto|slice:":2"|upper }}</span>
+            <span class="chip-icono demo-chip" style="background:rgba(255,255,255,.16);color:#fff">{{ obj.categoria|icono_cat }}</span>
             <div>
               <b>{{ obj.nombre_objeto }}</b>
               <span>{{ obj.etiqueta_categoria }} · {{ obj.lugar_encontrado|default:'Sin lugar' }}</span>
             </div>
-            {% if user.is_authenticated %}
-            <a href="{% url 'detalle_objeto' obj.pk %}" class="btn btn-sm btn-white">Ver</a>
-            {% endif %}
           </div>
           {% empty %}
           <div class="demo-item">
-            <span class="chip-icono">—</span>
+            <span class="chip-icono demo-chip" style="background:rgba(255,255,255,.16);color:#fff">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </span>
             <div><b>Aún no hay reportes</b><span>Los objetos registrados aparecerán aquí.</span></div>
           </div>
           {% endfor %}
         </div>
+        <a href="{% url 'login' %}" class="btn btn-white btn-block demo-cta">Explorar todos los objetos</a>
       </div>
     </div>
   </div>
@@ -61,22 +73,55 @@
 <section class="seccion">
   <div class="container">
     <div class="seccion-header">
-      <h2>¿Cómo funciona?</h2>
-      <p>Tres pasos simples que conectan lo perdido con su dueño.</p>
+      <span class="seccion-eyebrow">Explora por categoría</span>
+      <h2>¿Qué se pierde en la universidad?</h2>
+      <p>Revisa las categorías más comunes y encuentra lo que buscas.</p>
+    </div>
+    <div class="grid-categorias">
+      {% for cat in categorias %}
+      <a href="{% url 'login' %}" class="cat-card">
+        <span class="cat-card-ico" style="background:{{ cat.color }};color:#fff">{{ cat|icono_cat }}</span>
+        <span class="cat-card-info">
+          <b>{{ cat.nombre }}</b>
+          <span>
+            {% if cat.total_disponibles %}{{ cat.total_disponibles }} esperando dueño{% else %}Sin reportes disponibles{% endif %}
+          </span>
+        </span>
+        <svg class="cat-card-flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      {% empty %}
+      <div class="vacio">Pronto habrá categorías para explorar.</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="seccion seccion-alt">
+  <div class="container">
+    <div class="seccion-header">
+      <span class="seccion-eyebrow">¿Cómo funciona?</span>
+      <h2>Tres pasos simples que conectan lo perdido con su dueño</h2>
+      <p>Del armario de objetos perdidos de regreso a tus manos.</p>
     </div>
     <div class="pasos">
       <div class="card paso">
-        <div class="num">1</div>
+        <div class="num">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
         <h3>Explora</h3>
         <p>Revisa los objetos encontrados y filtra por categoría o lugar.</p>
       </div>
       <div class="card paso">
-        <div class="num">2</div>
+        <div class="num">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+        </div>
         <h3>Solicita</h3>
         <p>¿Reconoces el objeto? Envía tu solicitud de reclamo.</p>
       </div>
       <div class="card paso">
-        <div class="num">3</div>
+        <div class="num">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/><path d="m9 11 3 3"/><path d="M9.2 10.8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg>
+        </div>
         <h3>Recupera</h3>
         <p>La coordinación verifica la entrega y coordina la devolución.</p>
       </div>
@@ -84,11 +129,12 @@
   </div>
 </section>
 
-<section class="seccion" style="background:#fff">
+<section class="seccion">
   <div class="container">
     <div class="seccion-header">
-      <h2>La situación, en números</h2>
-      <p>Datos reales de la plataforma, actualizados en cada consulta.</p>
+      <span class="seccion-eyebrow">La situación, en números</span>
+      <h2>Datos reales de la plataforma</h2>
+      <p>Actualizados en cada consulta.</p>
     </div>
     <div class="insights">
       {% for m in mensajes %}
@@ -113,11 +159,7 @@
       {% endfor %}
     </div>
     <div class="text-center mt-4">
-      {% if user.is_authenticated %}
-        <a href="{% url 'lista_objetos' %}" class="btn btn-primary btn-lg">Ver objetos disponibles</a>
-      {% else %}
-        <a href="{% url 'login' %}" class="btn btn-primary btn-lg">Ingresar con tu correo institucional</a>
-      {% endif %}
+      <a href="{% url 'login' %}" class="btn btn-gradient btn-lg">Quiero recuperar lo que es mío</a>
     </div>
   </div>
 </section>

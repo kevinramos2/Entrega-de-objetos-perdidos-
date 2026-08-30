@@ -1,4 +1,5 @@
 {% extends 'panel/base.html' %}
+{% load iconos %}
 {% block title %}Objetos · Panel{% endblock %}
 
 {% block panel_content %}
@@ -50,7 +51,7 @@
       <tr>
         <td>
           <div class="flex">
-            <span class="chip-icono sm" style="background:{{ obj.categoria.color|default:'#0b7a54' }};color:#fff">{{ obj.nombre_objeto|slice:":2"|default:'—'|upper }}</span>
+            <span class="chip-icono sm" style="background:{{ obj.categoria.color|default:'#0b7a54' }};color:#fff">{{ obj.categoria|icono_cat }}</span>
             <div>
               <b>{{ obj.nombre_objeto }}</b>
               {% if obj.nombre_persona %}<br><span class="muted" style="font-size:.8rem">{{ obj.nombre_persona }}</span>{% endif %}

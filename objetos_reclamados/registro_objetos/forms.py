@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 
+from .iconos import OPCIONES_ICONO
 from .models import Categoria, InstruccionesEntrega, ObjetoReclamado, PerfilUsuario
 
 MAX_IMAGEN_MB = 5
@@ -177,7 +178,12 @@ class CategoriaForm(forms.ModelForm):
     class Meta:
         model = Categoria
         fields = ['nombre', 'icono', 'color', 'orden']
-        widgets = {'color': forms.TextInput(attrs={'type': 'color'})}
+        widgets = {
+            'color': forms.TextInput(attrs={'type': 'color'}),
+            'icono': forms.Select(
+                choices=[('', 'Genérico')] + OPCIONES_ICONO,
+            ),
+        }
 
 
 class UsuarioPanelForm(forms.Form):

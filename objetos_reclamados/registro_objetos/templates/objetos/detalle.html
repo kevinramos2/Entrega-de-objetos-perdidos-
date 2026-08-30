@@ -1,4 +1,5 @@
 {% extends 'objetos/base.html' %}
+{% load iconos %}
 {% block title %}{{ objeto.nombre_objeto }} · Perdidos y Encontrados{% endblock %}
 
 {% block content %}
@@ -10,16 +11,20 @@
       {% if objeto.foto %}
         <img src="{{ objeto.foto.url }}" alt="{{ objeto.nombre_objeto }}">
       {% else %}
-        <span class="chip-icono lg" style="background:{{ objeto.categoria.color|default:'#0b7a54' }};color:#fff">{{ objeto.nombre_objeto|slice:":2"|default:'—'|upper }}</span>
+        <span class="media-ico media-ico-lg" style="color:{{ objeto.categoria.color|default:'#0b7a54' }}">{{ objeto.categoria|icono_cat }}</span>
       {% endif %}
     </div>
     <div class="detalle-info">
-      <span class="badge badge-disponible">Disponible</span>
-      <h1 class="mt-2">{{ objeto.nombre_objeto|default:'Objeto' }}</h1>
-      <div class="detalle-tags">
-        {% if objeto.categoria %}<span class="badge badge-cat">{{ objeto.categoria.nombre }}</span>{% endif %}
-        <span class="badge" style="background:var(--primary-50);color:var(--primary-600)">Registrado el {{ objeto.fecha_registro|date:'d M Y' }}</span>
+      <div class="detalle-tags" style="margin:0 0 10px">
+        {% if objeto.categoria %}
+        <span class="badge badge-cat" style="padding:5px 12px">
+          <span class="mini-ico" style="color:{{ objeto.categoria.color }}">{{ objeto.categoria|icono_cat }}</span>
+          {{ objeto.categoria.nombre }}
+        </span>
+        {% endif %}
+        <span class="badge badge-disponible">Disponible</span>
       </div>
+      <h1 class="mt-2">{{ objeto.nombre_objeto|default:'Objeto' }}</h1>
 
       <ul class="lista-clave">
         <li><b>Sede</b><span>{{ objeto.get_sede_display }}</span></li>
