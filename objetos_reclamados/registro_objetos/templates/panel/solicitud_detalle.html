@@ -88,10 +88,10 @@
       <div class="help">Se muestra al estudiante cuando la solicitud quede aprobada.</div>
     </div>
     <div class="flex" style="gap:10px">
-      <button type="submit" name="accion" value="aprobar" class="btn btn-success btn-lg" {% if solicitud.estado == 'apelada' %}data-confirm="¿Confirmas que, tras revisar la apelación, el objeto es de este estudiante?"{% else %}data-confirm="¿Confirmas que el objeto es de este estudiante?"{% endif %}>
+      <button type="submit" name="accion" value="aprobar" class="btn btn-success btn-lg" data-confirm-tone="success" data-confirm-label="Aprobar" {% if solicitud.estado == 'apelada' %}data-confirm="¿Confirmas que, tras revisar la apelación, el objeto es de este estudiante?"{% else %}data-confirm="¿Confirmas que el objeto es de este estudiante?"{% endif %}>
         {% if solicitud.estado == 'apelada' %}Aprobar la apelación{% else %}Aprobar reclamo{% endif %}
       </button>
-      <button type="submit" name="accion" value="rechazar" class="btn btn-danger btn-lg" data-confirm="{% if solicitud.estado == 'apelada' %}¿Mantener el rechazo y cerrar la apelación?{% else %}¿Rechazar esta solicitud?{% endif %}">
+      <button type="submit" name="accion" value="rechazar" class="btn btn-danger btn-lg" data-confirm-tone="danger" data-confirm-label="Rechazar" data-confirm="{% if solicitud.estado == 'apelada' %}¿Mantener el rechazo y cerrar la apelación?{% else %}¿Rechazar esta solicitud?{% endif %}">
         {% if solicitud.estado == 'apelada' %}Mantener rechazo{% else %}Rechazar{% endif %}
       </button>
     </div>

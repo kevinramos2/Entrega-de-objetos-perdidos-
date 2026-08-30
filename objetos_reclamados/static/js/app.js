@@ -25,25 +25,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }, 6000);
 
-  // Confirmación para formularios con data-confirm
-  document.querySelectorAll('form[data-confirm]').forEach(function (form) {
-    form.addEventListener('submit', function (e) {
-      var msg = form.getAttribute('data-confirm') || '¿Estás seguro?';
-      if (!window.confirm(msg)) e.preventDefault();
-    });
-  });
-
-  // Confirmación para botones con data-confirm (dentro de un formulario)
-  document.querySelectorAll('form button[data-confirm]').forEach(function (btn) {
-    btn.addEventListener('click', function (e) {
-      var msg = btn.getAttribute('data-confirm') || '¿Estás seguro?';
-      if (!window.confirm(msg)) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-      }
-    });
-  });
-
   // Vista previa del ícono de categoría en el panel
   var catalogo = window.CATEGORIA_ICONOS || null;
   function pintarIcono(select, span) {
@@ -57,4 +38,131 @@ document.addEventListener('DOMContentLoaded', function () {
     pintarIcono(select, span);
     select.addEventListener('change', function () { pintarIcono(select, span); });
   });
+
+  // ------------- Modal de confirmación (reemplaza window.confirm) -------------
+  var modalConfirmar = document.getElementById('modal-confirmacion');
+  var modalTitulo = document.getElementById('modal-confirmacion-titulo');
+  var modalMsg = document.getElementById('modal-confirmacion-msg');
+  var modalIco = document.getElementById('modal-confirmacion-ico');
+  var modalBoton = document.getElementById('modal-confirmacion-aceptar');
+  var modalCancelar = document.getElementById('modal-confirmacion-cancelar');
+  var accionPendiente = null;
+
+  function cerrarModal() {
+    modalConfirmar.setAttribute('hidden', 'hidden');
+    accionPendiente = null;
+    modalIco.classList.remove('ok');
+    modalBoton.classList.remove('btn-danger', 'btn-success');
+    modalBoton.classList.add('btn-primary');
+  }
+
+  function abrirConfirmacion(mensaje, alAceptar, opciones) {
+    opciones = opciones || {};
+    modalTitulo.textContent = opciones.titulo || '¿Confirmar acción?';
+    modalMsg.textContent = mensaje;
+    modalBoton.textContent = opciones.etiqueta || 'Confirmar';
+    modalBoton.classList.remove('btn-primary', 'btn-danger', 'btn-success');
+    if (opciones.tone === 'danger') {
+      modalBoton.classList.add('btn-danger');
+    } else if (opciones.tone === 'success') {
+      modalBoton.classList.add('btn-success');
+      modalIco.classList.add('ok');
+    } else {
+      modalBoton.classList.add('btn-primary');
+    }
+    accionPendiente = alAceptar;
+    modalConfirmar.removeAttribute('hidden');
+    modalBoton.focus();
+  }
+
+  modalCancelar.addEventListener('click', cerrarModal);
+  modalConfirmar.addEventListener('click', function (e) {
+    if (e.target === modalConfirmar) cerrarModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !modalConfirmar.hasAttribute('hidden')) cerrarModal();
+  });
+  modalBoton.addEventListener('click', function () {
+    if (!accionPendiente) return;
+    var accion = accionPendiente;
+    accionPendiente = null;
+    cerrarModal();
+    accion();
+  });
+
+  // Formularios con data-confirm (se envían al aceptar el modal)
+  document.querySelectorAll('form[data-confirm]').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      abrirConfirmacion(form.getAttribute('data-confirm'), function () {
+        form.submit();
+      }, { tone: 'danger', etiqueta: 'Eliminar' });
+    });
+  });
+
+  // Botones submit con data-confirm (dentro de un formulario)
+  document.querySelectorAll('form button[data-confirm]').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      var form = btn.closest('form');
+      var tono = btn.getAttribute('data-confirm-tone') || 'danger';
+      abrirConfirmacion(btn.getAttribute('data-confirm'), function () {
+        if (btn.name) {
+          var oculto = document.createElement('input');
+          oculto.type = 'hidden';
+          oculto.name = btn.name;
+          oculto.value = btn.value || '';
+          form.appendChild(oculto);
+        }
+        form.submit();
+      }, {
+        tone: tono,
+        etiqueta: btn.getAttribute('data-confirm-label') || 'Continuar'
+      });
+    });
+  });
+
+  // ------------- Borrado múltiple en el panel de objetos -------------
+  var checks = document.querySelectorAll('.seleccion-objeto');
+  if (checks.length) {
+    var todos = document.getElementById('seleccionar-todos');
+    var btnBorrar = document.getElementById('btn-borrar-seleccion');
+    var conteo = document.getElementById('seleccion-conteo');
+    var formMasivo = document.getElementById('form-borrado-seleccion');
+    var idsMasivos = formMasivo ? formMasivo.querySelector('[name="ids"]') : null;
+
+    function actualizarSeleccion() {
+      var cuantos = document.querySelectorAll('.seleccion-objeto:checked').length;
+      if (conteo) conteo.textContent = String(cuantos);
+      if (btnBorrar) btnBorrar.disabled = cuantos === 0;
+      if (todos) todos.checked = cuantos > 0 && cuantos === checks.length;
+    }
+
+    checks.forEach(function (c) {
+      c.addEventListener('change', actualizarSeleccion);
+    });
+    if (todos) {
+      todos.addEventListener('change', function () {
+        checks.forEach(function (c) { c.checked = todos.checked; });
+        actualizarSeleccion();
+      });
+    }
+    if (btnBorrar) {
+      btnBorrar.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (!formMasivo || !idsMasivos) return;
+        var seleccionados = document.querySelectorAll('.seleccion-objeto:checked');
+        var ids = Array.prototype.map.call(seleccionados, function (c) { return c.value; });
+        if (!ids.length) return;
+        idsMasivos.value = ids.join(',');
+        var palabra = ids.length === 1 ? 'registro' : 'registros';
+        abrirConfirmacion(
+          'Vas a eliminar ' + ids.length + ' ' + palabra + ' de forma permanente. Esta acción no se puede deshacer.',
+          function () { formMasivo.submit(); },
+          { tone: 'danger', etiqueta: 'Eliminar ' + ids.length }
+        );
+      });
+    }
+  }
 });

@@ -682,3 +682,48 @@ input[type="checkbox"] { accent-color: var(--primary); }
 @media (max-width: 640px) {
   .hero-orb { display: none; }
 }
+
+/* ============================================================
+   Modal de confirmación (reemplaza window.confirm) y borrado múltiple
+   ============================================================ */
+
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  display: grid; place-items: center; padding: 20px;
+  background: rgba(15, 23, 42, .55); backdrop-filter: blur(3px);
+}
+.modal-overlay[hidden] { display: none; }
+.modal {
+  width: 100%; max-width: 420px; background: var(--surface);
+  border-radius: 18px; padding: 26px; text-align: center;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, .3);
+  animation: modal-entra .18s ease;
+}
+@keyframes modal-entra { from { transform: translateY(10px) scale(.98); opacity: 0; } }
+.modal-ico {
+  width: 52px; height: 52px; border-radius: 16px; display: inline-grid; place-items: center;
+  background: var(--danger-50); color: var(--danger); margin-bottom: 14px;
+}
+.modal-ico.ok { background: var(--success-50); color: var(--success); }
+.modal-ico svg { width: 26px; height: 26px; }
+.modal h3 { margin: 0 0 8px; font-size: 1.15rem; }
+.modal p { margin: 0 0 22px; color: var(--muted); font-size: .92rem; }
+.modal-acciones { display: flex; gap: 10px; justify-content: center; }
+.modal-acciones .btn { min-width: 118px; }
+@media (max-width: 420px) {
+  .modal-acciones { flex-direction: column; }
+  .modal-acciones .btn { width: 100%; }
+}
+
+/* Borrado múltiple en tablas del panel */
+.tabla input[type="checkbox"] {
+  width: 17px; height: 17px; accent-color: var(--primary); cursor: pointer; vertical-align: middle;
+}
+.tabla-toolbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 12px 16px; border-bottom: 1px solid var(--line);
+}
+.tabla-toolbar-info { font-size: .86rem; color: var(--muted); font-weight: 600; }
+.tabla-toolbar-info b { color: var(--ink); }
+.btn-icon { display: inline-grid; place-items: center; width: 34px; height: 34px; padding: 0 !important; }
+.btn-icon svg { width: 16px; height: 16px; }

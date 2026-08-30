@@ -22,6 +22,7 @@ urlpatterns = [
     path('panel/', views.panel_inicio, name='panel_inicio'),
     path('panel/objetos/', views.panel_objetos, name='panel_objetos'),
     path('panel/objetos/nuevo/', views.panel_objeto_nuevo, name='panel_objeto_nuevo'),
+    path('panel/objetos/eliminar-seleccion/', views.panel_objetos_eliminar_seleccion, name='panel_objetos_eliminar_seleccion'),
     path('panel/objetos/<int:pk>/editar/', views.panel_objeto_editar, name='panel_objeto_editar'),
     path('panel/objetos/<int:pk>/eliminar/', views.panel_objeto_eliminar, name='panel_objeto_eliminar'),
     path('panel/objetos/<int:pk>/estado/', views.panel_objeto_estado, name='panel_objeto_estado'),

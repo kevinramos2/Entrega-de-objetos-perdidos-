@@ -7,7 +7,9 @@ renderizarse como SVG inline con ``currentColor``.
 
 # Clave -> contenido interno del SVG (24x24, stroke, sin <svg> externo).
 ICONOS_CATEGORIA = {
-    'termo': '<path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/>',
+    'termo': '<path d="M9 2h6"/>'
+             '<rect x="8.5" y="5" width="7" height="3" rx="1"/>'
+             '<path d="M6.5 8h10a1 1 0 0 1 1 1l-.9 10.2a2.8 2.8 0 0 1-2.8 2.8H9.2a2.8 2.8 0 0 1-2.8-2.8L5.5 9a1 1 0 0 1 1-1Z"/>',
     'documento': '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/>'
                  '<path d="M14 2v4a2 2 0 0 0 2 2h4"/>'
                  '<path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',

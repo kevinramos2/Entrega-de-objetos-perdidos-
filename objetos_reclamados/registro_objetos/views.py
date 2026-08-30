@@ -399,6 +399,20 @@ def panel_objeto_eliminar(request, pk):
 
 @staff_member_required
 @require_POST
+def panel_objetos_eliminar_seleccion(request):
+    ids = request.POST.get('ids', '')
+    pks = [valor for valor in ids.split(',') if valor.isdigit()]
+    if not pks:
+        messages.error(request, 'No seleccionaste ningún objeto para eliminar.')
+        return redirect('panel_objetos')
+    total, _ = ObjetoReclamado.objects.filter(pk__in=pks).delete()
+    mensaje = f'Se eliminaron {total} registros.' if total != 1 else 'Se eliminó 1 registro.'
+    messages.success(request, mensaje)
+    return redirect('panel_objetos')
+
+
+@staff_member_required
+@require_POST
 def panel_objeto_estado(request, pk):
     objeto = get_object_or_404(ObjetoReclamado, pk=pk)
     nuevo = request.POST.get('estado')
