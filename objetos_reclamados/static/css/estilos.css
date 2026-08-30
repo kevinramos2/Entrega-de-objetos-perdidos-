@@ -87,6 +87,11 @@ img { max-width: 100%; }
 }
 .nav-links a:hover { background: var(--primary-50); color: var(--primary); }
 .nav-links a.active { background: var(--primary); color: #fff; }
+.nav-links a .contador {
+  margin-left: 7px; background: var(--danger); color: #fff;
+  border-radius: 999px; min-width: 20px; text-align: center;
+  font-size: .72rem; font-weight: 700; padding: 1px 6px;
+}
 .nav-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
 
 .avatar {

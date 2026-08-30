@@ -105,6 +105,26 @@ class FlujoSolicitudApelacionTest(TestCase):
         self.solicitud.refresh_from_db()
         self.assertEqual(self.solicitud.estado, SolicitudReclamacion.Estados.RECHAZADA)
 
+    def test_contador_de_respuesta_nueva_en_mis_reclamos(self):
+        self._solicitar()
+        self.solicitud = SolicitudReclamacion.objects.get(usuario=self.estudiante)
+        self._rechazar(comentario='Revisamos y no coincide.')
+        self.solicitud.refresh_from_db()
+        self.assertFalse(self.solicitud.respuesta_vista)
+
+        # La pestaña "Mis reclamos" muestra la señal con la respuesta sin leer.
+        self.client.force_login(self.estudiante)
+        respuesta = self.client.get(reverse('lista_objetos'))
+        self.assertContains(respuesta, 'contador')
+        self.assertContains(respuesta, '>1<')
+
+        # Al visitar "Mis reclamos" la respuesta se marca como vista.
+        self.client.get(reverse('mis_solicitudes'))
+        self.solicitud.refresh_from_db()
+        self.assertTrue(self.solicitud.respuesta_vista)
+        respuesta = self.client.get(reverse('lista_objetos'))
+        self.assertNotContains(respuesta, 'contador')
+
 
 class InstruccionesEntregaTest(TestCase):
     def test_mis_solicitudes_muestra_donde_reclamar_al_aprobar(self):

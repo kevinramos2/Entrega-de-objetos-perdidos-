@@ -19,4 +19,18 @@ def globales(request):
             ])
             .count()
         )
+    elif request.user.is_authenticated:
+        from .models import SolicitudReclamacion
+        datos['nuevas_respuestas'] = (
+            SolicitudReclamacion.objects
+            .filter(
+                usuario=request.user,
+                estado__in=[
+                    SolicitudReclamacion.Estados.APROBADA,
+                    SolicitudReclamacion.Estados.RECHAZADA,
+                ],
+                respuesta_vista=False,
+            )
+            .count()
+        )
     return datos

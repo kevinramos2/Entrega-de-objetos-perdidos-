@@ -240,6 +240,14 @@ def solicitar_reclamacion(request, pk):
 
 @login_required
 def mis_solicitudes(request):
+    # Al visitar la página, las respuestas pendientes de ver se marcan como vistas.
+    request.user.solicitudes.filter(
+        estado__in=[
+            SolicitudReclamacion.Estados.APROBADA,
+            SolicitudReclamacion.Estados.RECHAZADA,
+        ],
+        respuesta_vista=False,
+    ).update(respuesta_vista=True)
     solicitudes = (
         request.user.solicitudes
         .select_related('objeto', 'objeto__categoria')

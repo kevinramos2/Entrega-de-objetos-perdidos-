@@ -151,6 +151,10 @@ class SolicitudReclamacion(models.Model):
         related_name='solicitudes_respondidas', verbose_name='Respondida por',
     )
     fecha_respuesta = models.DateTimeField('Fecha de respuesta', null=True, blank=True)
+    respuesta_vista = models.BooleanField(
+        '¿Respuesta vista por el estudiante?', default=True,
+        help_text='Se marca como no vista cuando hay una respuesta nueva del admin.',
+    )
     comentario_admin = models.TextField(
         'Comentario del administrador', blank=True,
         help_text='Motivo de la decisión que verá el estudiante.',
@@ -192,6 +196,7 @@ class SolicitudReclamacion(models.Model):
         self.respondida_por = admin
         self.fecha_respuesta = timezone.now()
         self.comentario_admin = (comentario or '').strip()
+        self.respuesta_vista = False
         self.save()
         objeto = self.objeto
         objeto.estado = ObjetoReclamado.Estados.RECLAMADO
@@ -213,6 +218,7 @@ class SolicitudReclamacion(models.Model):
         self.respondida_por = admin
         self.fecha_respuesta = timezone.now()
         self.comentario_admin = (comentario or '').strip()
+        self.respuesta_vista = False
         self.save()
 
 
