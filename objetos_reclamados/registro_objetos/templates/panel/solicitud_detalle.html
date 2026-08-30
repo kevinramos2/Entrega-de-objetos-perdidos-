@@ -83,8 +83,27 @@
       <textarea name="comentario" id="comentario" rows="3" placeholder="Ej. Verificamos el reporte de pérdida y no coincide con tu descripción…" class="form-control"></textarea>
     </div>
     <div class="form-campo">
+      <span class="form-etiqueta">Sede donde se entrega el objeto</span>
+      <div class="select-sede">
+        {% for valor, etiqueta in sedes %}
+        <label class="radio-sede {% if solicitud.objeto.sede == valor %}seleccionada{% endif %}">
+          <input type="radio" name="sede" value="{{ valor }}" {% if solicitud.objeto.sede == valor %}checked{% endif %}>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            {{ etiqueta }}
+          </span>
+        </label>
+        {% endfor %}
+      </div>
+      <div class="help">La instrucción configurada para esta sede se usará al aprobar, salvo que escribas un texto propio abajo.</div>
+      <div class="vista-previa-entrega" id="vista-previa-entrega">
+        <b>Instrucción configurada para esta sede</b>
+        <p id="texto-sede-entrega"></p>
+      </div>
+    </div>
+    <div class="form-campo">
       <label for="datos_entrega">Datos para reclamar el objeto (opcional)</label>
-      <textarea name="datos_entrega" id="datos_entrega" rows="3" placeholder="Ej. Recógelo en Bienestar, edificio 2 piso 1, lunes a viernes de 8 a.m. a 5 p.m., con tu documento. Si lo dejas vacío se usará el texto general de configuración." class="form-control"></textarea>
+      <textarea name="datos_entrega" id="datos_entrega" rows="3" placeholder="Ej. Recógelo en Bienestar, edificio 2 piso 1, lunes a viernes de 8 a.m. a 5 p.m., con tu documento. Si lo dejas vacío se usará la instrucción configurada para la sede seleccionada." class="form-control"></textarea>
       <div class="help">Se muestra al estudiante cuando la solicitud quede aprobada.</div>
     </div>
     <div class="flex" style="gap:10px">
@@ -110,4 +129,5 @@
   </div>
 </div>
 {% endif %}
+<script type="application/json" id="textos-entrega-sedes">{{ textos_entrega_json|safe }}</script>
 {% endblock %}

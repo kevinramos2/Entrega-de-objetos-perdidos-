@@ -225,4 +225,31 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   window.addEventListener('resize', function () { cerrarMenusAcciones(); });
   window.addEventListener('scroll', function () { cerrarMenusAcciones(); }, true);
+
+  // Vista previa de la instrucción de entrega por sede (solicitudes del panel)
+  var guionSedes = document.getElementById('textos-entrega-sedes');
+  var radiosSede = document.querySelectorAll('.select-sede input[name="sede"]');
+  var textoSede = document.getElementById('texto-sede-entrega');
+  if (guionSedes && radiosSede.length && textoSede) {
+    var textosSede = JSON.parse(guionSedes.textContent || '{}');
+    function actualizarOpcionSede() {
+      document.querySelectorAll('.radio-sede').forEach(function (r) {
+        r.classList.toggle('seleccionada', r.querySelector('input').checked);
+      });
+    }
+    function pintarInstruccionSede() {
+      var marcada = document.querySelector('.select-sede input[name="sede"]:checked');
+      var clave = marcada ? marcada.value : '';
+      var texto = textosSede[clave] || '';
+      textoSede.textContent = texto || 'No hay instrucción configurada para esta sede.';
+    }
+    radiosSede.forEach(function (r) {
+      r.addEventListener('change', function () {
+        actualizarOpcionSede();
+        pintarInstruccionSede();
+      });
+    });
+    actualizarOpcionSede();
+    pintarInstruccionSede();
+  }
 });

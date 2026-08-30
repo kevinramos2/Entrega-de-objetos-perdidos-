@@ -176,7 +176,7 @@ class SolicitudReclamacion(models.Model):
         'Datos para reclamar el objeto', blank=True,
         help_text='Información específica de esta entrega (lugar, horario). Se '
                   'muestra al estudiante al aprobar; si está vacía se usa el '
-                  'texto general de configuración.',
+                  'texto configurado para la sede.',
     )
 
     class Meta:
@@ -206,12 +206,17 @@ class SolicitudReclamacion(models.Model):
         self.fecha_apelacion = timezone.now()
         self.save()
 
-    def aprobar(self, admin, comentario='', datos_entrega=''):
+    def aprobar(self, admin, comentario='', datos_entrega='', sede=None):
         self.estado = self.Estados.APROBADA
         self.respondida_por = admin
         self.fecha_respuesta = timezone.now()
         self.comentario_admin = (comentario or '').strip()
-        self.datos_entrega = (datos_entrega or '').strip()
+        texto_entrega = (datos_entrega or '').strip()
+        if not texto_entrega:
+            texto_entrega = obtener_texto_entrega_para_sede(
+                sede or self.objeto.sede,
+            )
+        self.datos_entrega = texto_entrega
         self.respuesta_vista = False
         self.save()
         objeto = self.objeto
@@ -239,15 +244,21 @@ class SolicitudReclamacion(models.Model):
 
 
 class InstruccionesEntrega(models.Model):
-    """Instrucciones globales sobre dónde y cómo reclamar un objeto aprobado.
+    """Instrucciones sobre dónde y cómo reclamar un objeto aprobado, por sede.
 
-    Es un singleton (pk=1): el administrador la edita desde el panel y el
-    estudiante la ve en su solicitud aprobada.
+    Es un singleton (pk=1): la edita el administrador desde el panel. Cada sede
+    tiene su propio texto y el estudiante ve el de la sede elegida al aprobar.
     """
 
-    texto = models.TextField(
-        'Instrucciones para reclamar el objeto', blank=True,
-        help_text='Lugar, horario, oficina o cualquier indicación para la entrega.',
+    texto_minas = models.TextField(
+        'Instrucciones · Sede Minas', blank=True,
+        help_text='Lugar, horario, oficina o cualquier indicación para reclamar '
+                  'un objeto en la Sede Minas.',
+    )
+    texto_volador = models.TextField(
+        'Instrucciones · Sede El Volador', blank=True,
+        help_text='Lugar, horario, oficina o cualquier indicación para reclamar '
+                  'un objeto en la Sede El Volador.',
     )
     fecha_actualizada = models.DateTimeField('Actualizado', auto_now=True)
 
@@ -256,10 +267,23 @@ class InstruccionesEntrega(models.Model):
         verbose_name_plural = 'Instrucciones de entrega'
 
     def __str__(self):
-        return 'Instrucciones de entrega'
+        return 'Instrucciones de entrega por sede'
+
+    def texto_para_sede(self, sede):
+        """Devuelve el texto configurado para una sede ('minas' o 'volador')."""
+        if sede == ObjetoReclamado.Sedes.MINAS:
+            return self.texto_minas
+        if sede == ObjetoReclamado.Sedes.VOLADOR:
+            return self.texto_volador
+        return ''
 
 
 def obtener_instrucciones_entrega():
     """Devuelve (creándola si no existe) la única fila del singleton."""
     obj, _ = InstruccionesEntrega.objects.get_or_create(pk=1)
     return obj
+
+
+def obtener_texto_entrega_para_sede(sede):
+    """Texto de entrega configurado para una sede ('' si no hay o es inválida)."""
+    return obtener_instrucciones_entrega().texto_para_sede(sede)

@@ -165,11 +165,19 @@ class ApelacionForm(forms.Form):
 class InstruccionesEntregaForm(forms.ModelForm):
     class Meta:
         model = InstruccionesEntrega
-        fields = ['texto']
+        fields = ['texto_minas', 'texto_volador']
         widgets = {
-            'texto': forms.Textarea(attrs={
+            'texto_minas': forms.Textarea(attrs={
                 'rows': 4,
-                'placeholder': 'Ej. Reclama tu objeto en la oficina de Bienestar, edificio 2, piso 1, entre 8:00 a.m. y 5:00 p.m. Lleva tu documento de identidad.',
+                'placeholder': 'Ej. Reclama tu objeto en Bienestar de la Sede '
+                               'Minas, edificio 2, piso 1, entre 8:00 a.m. y '
+                               '5:00 p.m. Lleva tu documento de identidad.',
+            }),
+            'texto_volador': forms.Textarea(attrs={
+                'rows': 4,
+                'placeholder': 'Ej. Reclama tu objeto en la portería principal '
+                               'de la Sede El Volador, entre 8:00 a.m. y '
+                               '6:00 p.m. Lleva tu documento de identidad.',
             }),
         }
 

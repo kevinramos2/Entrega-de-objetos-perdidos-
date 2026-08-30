@@ -478,8 +478,16 @@ def panel_solicitud_detalle(request, pk):
         SolicitudReclamacion.objects.select_related('usuario', 'objeto', 'objeto__categoria'),
         pk=pk,
     )
+    config = obtener_instrucciones_entrega()
+    textos_entrega = {
+        'minas': config.texto_minas or '',
+        'volador': config.texto_volador or '',
+    }
     return render(request, 'panel/solicitud_detalle.html', {
         'solicitud': solicitud,
+        'sedes': ObjetoReclamado.Sedes.choices,
+        'textos_entrega': textos_entrega,
+        'textos_entrega_json': json.dumps(textos_entrega),
     })
 
 
@@ -490,6 +498,9 @@ def panel_solicitud_decision(request, pk, accion=None):
     accion = accion or request.POST.get('accion')
     comentario = (request.POST.get('comentario') or '').strip()
     datos_entrega = (request.POST.get('datos_entrega') or '').strip()
+    sede = request.POST.get('sede') or solicitud.objeto.sede
+    if sede not in ObjetoReclamado.Sedes.values:
+        sede = solicitud.objeto.sede
     es_apelacion = solicitud.fue_apelada
 
     if solicitud.estado not in (
@@ -498,7 +509,12 @@ def panel_solicitud_decision(request, pk, accion=None):
     ):
         messages.warning(request, 'Esta solicitud ya fue respondida.')
     elif accion == 'aprobar':
-        solicitud.aprobar(request.user, comentario=comentario, datos_entrega=datos_entrega)
+        solicitud.aprobar(
+            request.user,
+            comentario=comentario,
+            datos_entrega=datos_entrega,
+            sede=sede,
+        )
         notificar_respuesta_solicitud(solicitud, 'aprobar')
         prefijo = 'Apelación ' if es_apelacion else ''
         messages.success(

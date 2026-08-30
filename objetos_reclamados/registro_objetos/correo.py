@@ -11,16 +11,16 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
-from .models import obtener_instrucciones_entrega
+from .models import obtener_texto_entrega_para_sede
 
 logger = logging.getLogger(__name__)
 
 
 def _datos_para_entrega(solicitud):
-    """Texto de entrega: específico de la solicitud o el general de config."""
+    """Texto de entrega: específico de la solicitud o el de su sede."""
     if solicitud.datos_entrega:
         return solicitud.datos_entrega
-    return obtener_instrucciones_entrega().texto or ''
+    return obtener_texto_entrega_para_sede(solicitud.objeto.sede) or ''
 
 
 def notificar_respuesta_solicitud(solicitud, accion):

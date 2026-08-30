@@ -136,7 +136,7 @@ class InstruccionesEntregaTest(TestCase):
             estado=ObjetoReclamado.Estados.DISPONIBLE,
         )
         config = obtener_instrucciones_entrega()
-        config.texto = 'Reclama en Bienestar, edificio 2, piso 1, lunes a viernes 8-5.'
+        config.texto_minas = 'Reclama en Bienestar, edificio 2, piso 1, lunes a viernes 8-5.'
         config.save()
 
         self.client.force_login(estudiante)
@@ -164,7 +164,7 @@ class InstruccionesEntregaTest(TestCase):
             estado=ObjetoReclamado.Estados.DISPONIBLE,
         )
         config = obtener_instrucciones_entrega()
-        config.texto = 'Texto general de configuración.'
+        config.texto_minas = 'Texto general de configuración.'
         config.save()
 
         self.client.force_login(estudiante)
@@ -188,16 +188,83 @@ class InstruccionesEntregaTest(TestCase):
         self.assertContains(respuesta, 'Recógelo en la oficina 301, edificio 4')
         self.assertNotContains(respuesta, 'Texto general de configuración.')
 
-    def test_vista_panel_guarda_instrucciones(self):
+    def test_vista_panel_guarda_instrucciones_por_sede(self):
         admin = crear_usuario('admin3', 'admin3@unal.edu.co', is_staff=True)
         self.client.force_login(admin)
         respuesta = self.client.post(
             reverse('panel_configuracion_entrega'),
-            {'texto': 'Entrega en oficina central, 9-12.'},
+            {
+                'texto_minas': 'Entrega en oficina central de Minas, 9-12.',
+                'texto_volador': 'Entrega en Volador, portería principal.',
+            },
         )
         self.assertEqual(respuesta.status_code, 302)
         config = InstruccionesEntrega.objects.get(pk=1)
-        self.assertEqual(config.texto, 'Entrega en oficina central, 9-12.')
+        self.assertEqual(config.texto_minas, 'Entrega en oficina central de Minas, 9-12.')
+        self.assertEqual(config.texto_volador, 'Entrega en Volador, portería principal.')
+
+    def test_aprobacion_usa_instruccion_de_la_sede_elegida(self):
+        estudiante = crear_usuario('sofia', 'sofia@unal.edu.co')
+        admin = crear_usuario('admin5', 'admin5@unal.edu.co', is_staff=True)
+        config = obtener_instrucciones_entrega()
+        config.texto_minas = 'Instrucciones de la Sede Minas.'
+        config.texto_volador = 'Instrucciones de la Sede El Volador.'
+        config.save()
+        objeto = ObjetoReclamado.objects.create(
+            nombre_objeto='Carpeta negra',
+            estado=ObjetoReclamado.Estados.DISPONIBLE,
+            sede=ObjetoReclamado.Sedes.MINAS,
+        )
+
+        self.client.force_login(estudiante)
+        self.client.post(
+            reverse('solicitar_reclamacion', args=[objeto.pk]),
+            {'mensaje': 'Es mía.'},
+        )
+        solicitud = SolicitudReclamacion.objects.get(usuario=estudiante)
+        self.client.force_login(admin)
+        self.client.post(
+            reverse('panel_solicitud_decidir', args=[solicitud.pk]),
+            {'accion': 'aprobar', 'sede': ObjetoReclamado.Sedes.VOLADOR},
+        )
+
+        solicitud.refresh_from_db()
+        self.assertEqual(solicitud.datos_entrega, 'Instrucciones de la Sede El Volador.')
+        self.client.force_login(estudiante)
+        respuesta = self.client.get(reverse('mis_solicitudes'))
+        self.assertContains(respuesta, 'Instrucciones de la Sede El Volador.')
+        self.assertNotContains(respuesta, 'Instrucciones de la Sede Minas.')
+
+    def test_panel_muestra_selector_de_sede_y_config_por_sede(self):
+        admin = crear_usuario('admin6', 'admin6@unal.edu.co', is_staff=True)
+        self.client.force_login(admin)
+        config = obtener_instrucciones_entrega()
+        config.texto_minas = 'Entrega en Bienestar Minas.'
+        config.texto_volador = 'Entrega en portería Volador.'
+        config.save()
+
+        respuesta = self.client.get(reverse('panel_configuracion_entrega'))
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertContains(respuesta, 'texto_minas')
+        self.assertContains(respuesta, 'texto_volador')
+
+        objeto = ObjetoReclamado.objects.create(
+            nombre_objeto='Billetera',
+            estado=ObjetoReclamado.Estados.DISPONIBLE,
+        )
+        estudiante = crear_usuario('valeria', 'valeria@unal.edu.co')
+        self.client.force_login(estudiante)
+        self.client.post(
+            reverse('solicitar_reclamacion', args=[objeto.pk]),
+            {'mensaje': 'Es mía.'},
+        )
+        solicitud = SolicitudReclamacion.objects.get(usuario=estudiante)
+        self.client.force_login(admin)
+        respuesta = self.client.get(reverse('panel_solicitud_detalle', args=[solicitud.pk]))
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertContains(respuesta, 'name="sede"')
+        self.assertContains(respuesta, 'textos-entrega-sedes')
+        self.assertContains(respuesta, 'Entrega en Bienestar Minas.')
 
 
 class NotificacionCorreoTest(TestCase):

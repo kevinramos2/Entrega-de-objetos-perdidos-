@@ -11,18 +11,35 @@
 
 <div class="card mt-2" style="max-width:720px;padding:24px">
   <p class="muted" style="margin-top:0">
-    Este texto lo verá el estudiante en su solicitud cuando la respuesta sea
-    <b>Aprobada</b>. Indica dónde, cuándo y cómo debe reclamar el objeto.
+    Cada sede tiene sus propias instrucciones. El estudiante verá el texto de
+    la sede que elijas al aprobar su solicitud (a menos que escribas un texto
+    específico en esa aprobación). Indica dónde, cuándo y cómo debe reclamar.
   </p>
   <form method="post">
     {% csrf_token %}
+
     <div class="form-campo">
-      <label for="{{ form.texto.id_for_label }}">Instrucciones de entrega</label>
-      {{ form.texto }}
-      {% if form.texto.help_text %}
-        <div class="help">{{ form.texto.help_text }}</div>
+      <label for="{{ form.texto_minas.id_for_label }}">
+        <span class="badge badge-sede badge-sede-minas">Sede Minas</span>
+        Instrucciones de entrega
+      </label>
+      {{ form.texto_minas }}
+      {% if form.texto_minas.help_text %}
+        <div class="help">{{ form.texto_minas.help_text }}</div>
       {% endif %}
     </div>
+
+    <div class="form-campo mt-2">
+      <label for="{{ form.texto_volador.id_for_label }}">
+        <span class="badge badge-sede badge-sede-volador">Sede El Volador</span>
+        Instrucciones de entrega
+      </label>
+      {{ form.texto_volador }}
+      {% if form.texto_volador.help_text %}
+        <div class="help">{{ form.texto_volador.help_text }}</div>
+      {% endif %}
+    </div>
+
     <div class="flex" style="gap:10px">
       <button type="submit" class="btn btn-primary">Guardar instrucciones</button>
       <a href="{% url 'panel_solicitudes' %}" class="btn btn-ghost">Cancelar</a>

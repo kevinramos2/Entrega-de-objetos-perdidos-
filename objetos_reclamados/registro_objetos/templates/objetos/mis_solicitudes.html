@@ -48,10 +48,15 @@
           <b>¿Cómo reclamar tu objeto?</b>
           <p style="margin:4px 0 0;white-space:pre-line">{{ s.datos_entrega }}</p>
         </div>
-        {% elif instrucciones.texto %}
+        {% elif s.objeto.sede == 'minas' and instrucciones.texto_minas %}
         <div class="nota-caja nota-entrega">
           <b>¿Cómo reclamar tu objeto?</b>
-          <p style="margin:4px 0 0;white-space:pre-line">{{ instrucciones.texto }}</p>
+          <p style="margin:4px 0 0;white-space:pre-line">{{ instrucciones.texto_minas }}</p>
+        </div>
+        {% elif s.objeto.sede == 'volador' and instrucciones.texto_volador %}
+        <div class="nota-caja nota-entrega">
+          <b>¿Cómo reclamar tu objeto?</b>
+          <p style="margin:4px 0 0;white-space:pre-line">{{ instrucciones.texto_volador }}</p>
         </div>
         {% else %}
         <p class="muted" style="font-size:.84rem;margin-top:12px">
