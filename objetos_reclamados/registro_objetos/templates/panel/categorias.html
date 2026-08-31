@@ -40,6 +40,7 @@
   <div>
     <form method="post" class="form-card">
       {% csrf_token %}
+      {% if form.errors %}<div class="errores-form">{{ form.errors }}</div>{% endif %}
       <h3 style="margin-top:0">Nueva categoría</h3>
       <div class="form-campo"><label>{{ form.nombre.label }}</label>{{ form.nombre }}</div>
       <div class="form-campo">

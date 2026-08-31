@@ -183,6 +183,8 @@ class InstruccionesEntregaForm(forms.ModelForm):
 
 
 class CategoriaForm(forms.ModelForm):
+    orden = forms.IntegerField(label='Orden', required=False)
+
     class Meta:
         model = Categoria
         fields = ['nombre', 'icono', 'color', 'orden']
@@ -192,6 +194,15 @@ class CategoriaForm(forms.ModelForm):
                 choices=[('', 'Genérico')] + OPCIONES_ICONO,
             ),
         }
+
+    def clean_nombre(self):
+        nombre = (self.cleaned_data.get('nombre') or '').strip()
+        if not nombre:
+            raise forms.ValidationError('Escribe un nombre para la categoría.')
+        return nombre
+
+    def clean_orden(self):
+        return self.cleaned_data.get('orden') or 0
 
 
 class UsuarioPanelForm(forms.Form):

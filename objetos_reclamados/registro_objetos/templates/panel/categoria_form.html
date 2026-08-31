@@ -12,7 +12,7 @@
 
 <form method="post" class="form-card" style="max-width:520px">
   {% csrf_token %}
-  {% if form.non_field_errors %}<div class="errores-form">{{ form.non_field_errors }}</div>{% endif %}
+  {% if form.errors %}<div class="errores-form">{{ form.errors }}</div>{% endif %}
   <div class="form-campo"><label>{{ form.nombre.label }}</label>{{ form.nombre }}</div>
   <div class="form-campo">
     <label>{{ form.icono.label }}</label>
