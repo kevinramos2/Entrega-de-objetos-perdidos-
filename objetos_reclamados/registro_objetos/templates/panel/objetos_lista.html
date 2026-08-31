@@ -52,12 +52,12 @@
         {% for obj in objetos %}
         <tr>
           <td><input type="checkbox" class="seleccion-objeto" value="{{ obj.pk }}" aria-label="Seleccionar {{ obj.nombre_objeto }}"></td>
-          <td>
+          <td class="cel-objeto">
             <div class="flex">
               <span class="chip-icono sm" style="background:{{ obj.categoria.color|default:'#0b7a54' }};color:#fff">{{ obj.categoria|icono_cat }}</span>
-              <div>
-                <b>{{ obj.nombre_objeto }}</b>
-                {% if obj.nombre_persona %}<br><span class="muted" style="font-size:.8rem">{{ obj.nombre_persona }}</span>{% endif %}
+              <div class="cel-objeto-info">
+                <b class="nombre-obj" title="{{ obj.nombre_objeto }}">{{ obj.nombre_objeto }}</b>
+                {% if obj.nombre_persona %}<span class="persona-obj muted" title="{{ obj.nombre_persona }}">{{ obj.nombre_persona }}</span>{% endif %}
               </div>
             </div>
           </td>
