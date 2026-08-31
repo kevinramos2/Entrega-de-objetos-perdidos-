@@ -384,7 +384,7 @@ img { max-width: 100%; }
 .tabla tbody tr { transition: background .12s ease; }
 .tabla tbody tr:hover { background: #f3f8f5; }
 .tabla .acciones { display: flex; gap: 8px; }
-.tabla .cel-lugar { max-width: 190px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tabla .cel-lugar { display: block; max-width: 190px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tabla td.cel-objeto { max-width: 210px; }
 .tabla .cel-objeto .chip-icono { flex: none; }
 .tabla .cel-objeto .cel-objeto-info { min-width: 0; }

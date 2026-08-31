@@ -65,7 +65,7 @@
           <td><span class="badge badge-cat">{{ obj.etiqueta_categoria }}</span></td>
           <td><span class="badge badge-{{ obj.estado }}">{{ obj.get_estado_display }}</span></td>
           <td>{{ obj.fecha_registro|date:'d M Y'|default:'—' }}</td>
-          <td class="cel-lugar" title="{{ obj.lugar_encontrado|default:'' }}">{{ obj.lugar_encontrado|default:'—' }}</td>
+          <td><span class="cel-lugar" title="{{ obj.lugar_encontrado|default:'' }}">{{ obj.lugar_encontrado|default:'—' }}</span></td>
           <td>{{ obj.solicitudes.count }}</td>
           <td>
             <div class="menu-acciones">
