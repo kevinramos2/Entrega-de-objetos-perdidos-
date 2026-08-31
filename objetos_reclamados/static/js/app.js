@@ -25,6 +25,38 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }, 6000);
 
+  // Luminosidad que sigue al cursor dentro del hero (solo mouse y sin animación reducida)
+  var tracker = document.querySelector('.hero-tracker');
+  if (tracker && window.matchMedia('(pointer: fine)').matches &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var hero = tracker.closest('.hero');
+    var destino = { x: 0, y: 0 };
+    var actual = { x: 0, y: 0 };
+    var iniciado = false;
+    function animarTracker() {
+      actual.x += (destino.x - actual.x) * 0.14;
+      actual.y += (destino.y - actual.y) * 0.14;
+      tracker.style.transform =
+        'translate3d(' + (actual.x - 5) + 'px,' + (actual.y - 5) + 'px,0)';
+      requestAnimationFrame(animarTracker);
+    }
+    hero.addEventListener('mousemove', function (e) {
+      var r = hero.getBoundingClientRect();
+      destino.x = e.clientX - r.left;
+      destino.y = e.clientY - r.top;
+      if (!iniciado) {
+        iniciado = true;
+        actual.x = destino.x;
+        actual.y = destino.y;
+        requestAnimationFrame(animarTracker);
+      }
+      tracker.classList.add('visible');
+    });
+    hero.addEventListener('mouseleave', function () {
+      tracker.classList.remove('visible');
+    });
+  }
+
   // Vista previa del ícono de categoría en el panel
   var catalogo = window.CATEGORIA_ICONOS || null;
   function pintarIcono(select, span) {
