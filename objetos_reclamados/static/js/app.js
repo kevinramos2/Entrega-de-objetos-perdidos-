@@ -30,24 +30,46 @@ document.addEventListener('DOMContentLoaded', function () {
   if (tracker && window.matchMedia('(pointer: fine)').matches &&
       !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     var hero = tracker.closest('.hero');
+    var esAnillo = tracker.classList.contains('hero-tracker-anillo');
+    var centro = esAnillo ? 22 : 5;
     var destino = { x: 0, y: 0 };
     var actual = { x: 0, y: 0 };
     var iniciado = false;
+    var ultimaParticula = 0;
     function animarTracker() {
       actual.x += (destino.x - actual.x) * 0.14;
       actual.y += (destino.y - actual.y) * 0.14;
       tracker.style.transform =
-        'translate3d(' + (actual.x - 5) + 'px,' + (actual.y - 5) + 'px,0)';
+        'translate3d(' + (actual.x - centro) + 'px,' + (actual.y - centro) + 'px,0)';
       requestAnimationFrame(animarTracker);
+    }
+    function espolvorear(x, y) {
+      var ahora = Date.now();
+      if (ahora - ultimaParticula < 45) return;
+      ultimaParticula = ahora;
+      var p = document.createElement('span');
+      p.className = 'hero-particula';
+      p.style.left = (x - 3) + 'px';
+      p.style.top = (y - 3) + 'px';
+      var tam = (Math.random() * 4 + 3).toFixed(1);
+      p.style.width = tam + 'px';
+      p.style.height = tam + 'px';
+      p.style.setProperty('--dx', (Math.random() * 60 - 30).toFixed(0) + 'px');
+      p.style.setProperty('--dy', (Math.random() * -46).toFixed(0) + 'px');
+      hero.appendChild(p);
+      setTimeout(function () { p.remove(); }, 950);
     }
     hero.addEventListener('mousemove', function (e) {
       var r = hero.getBoundingClientRect();
-      destino.x = e.clientX - r.left;
-      destino.y = e.clientY - r.top;
+      var x = e.clientX - r.left;
+      var y = e.clientY - r.top;
+      destino.x = x;
+      destino.y = y;
+      if (esAnillo) espolvorear(x, y);
       if (!iniciado) {
         iniciado = true;
-        actual.x = destino.x;
-        actual.y = destino.y;
+        actual.x = x;
+        actual.y = y;
         requestAnimationFrame(animarTracker);
       }
       tracker.classList.add('visible');
