@@ -30,8 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (tracker && window.matchMedia('(pointer: fine)').matches &&
       !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     var hero = tracker.closest('.hero');
-    var esAnillo = tracker.classList.contains('hero-tracker-anillo');
-    var centro = esAnillo ? 22 : 5;
+    var centro = tracker.classList.contains('hero-tracker-anillo') ? 22 : 5;
     var destino = { x: 0, y: 0 };
     var actual = { x: 0, y: 0 };
     var iniciado = false;
@@ -65,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var y = e.clientY - r.top;
       destino.x = x;
       destino.y = y;
-      if (esAnillo) espolvorear(x, y);
+      espolvorear(x, y);
       if (!iniciado) {
         iniciado = true;
         actual.x = x;
