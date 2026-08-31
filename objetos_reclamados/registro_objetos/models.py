@@ -40,6 +40,11 @@ class ObjetoReclamado(models.Model):
         MINAS = 'minas', 'Sede Minas'
         VOLADOR = 'volador', 'Sede El Volador'
 
+    class TiposDocumento(models.TextChoices):
+        CC = 'CC', 'Cédula de ciudadanía'
+        TI = 'TI', 'Tarjeta de identidad'
+        CE = 'CE', 'Cédula de extranjería'
+
     # Información del objeto
     nombre_objeto = models.CharField('Nombre del objeto', max_length=120, blank=True)
     categoria = models.ForeignKey(
@@ -53,7 +58,7 @@ class ObjetoReclamado(models.Model):
         help_text='Sede donde se encontró o se entrega el objeto.',
     )
     lugar_encontrado = models.CharField('Lugar donde fue encontrado', max_length=150, blank=True)
-    fecha_registro = models.DateField('Fecha de registro', auto_now_add=True, null=True)
+    fecha_registro = models.DateField('Fecha de registro', null=True, blank=True)
     foto = models.ImageField('Foto', upload_to='objetos/', blank=True, null=True)
     estado = models.CharField(
         'Estado', max_length=20, choices=Estados.choices,
@@ -66,7 +71,9 @@ class ObjetoReclamado(models.Model):
 
     # Datos de la persona que reclama / entrega
     nombre_persona = models.CharField('Nombre de quien reclama', max_length=100, blank=True)
-    tipo_documento = models.CharField('Tipo de documento', max_length=50, blank=True)
+    tipo_documento = models.CharField(
+        'Tipo de documento', max_length=50, choices=TiposDocumento.choices, blank=True, default='',
+    )
     numero_documento = models.CharField('Número de documento', max_length=50, blank=True)
     telefono = models.CharField('Teléfono', max_length=20, blank=True)
     suministro_correo = models.BooleanField('¿Suministró correo?', default=False)

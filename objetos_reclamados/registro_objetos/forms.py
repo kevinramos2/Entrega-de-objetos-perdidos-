@@ -6,6 +6,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from .iconos import OPCIONES_ICONO
 from .models import Categoria, InstruccionesEntrega, ObjetoReclamado, PerfilUsuario
@@ -39,7 +40,7 @@ class ObjetoReclamadoForm(forms.ModelForm):
         model = ObjetoReclamado
         fields = [
             'nombre_objeto', 'categoria', 'descripcion_objeto',
-            'sede', 'lugar_encontrado', 'foto', 'estado',
+            'sede', 'lugar_encontrado', 'foto', 'estado', 'fecha_registro',
             'nombre_persona', 'tipo_documento', 'numero_documento',
             'telefono', 'suministro_correo', 'correo',
             'fecha_entrega', 'responsable_entrega',
@@ -49,6 +50,13 @@ class ObjetoReclamadoForm(forms.ModelForm):
             'nombre_objeto': forms.TextInput(attrs={'placeholder': 'Ej. Termo negro 500 ml'}),
             'lugar_encontrado': forms.TextInput(attrs={'placeholder': 'Ej. Biblioteca, bloque 2, cafetería…'}),
             'foto': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
+            'fecha_registro': forms.DateInput(
+                attrs={'type': 'date'},
+                format='%Y-%m-%d',
+            ),
+            'tipo_documento': forms.Select(
+                choices=[('', 'Tipo de documento')] + ObjetoReclamado.TiposDocumento.choices,
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -57,6 +65,8 @@ class ObjetoReclamadoForm(forms.ModelForm):
         self.fields['categoria'].required = True
         for campo in self.fields:
             self.fields[campo].widget.attrs.setdefault('class', '')
+        if not self.instance.pk and not self.is_bound:
+            self.fields['fecha_registro'].initial = timezone.localdate()
 
     def clean_foto(self):
         foto = self.cleaned_data.get('foto')

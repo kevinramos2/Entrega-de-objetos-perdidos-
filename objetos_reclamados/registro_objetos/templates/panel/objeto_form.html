@@ -58,6 +58,11 @@
       {{ form.estado }}
     </div>
   </div>
+  <div class="form-campo" style="grid-column:1/-1">
+    <label for="{{ form.fecha_registro.id_for_label }}">{{ form.fecha_registro.label }}</label>
+    {{ form.fecha_registro }}
+    <div class="help">Fecha en que fue encontrado el objeto. Para registros antiguos escribe el día real (ej. 2025-04-12); se mostrará esa fecha en la lista.</div>
+  </div>
 
   {% if es_nuevo %}<p class="muted" style="font-size:.86rem">Si el objeto es <b>reclamado</b> o <b>entregado</b>, completa también la sección de abajo. Si está <b>disponible</b>, puedes dejarla vacía.</p>{% endif %}
 

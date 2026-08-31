@@ -365,6 +365,8 @@ def panel_objeto_nuevo(request):
     if request.method == 'POST' and form.is_valid():
         objeto = form.save(commit=False)
         objeto.registrado_por = request.user
+        if not objeto.fecha_registro:
+            objeto.fecha_registro = timezone.localdate()
         objeto.save()
         messages.success(request, f'Objeto «{objeto}» registrado correctamente.')
         return redirect('panel_objetos')

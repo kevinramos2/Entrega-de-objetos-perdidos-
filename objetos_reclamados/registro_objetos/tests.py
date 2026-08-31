@@ -471,3 +471,50 @@ class FormatoEntregaTest(TestCase):
         admin.perfil.refresh_from_db()
         self.assertTrue(admin.perfil.firma)
         self.assertTrue(admin.perfil.firma.name.endswith('.png'))
+
+
+class RegistroObjetoTipoDocumentoYFechaTest(TestCase):
+    def setUp(self):
+        self.admin = crear_usuario('adminfech', 'adminfech@unal.edu.co', is_staff=True)
+        self.categoria = Categoria.objects.create(nombre='Credenciales', color='#123456')
+
+    def _post(self, **campos):
+        datos = {
+            'nombre_objeto': 'Carnet',
+            'categoria': self.categoria.pk,
+            'descripcion_objeto': '',
+            'sede': 'minas',
+            'lugar_encontrado': 'Biblioteca',
+            'estado': 'disponible',
+            'tipo_documento': '',
+            'numero_documento': '',
+            'telefono': '',
+            'suministro_correo': '',
+            'correo': '',
+            'fecha_entrega': '',
+            'responsable_entrega': '',
+        }
+        datos.update(campos)
+        self.client.force_login(self.admin)
+        return self.client.post(reverse('panel_objeto_nuevo'), datos)
+
+    def test_se_guarda_la_fecha_antigua_ingresada(self):
+        self._post(fecha_registro='2025-04-12', tipo_documento='CE')
+        objeto = ObjetoReclamado.objects.get(nombre_objeto='Carnet')
+        self.assertEqual(objeto.fecha_registro.strftime('%Y-%m-%d'), '2025-04-12')
+        self.assertEqual(objeto.tipo_documento, 'CE')
+
+    def test_sin_fecha_usa_el_dia_actual(self):
+        from django.utils import timezone
+        self._post(fecha_registro='', tipo_documento='TI')
+        objeto = ObjetoReclamado.objects.get(nombre_objeto='Carnet')
+        self.assertEqual(objeto.fecha_registro, timezone.localdate())
+        self.assertEqual(objeto.tipo_documento, 'TI')
+
+    def test_formulario_incluye_calendario_y_tipo_de_documento(self):
+        self.client.force_login(self.admin)
+        respuesta = self.client.get(reverse('panel_objeto_nuevo'))
+        contenido = respuesta.content.decode('utf-8', 'ignore')
+        self.assertIn('type="date"', contenido)
+        for valor in ('value="CC"', 'value="TI"', 'value="CE"'):
+            self.assertIn(valor, contenido)
