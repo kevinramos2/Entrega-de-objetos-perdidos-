@@ -518,3 +518,31 @@ class RegistroObjetoTipoDocumentoYFechaTest(TestCase):
         self.assertIn('type="date"', contenido)
         for valor in ('value="CC"', 'value="TI"', 'value="CE"'):
             self.assertIn(valor, contenido)
+
+
+class InicioYNavegacionTest(TestCase):
+    def setUp(self):
+        self.estudiante = crear_usuario('camila', 'camila@unal.edu.co')
+        self.admin = crear_usuario('adminnav', 'adminnav@unal.edu.co', is_staff=True)
+
+    def test_inicio_visible_para_estudiante_logueado(self):
+        self.client.force_login(self.estudiante)
+        respuesta = self.client.get(reverse('inicio'))
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertContains(respuesta, 'Perdiste algo')
+
+    def test_inicio_visible_para_administrador(self):
+        self.client.force_login(self.admin)
+        respuesta = self.client.get(reverse('inicio'))
+        self.assertEqual(respuesta.status_code, 200)
+
+    def test_mis_solicitudes_visible_para_administrador(self):
+        self.client.force_login(self.admin)
+        respuesta = self.client.get(reverse('mis_solicitudes'))
+        self.assertEqual(respuesta.status_code, 200)
+
+    def test_hero_muestra_objetos_perdidos_cuando_esta_logueado(self):
+        self.client.force_login(self.estudiante)
+        contenido = self.client.get(reverse('inicio')).content.decode('utf-8', 'ignore')
+        self.assertIn('Ver objetos perdidos', contenido)
+        self.assertNotIn('Ingresar con tu correo institucional', contenido)

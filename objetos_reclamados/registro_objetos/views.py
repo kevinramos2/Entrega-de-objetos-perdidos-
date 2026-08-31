@@ -92,8 +92,6 @@ def serializar_json(datos):
 
 
 def inicio(request):
-    if request.user.is_authenticated:
-        return redirigir_por_rol(request.user)
     resumen = stats.resumen_global()
     recientes = (
         ObjetoReclamado.objects

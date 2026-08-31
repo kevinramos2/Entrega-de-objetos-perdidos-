@@ -32,7 +32,11 @@
           Busca lo que perdiste, solicita su reclamo y recupera lo que es tuyo.
         </p>
         <div class="hero-ctas">
-          <a href="{% url 'login' %}" class="btn btn-white btn-lg">Ingresar con tu correo institucional</a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'lista_objetos' %}" class="btn btn-white btn-lg">Ver objetos perdidos</a>
+          {% else %}
+            <a href="{% url 'login' %}" class="btn btn-white btn-lg">Ingresar con tu correo institucional</a>
+          {% endif %}
         </div>
         <div class="hero-stats">
           <div class="hero-stat"><b>{{ resumen.total }}</b><span>objetos reportados</span></div>
@@ -64,7 +68,7 @@
           </div>
           {% endfor %}
         </div>
-        <a href="{% url 'login' %}" class="btn btn-white btn-block demo-cta">Explorar todos los objetos</a>
+        <a href="{% if user.is_authenticated %}{% url 'lista_objetos' %}{% else %}{% url 'login' %}{% endif %}" class="btn btn-white btn-block demo-cta">Explorar todos los objetos</a>
       </div>
     </div>
   </div>
@@ -79,7 +83,7 @@
     </div>
     <div class="grid-categorias">
       {% for cat in categorias %}
-      <a href="{% url 'login' %}" class="cat-card">
+      <a href="{% if user.is_authenticated %}{% url 'lista_objetos' %}?categoria={{ cat.id }}{% else %}{% url 'login' %}{% endif %}" class="cat-card">
         <span class="cat-card-ico" style="background:{{ cat.color }};color:#fff">{{ cat|icono_cat }}</span>
         <span class="cat-card-info">
           <b>{{ cat.nombre }}</b>
@@ -159,7 +163,11 @@
       {% endfor %}
     </div>
     <div class="text-center mt-4">
-      <a href="{% url 'login' %}" class="btn btn-gradient btn-lg">Quiero recuperar lo que es mío</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'lista_objetos' %}" class="btn btn-gradient btn-lg">Ver objetos perdidos</a>
+      {% else %}
+        <a href="{% url 'login' %}" class="btn btn-gradient btn-lg">Quiero recuperar lo que es mío</a>
+      {% endif %}
     </div>
   </div>
 </section>
