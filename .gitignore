@@ -16,8 +16,9 @@ staticfiles/
 .env
 .env.*
 
-# Base de datos (mantener db.sqlite3 versionado solo para datos demo)
-# db.sqlite3
+# Base de datos (no se versiona: el snapshot viejo resucitaba registros borrados)
+db.sqlite3
+objetos_reclamados/db.sqlite3
 
 # Variables de entorno (el .env real nunca se sube)
 .env
