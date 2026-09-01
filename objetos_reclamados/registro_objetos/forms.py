@@ -158,6 +158,24 @@ class SolicitudForm(forms.Form):
         max_length=500,
         widget=forms.Textarea(attrs={'rows': 3, 'placeholder': 'Ej. Es azul, tiene un sticker de… y lo perdí el lunes en la cafetería.'}),
     )
+    tipo_documento = forms.ChoiceField(
+        label='Tipo de documento',
+        choices=PerfilUsuario.TiposDocumento.choices,
+        widget=forms.Select,
+        error_messages={'required': 'Selecciona tu tipo de documento.'},
+    )
+    numero_documento = forms.CharField(
+        label='Número de documento',
+        max_length=50,
+        widget=forms.TextInput(attrs={'placeholder': 'Ej. 1036645213', 'autocomplete': 'off'}),
+        error_messages={'required': 'Escribe tu número de documento. Sin este dato no podemos emitir el formato de entrega.'},
+    )
+    telefono = forms.CharField(
+        label='Teléfono de contacto',
+        max_length=20,
+        widget=forms.TextInput(attrs={'placeholder': 'Ej. 300 123 4567'}),
+        error_messages={'required': 'Escribe tu teléfono de contacto.'},
+    )
 
 
 class ApelacionForm(forms.Form):

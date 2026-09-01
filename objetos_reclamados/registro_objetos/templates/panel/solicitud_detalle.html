@@ -9,11 +9,19 @@
     <h1>Revisión de solicitud</h1>
   </div>
   <div class="flex" style="gap:10px">
-    {% if solicitud.estado == 'aprobada' %}
+    {% if solicitud.esta_entregada %}
     <a href="{% url 'panel_solicitud_formato' solicitud.pk %}" class="btn btn-primary">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Formato de entrega
+      Formato de entrega (PDF)
     </a>
+    {% elif solicitud.estado == 'aprobada' %}
+    <form method="post" action="{% url 'panel_solicitud_entregar' solicitud.pk %}" style="margin:0">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-success" data-confirm-tone="success" data-confirm-label="Marcar entregado" data-confirm="¿Confirmas que el objeto ya fue entregado a este estudiante? Esto registrará la fecha de entrega y habilitará el formato (PDF).">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;vertical-align:-2px;margin-right:6px"><polyline points="20 6 9 17 4 12"/></svg>
+        Marcar como entregado
+      </button>
+    </form>
     {% endif %}
     <a href="{% url 'panel_solicitudes' %}" class="btn btn-ghost">← Volver</a>
   </div>
@@ -126,8 +134,14 @@
 </div>
 {% else %}
 <div class="card mt-3" style="padding:24px">
-  <div class="flex">
+  <div class="flex" style="align-items:center;gap:16px;flex-wrap:wrap">
     <span class="badge badge-{{ solicitud.estado }}">{{ solicitud.get_estado_display }}</span>
+    {% if solicitud.fecha_entrega %}
+    <span class="badge badge-entregado" style="background:#06543c;color:#fff">
+      Entregado el {{ solicitud.fecha_entrega|date:'d/m/Y' }}
+      {% if solicitud.entregado_por %} · {{ solicitud.entregado_por.get_full_name|default:solicitud.entregado_por.username }}{% endif %}
+    </span>
+    {% endif %}
     <span class="muted">
       {% if solicitud.respondida_por %}
         Respondida por <b>{{ solicitud.respondida_por.get_full_name|default:solicitud.respondida_por.username }}</b>

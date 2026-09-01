@@ -23,6 +23,14 @@ def crear_usuario(username, email, is_staff=False):
     return u
 
 
+SOLICITUD_DATOS = {
+    'mensaje': 'Es mío, lo perdí en la cafetería.',
+    'tipo_documento': 'CC',
+    'numero_documento': '1036645213',
+    'telefono': '3001234567',
+}
+
+
 class FlujoSolicitudApelacionTest(TestCase):
     def setUp(self):
         self.estudiante = crear_usuario('santiago', 'santiago@unal.edu.co')
@@ -39,7 +47,7 @@ class FlujoSolicitudApelacionTest(TestCase):
         self.client.force_login(self.estudiante)
         return self.client.post(
             reverse('solicitar_reclamacion', args=[self.objeto.pk]),
-            {'mensaje': 'Es mío, lo perdí en la cafetería.'},
+            SOLICITUD_DATOS,
         )
 
     def _rechazar(self, comentario='No coincide con el reporte.'):
@@ -109,6 +117,16 @@ class FlujoSolicitudApelacionTest(TestCase):
         self.solicitud.refresh_from_db()
         self.assertEqual(self.solicitud.estado, SolicitudReclamacion.Estados.RECHAZADA)
 
+    def test_solicitud_requiere_documento_y_telefono(self):
+        self.client.force_login(self.estudiante)
+        self.client.post(
+            reverse('solicitar_reclamacion', args=[self.objeto.pk]),
+            {'mensaje': 'Es mío, sin datos.'},
+        )
+        self.assertFalse(
+            SolicitudReclamacion.objects.filter(usuario=self.estudiante).exists()
+        )
+
     def test_contador_de_respuesta_nueva_en_mis_reclamos(self):
         self._solicitar()
         self.solicitud = SolicitudReclamacion.objects.get(usuario=self.estudiante)
@@ -116,7 +134,7 @@ class FlujoSolicitudApelacionTest(TestCase):
         self.solicitud.refresh_from_db()
         self.assertFalse(self.solicitud.respuesta_vista)
 
-        # La pestaña "Mis reclamos" muestra la señal con la respuesta sin leer.
+        # La pestaña "Mis reclamos" (a través de la lista) muestra la señal.
         self.client.force_login(self.estudiante)
         respuesta = self.client.get(reverse('lista_objetos'))
         self.assertContains(respuesta, 'contador')
@@ -145,7 +163,7 @@ class InstruccionesEntregaTest(TestCase):
         self.client.force_login(estudiante)
         self.client.post(
             reverse('solicitar_reclamacion', args=[objeto.pk]),
-            {'mensaje': 'Es mío.'},
+            SOLICITUD_DATOS,
         )
         solicitud = SolicitudReclamacion.objects.get(usuario=estudiante)
         self.client.force_login(admin)
@@ -173,7 +191,7 @@ class InstruccionesEntregaTest(TestCase):
         self.client.force_login(estudiante)
         self.client.post(
             reverse('solicitar_reclamacion', args=[objeto.pk]),
-            {'mensaje': 'Es mío.'},
+            SOLICITUD_DATOS,
         )
         solicitud = SolicitudReclamacion.objects.get(usuario=estudiante)
         self.client.force_login(admin)
@@ -222,7 +240,7 @@ class InstruccionesEntregaTest(TestCase):
         self.client.force_login(estudiante)
         self.client.post(
             reverse('solicitar_reclamacion', args=[objeto.pk]),
-            {'mensaje': 'Es mía.'},
+            SOLICITUD_DATOS,
         )
         solicitud = SolicitudReclamacion.objects.get(usuario=estudiante)
         self.client.force_login(admin)
@@ -259,7 +277,7 @@ class InstruccionesEntregaTest(TestCase):
         self.client.force_login(estudiante)
         self.client.post(
             reverse('solicitar_reclamacion', args=[objeto.pk]),
-            {'mensaje': 'Es mía.'},
+            SOLICITUD_DATOS,
         )
         solicitud = SolicitudReclamacion.objects.get(usuario=estudiante)
         self.client.force_login(admin)
@@ -285,7 +303,7 @@ class NotificacionCorreoTest(TestCase):
         self.client.force_login(self.estudiante)
         self.client.post(
             reverse('solicitar_reclamacion', args=[self.objeto.pk]),
-            {'mensaje': 'Perdí una carpeta azul.'},
+            SOLICITUD_DATOS,
         )
         return SolicitudReclamacion.objects.get(usuario=self.estudiante)
 
@@ -375,7 +393,8 @@ class FiltroSedeTest(TestCase):
 
 
 class FormatoEntregaTest(TestCase):
-    """Formato de entrega en PDF para solicitudes aprobadas."""
+    """Formato de entrega en PDF, disponible solo para el administrador y
+    únicamente cuando el objeto ya fue marcado como entregado."""
 
     @classmethod
     def _png(cls, color=(0, 123, 84)):
@@ -383,29 +402,37 @@ class FormatoEntregaTest(TestCase):
         Image.new('RGBA', (40, 22), color).save(buf, 'PNG')
         return buf.getvalue()
 
-    def _solicitud_aprobada(self):
+    def _solicitud(self, estado=SolicitudReclamacion.Estados.APROBADA, entregada=False):
         estudiante = crear_usuario('pablo', 'pablo@unal.edu.co')
         admin = crear_usuario('adminform', 'adminform@unal.edu.co', is_staff=True)
+        from .models import PerfilUsuario
+        perfil, _ = PerfilUsuario.objects.get_or_create(usuario=estudiante)
+        perfil.tipo_documento = 'CC'
+        perfil.numero_documento = '1036645213'
+        perfil.telefono = '3001234567'
+        perfil.save()
         objeto = ObjetoReclamado.objects.create(
             nombre_objeto='Gafas', estado=ObjetoReclamado.Estados.DISPONIBLE,
             lugar_encontrado='Biblioteca', sede=ObjetoReclamado.Sedes.MINAS,
         )
         solicitud = SolicitudReclamacion.objects.create(
-            usuario=estudiante, objeto=objeto,
-            estado=SolicitudReclamacion.Estados.APROBADA,
-            respondida_por=admin,
+            usuario=estudiante, objeto=objeto, estado=estado,
+            respondida_por=admin, tipo_documento='CC',
+            numero_documento='1036645213', telefono='3001234567',
             datos_entrega='Reclama en Bienestar, edificio 2.',
         )
+        if entregada:
+            solicitud.marcar_entregado(admin)
         return solicitud, estudiante, admin
 
-    def test_admin_descarga_formato_aprobada(self):
-        solicitud, _estudiante, admin = self._solicitud_aprobada()
+    def test_admin_no_ve_formato_si_no_esta_entregado(self):
+        solicitud, _estudiante, admin = self._solicitud(entregada=False)
         self.client.force_login(admin)
         respuesta = self.client.get(reverse('panel_solicitud_formato', args=[solicitud.pk]))
-        self.assertEqual(respuesta.status_code, 200)
-        self.assertEqual(respuesta['Content-Type'], 'application/pdf')
-        self.assertIn('formato_entrega', respuesta['Content-Disposition'])
-        self.assertGreater(len(respuesta.content), 1000)
+        self.assertEqual(respuesta.status_code, 302)
+        self.assertRedirects(
+            respuesta, reverse('panel_solicitud_detalle', args=[solicitud.pk]),
+        )
 
     def test_admin_no_ve_formato_si_no_esta_aprobada(self):
         admin = crear_usuario('adminf2', 'adminf2@unal.edu.co', is_staff=True)
@@ -423,34 +450,46 @@ class FormatoEntregaTest(TestCase):
             respuesta, reverse('panel_solicitud_detalle', args=[solicitud.pk]),
         )
 
-    def test_estudiante_descarga_su_formato(self):
-        solicitud, estudiante, _admin = self._solicitud_aprobada()
-        self.client.force_login(estudiante)
-        respuesta = self.client.get(reverse('formato_solicitud', args=[solicitud.pk]))
-        self.assertEqual(respuesta.status_code, 200)
-        self.assertEqual(respuesta['Content-Type'], 'application/pdf')
-
-    def test_estudiante_no_ve_formato_ajeno_ni_pendiente(self):
-        solicitud, estudiante, _admin = self._solicitud_aprobada()
-        otro = crear_usuario('nadia', 'nadia@unal.edu.co')
-        self.client.force_login(otro)
-        respuesta = self.client.get(reverse('formato_solicitud', args=[solicitud.pk]))
-        self.assertEqual(respuesta.status_code, 404)
-
-        solicitud.estado = SolicitudReclamacion.Estados.PENDIENTE
-        solicitud.save(update_fields=['estado'])
-        self.client.force_login(estudiante)
-        respuesta = self.client.get(reverse('formato_solicitud', args=[solicitud.pk]))
-        self.assertEqual(respuesta.status_code, 404)
-
-    def test_pdf_con_firma_digital_del_encargado(self):
-        solicitud, _estudiante, admin = self._solicitud_aprobada()
-        admin.perfil.firma = SimpleUploadedFile('firma.png', self._png())
-        admin.perfil.save()
+    def test_admin_descarga_formato_entregado(self):
+        solicitud, _estudiante, admin = self._solicitud(entregada=True)
         self.client.force_login(admin)
         respuesta = self.client.get(reverse('panel_solicitud_formato', args=[solicitud.pk]))
         self.assertEqual(respuesta.status_code, 200)
+        self.assertEqual(respuesta['Content-Type'], 'application/pdf')
+        self.assertIn('formato_entrega', respuesta['Content-Disposition'])
         self.assertGreater(len(respuesta.content), 1000)
+
+    def test_estudiante_no_puede_descargar_el_formato(self):
+        """El PDF es exclusivo del administrador: el estudiante no lo ve."""
+        solicitud, estudiante, _admin = self._solicitud(entregada=True)
+        self.client.force_login(estudiante)
+        respuesta = self.client.get(reverse('panel_solicitud_formato', args=[solicitud.pk]))
+        self.assertEqual(respuesta.status_code, 302)  # redirigido a login (staff)
+        self.assertIn('/login/', respuesta.url)
+
+    def test_marcar_entregado_desde_el_panel(self):
+        solicitud, _estudiante, admin = self._solicitud()
+        self.client.force_login(admin)
+        respuesta = self.client.post(
+            reverse('panel_solicitud_entregar', args=[solicitud.pk]), {},
+        )
+        self.assertEqual(respuesta.status_code, 302)
+        solicitud.refresh_from_db()
+        self.assertEqual(solicitud.objeto.estado, ObjetoReclamado.Estados.ENTREGADO)
+        self.assertIsNotNone(solicitud.fecha_entrega)
+        self.assertEqual(solicitud.entregado_por, admin)
+
+    def test_no_se_puede_entregar_una_no_aprobada(self):
+        solicitud, _estudiante, admin = self._solicitud(
+            estado=SolicitudReclamacion.Estados.PENDIENTE, entregada=False,
+        )
+        self.client.force_login(admin)
+        respuesta = self.client.post(
+            reverse('panel_solicitud_entregar', args=[solicitud.pk]), {},
+        )
+        self.assertEqual(respuesta.status_code, 302)
+        solicitud.refresh_from_db()
+        self.assertEqual(solicitud.objeto.estado, ObjetoReclamado.Estados.DISPONIBLE)
 
     def test_subir_firma_desde_el_panel(self):
         admin = crear_usuario('adminfir', 'adminfir@unal.edu.co', is_staff=True)

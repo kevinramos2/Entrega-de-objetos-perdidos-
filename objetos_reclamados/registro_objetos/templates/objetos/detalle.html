@@ -44,13 +44,29 @@
         <form method="post" action="{% url 'solicitar_reclamacion' objeto.pk %}">
           {% csrf_token %}
           <div class="form-campo">
+            <label class="muted" style="font-size:.84rem;font-weight:600">¿Por qué crees que es tuyo?</label>
             {{ form.mensaje }}
           </div>
-          <button type="submit" class="btn btn-primary btn-lg">Solicitar reclamo</button>
+          <div class="form-campo" style="margin-top:12px">
+            <label class="muted" style="font-size:.84rem;font-weight:600">Tipo de documento *</label>
+            {{ form.tipo_documento }}
+            {% if form.tipo_documento.errors %}<div class="form-error">{{ form.tipo_documento.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="form-campo" style="margin-top:12px">
+            <label class="muted" style="font-size:.84rem;font-weight:600">Número de documento *</label>
+            {{ form.numero_documento }}
+            {% if form.numero_documento.errors %}<div class="form-error">{{ form.numero_documento.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="form-campo" style="margin-top:12px">
+            <label class="muted" style="font-size:.84rem;font-weight:600">Teléfono de contacto *</label>
+            {{ form.telefono }}
+            {% if form.telefono.errors %}<div class="form-error">{{ form.telefono.errors.0 }}</div>{% endif %}
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg" style="margin-top:16px">Solicitar reclamo</button>
         </form>
         <p class="muted" style="font-size:.84rem;margin:12px 0 0">
-          Un administrador revisará tu solicitud y se contactará contigo.
-          Solo pedimos datos cuando confirmas el objeto para proteger tu privacidad.
+          Estos datos son necesarios para emitir tu formato de entrega y se
+          guardan en tu perfil. Un administrador revisará tu solicitud.
         </p>
       {% endif %}
     </div>

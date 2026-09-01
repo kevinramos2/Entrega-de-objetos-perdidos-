@@ -54,6 +54,21 @@ def redirigir_por_rol(user):
     return redirect('lista_objetos')
 
 
+def _actualizar_perfil_desde_solicitud(usuario, datos):
+    """Sincroniza documento y teléfono del estudiante a su perfil."""
+    perfil, _ = PerfilUsuario.objects.get_or_create(usuario=usuario)
+    tipo = datos.get('tipo_documento')
+    numero = (datos.get('numero_documento') or '').strip()
+    telefono = (datos.get('telefono') or '').strip()
+    if tipo:
+        perfil.tipo_documento = tipo
+    if numero:
+        perfil.numero_documento = numero
+    if telefono:
+        perfil.telefono = telefono
+    perfil.save()
+
+
 def _clave_login(identificador):
     return f'login_fallos:{identificador.lower()}'
 
@@ -210,9 +225,18 @@ def detalle_objeto(request, pk):
         usuario=request.user, objeto=objeto,
         estado__in=_estados_activos_solicitud(),
     ).exists()
+    inicial = {}
+    perfil = getattr(request.user, 'perfil', None)
+    if perfil:
+        if perfil.tipo_documento:
+            inicial['tipo_documento'] = perfil.tipo_documento
+        if perfil.numero_documento:
+            inicial['numero_documento'] = perfil.numero_documento
+        if perfil.telefono:
+            inicial['telefono'] = perfil.telefono
     return render(request, 'objetos/detalle.html', {
         'objeto': objeto,
-        'form': SolicitudForm(),
+        'form': SolicitudForm(initial=inicial),
         'ya_solicito': ya_solicito,
     })
 
@@ -239,15 +263,19 @@ def solicitar_reclamacion(request, pk):
             usuario=request.user,
             objeto=objeto,
             mensaje=form.cleaned_data['mensaje'].strip(),
+            tipo_documento=form.cleaned_data['tipo_documento'],
+            numero_documento=form.cleaned_data['numero_documento'].strip(),
+            telefono=form.cleaned_data['telefono'].strip(),
         )
+        _actualizar_perfil_desde_solicitud(request.user, form.cleaned_data)
         messages.success(
             request,
             '¡Listo! Tu solicitud fue enviada. La coordinación revisará que sea '
             'tu objeto y te contactará por el medio que registraste.',
         )
-    else:
-        messages.error(request, 'No pudimos procesar la solicitud. Intenta de nuevo.')
-    return redirect('mis_solicitudes')
+        return redirect('mis_solicitudes')
+    messages.error(request, 'Completa los datos requeridos para enviar la solicitud.')
+    return redirect('detalle_objeto', pk=objeto.pk)
 
 
 @login_required
@@ -546,27 +574,43 @@ def _pdf_formato_entrega(solicitud):
 
 @staff_member_required
 def panel_solicitud_formato(request, pk):
-    """Descarga del formato de entrega (para el administrador)."""
+    """Descarga del formato de entrega (solo para el administrador y cuando el
+    objeto ya fue marcado como entregado)."""
     solicitud = get_object_or_404(SolicitudReclamacion, pk=pk)
-    if solicitud.estado != SolicitudReclamacion.Estados.APROBADA:
+    if not solicitud.esta_entregada:
         messages.warning(
             request,
-            'El formato de entrega está disponible cuando la solicitud esté '
-            'aprobada.',
+            'El formato de entrega está disponible cuando el objeto haya sido '
+            'marcado como entregado.',
         )
         return redirect('panel_solicitud_detalle', pk=solicitud.pk)
+    if not solicitud.formato_descargado:
+        solicitud.formato_descargado = True
+        solicitud.save(update_fields=['formato_descargado'])
     return _pdf_formato_entrega(solicitud)
 
 
-@login_required
-def formato_solicitud(request, pk):
-    """El estudiante puede descargar el PDF de su solicitud aprobada."""
+@staff_member_required
+@require_POST
+def panel_solicitud_entregar(request, pk):
+    """Marca la solicitud (y su objeto) como entregada y habilita el PDF."""
     solicitud = get_object_or_404(
-        SolicitudReclamacion, pk=pk, usuario=request.user,
+        SolicitudReclamacion.objects.select_related('objeto'),
+        pk=pk,
     )
     if solicitud.estado != SolicitudReclamacion.Estados.APROBADA:
-        raise Http404('El formato solo está disponible para solicitudes aprobadas.')
-    return _pdf_formato_entrega(solicitud)
+        messages.error(request, 'Solo puedes entregar una solicitud aprobada.')
+        return redirect('panel_solicitud_detalle', pk=solicitud.pk)
+    if solicitud.objeto.estado == ObjetoReclamado.Estados.ENTREGADO and solicitud.fecha_entrega:
+        messages.info(request, 'Este objeto ya fue marcado como entregado.')
+        return redirect('panel_solicitud_detalle', pk=solicitud.pk)
+    solicitud.marcar_entregado(request.user)
+    messages.success(
+        request,
+        f'Objeto entregado el {solicitud.fecha_entrega}. Ya puedes descargar '
+        f'el formato de entrega.',
+    )
+    return redirect('panel_solicitud_detalle', pk=solicitud.pk)
 
 
 @staff_member_required

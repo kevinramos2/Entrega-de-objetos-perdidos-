@@ -43,15 +43,16 @@ Cada día se pierden y se recogen decenas de objetos en las instalaciones (termo
 - Inicio de sesión con **Google (SSO)** restringido al dominio institucional.
 - Explorar objetos disponibles con **búsqueda por texto**, **filtros por categoría** y **filtro por sede** (Sede Minas / Sede El Volador).
 - Ver el detalle de cada objeto (foto, lugar, fecha, descripción, sede).
-- **Solicitar el reclamo** de un objeto y consultar el estado en *Mis solicitudes*.
+- **Solicitar el reclamo** de un objeto y consultar el estado en *Mis solicitudes*. Al solicitar se piden el **tipo y número de documento** y el **teléfono** (obligatorios para poder emitir el formato de entrega).
 - **Notificación por correo** cuando el administrador aprueba o rechaza una solicitud (con datos de recogida y respuesta).
-- **Descargar el formato de entrega (PDF)**, con tipo y número de documento del reclamante y espacio para la firma, desde *Mis solicitudes* y desde el detalle de la solicitud.
+- Decidir si el objeto es suyo y **apelar** un rechazo una sola vez.
 - Recuadros de **estadísticas** visibles para el estudiante ("+3 termos perdidos este mes", "28 % recuperados", etc.).
 
 ### Rol administrador
 - **Dashboard** con indicadores y gráficas (Chart.js) del estado de los objetos y solicitudes.
 - **CRUD completo de objetos** (categoría, foto, lugar, **sede**, estado, datos del reclamante).
-- **Aprobar o rechazar solicitudes** de reclamo; al aprobar se registra al reclamante automáticamente, se le **notifica por correo** y se le habilita la **descarga del formato de entrega (PDF)**.
+- **Aprobar o rechazar solicitudes** de reclamo; al aprobar se registra al reclamante automáticamente y se le **notifica por correo**.
+- **Marcar un objeto como Entregado** desde la solicitud aprobada; solo entonces se habilita la descarga del **formato de entrega en PDF** (exclusivo del administrador), con la fecha de entrega del día.
 - **Gestión de cuentas** (crear/editar/activar/desactivar, asignar rol).
 - **Gestión de categorías** (crear, editar y eliminar desde el panel).
 - **Exportar datos en CSV** (incluye la sede) para análisis en Power BI / Excel.
@@ -86,10 +87,10 @@ flowchart LR
 1. **Registro y login**: solo correos institucionales (local o Google).
 2. **Publicación**: el administrador da de alta el objeto encontrado (con **lugar, fecha del hallazgo y tipo de documento**).
 3. **Búsqueda**: el estudiante usa el buscador y los filtros de categoría.
-4. **Solicitud**: el estudiante envía una solicitud de reclamo con su justificación.
-5. **Revisión**: el administrador aprueba o rechaza; al aprobar se capturan los datos del reclamante desde su perfil.
-6. **Seguimiento**: el estado del objeto cambia (Disponible → Reclamado → Entregado) y las estadísticas se actualizan.
-7. **Entrega**: el estudiante descarga el **formato de entrega en PDF** (con firma) para formalizar la devolución en la oficina.
+4. **Solicitud**: el estudiante envía una solicitud de reclamo con su justificación y sus **datos de identificación y contacto** (tipo/número de documento + teléfono, obligatorios).
+5. **Revisión**: el administrador aprueba o rechaza; al aprobar se registra al reclamante automáticamente.
+6. **Seguimiento**: el estado del objeto cambia a *Reclamado* y las estadísticas se actualizan.
+7. **Entrega**: al hacer efectiva la entrega, el administrador la **marca como Entregado** desde la solicitud y descarga el **formato de entrega en PDF** (exclusivo del admin) con la fecha del día.
 
 ---
 

@@ -164,6 +164,14 @@ class SolicitudReclamacion(models.Model):
         verbose_name='Objeto',
     )
     mensaje = models.TextField('¿Por qué crees que es tuyo? (opcional)', blank=True)
+    # Datos del reclamante capturados al momento de la solicitud (obligatorios),
+    # para poder emitir el formato de entrega aunque luego cambie su perfil.
+    tipo_documento = models.CharField(
+        'Tipo de documento', max_length=10,
+        choices=PerfilUsuario.TiposDocumento.choices, blank=True,
+    )
+    numero_documento = models.CharField('Número de documento', max_length=50, blank=True)
+    telefono = models.CharField('Teléfono', max_length=20, blank=True)
     estado = models.CharField(
         'Estado', max_length=20, choices=Estados.choices, default=Estados.PENDIENTE,
         db_index=True,
@@ -192,6 +200,13 @@ class SolicitudReclamacion(models.Model):
                   'muestra al estudiante al aprobar; si está vacía se usa el '
                   'texto configurado para la sede.',
     )
+    # Entrega efectiva del objeto (cuando pasa de Reclamado a Entregado)
+    fecha_entrega = models.DateField('Fecha de entrega', null=True, blank=True)
+    entregado_por = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='entregas_realizadas', verbose_name='Entregado por',
+    )
+    formato_descargado = models.BooleanField('¿Formato descargado?', default=False)
 
     class Meta:
         verbose_name = 'Solicitud de reclamación'
@@ -255,6 +270,24 @@ class SolicitudReclamacion(models.Model):
         self.comentario_admin = (comentario or '').strip()
         self.respuesta_vista = False
         self.save()
+
+    def marcar_entregado(self, admin, fecha=None):
+        """Registra la entrega efectiva del objeto y lo pasa a estado Entregado."""
+        if self.estado != self.Estados.APROBADA:
+            raise ValueError('Solo puedes marcar como entregada una solicitud aprobada.')
+        from datetime import date
+        self.fecha_entrega = fecha or date.today()
+        self.entregado_por = admin
+        self.save()
+        objeto = self.objeto
+        objeto.estado = ObjetoReclamado.Estados.ENTREGADO
+        objeto.fecha_entrega = self.fecha_entrega.strftime('%Y-%m-%d')
+        objeto.responsable_entrega = admin.get_full_name() or admin.username
+        objeto.save()
+
+    @property
+    def esta_entregada(self):
+        return self.estado == self.Estados.APROBADA and self.fecha_entrega is not None
 
 
 class InstruccionesEntrega(models.Model):
