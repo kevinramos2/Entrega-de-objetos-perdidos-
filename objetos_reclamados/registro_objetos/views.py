@@ -468,10 +468,55 @@ def panel_objeto_estado(request, pk):
             objeto.fecha_entrega = timezone.now().strftime('%Y-%m-%d')
         if not objeto.responsable_entrega:
             objeto.responsable_entrega = request.user.get_full_name() or request.user.username
+        # Si hay una solicitud aprobada para este objeto, se marca como entregada
+        # para que el formato quede disponible a partir de la solicitud también.
+        solicitud_aprobada = SolicitudReclamacion.objects.filter(
+            objeto=objeto,
+            estado=SolicitudReclamacion.Estados.APROBADA,
+        ).order_by('pk').first()
+        if solicitud_aprobada:
+            solicitud_aprobada.marcar_entregado(request.user, fecha=objeto.fecha_entrega)
     objeto.estado = nuevo
     objeto.save()
-    messages.success(request, f'El objeto pasó a estado «{objeto.get_estado_display()}».')
+    mensaje = f'El objeto pasó a estado «{objeto.get_estado_display()}».'
+    if nuevo == ObjetoReclamado.Estados.ENTREGADO:
+        mensaje += ' Ya puedes descargar el formato de entrega (PDF) desde este listado.'
+    messages.success(request, mensaje)
     return redirect('panel_objetos')
+
+
+@staff_member_required
+def panel_objeto_formato(request, pk):
+    """Genera y descarga el PDF de entrega de un objeto ya entregado."""
+    from .formato_entrega import generar_formato_entrega_objeto
+    from django.http import HttpResponse
+
+    objeto = get_object_or_404(ObjetoReclamado, pk=pk)
+    if objeto.estado != ObjetoReclamado.Estados.ENTREGADO:
+        messages.error(request, 'El objeto debe estar en estado «Entregado» para generar el formato.')
+        return redirect('panel_objetos')
+
+    # Prioriza la solicitud aprobada (datos del estudiante) si existe.
+    solicitud_aprobada = SolicitudReclamacion.objects.filter(
+        objeto=objeto,
+        estado=SolicitudReclamacion.Estados.APROBADA,
+        fecha_entrega__isnull=False,
+    ).order_by('pk').first()
+    if solicitud_aprobada:
+        solicitud_aprobada.formato_descargado = True
+        solicitud_aprobada.save(update_fields=['formato_descargado'])
+        pdf_bytes = generar_formato_entrega(solicitud_aprobada)
+    else:
+        pdf_bytes = generar_formato_entrega_objeto(
+            objeto,
+            nombre_encargado=objeto.responsable_entrega or
+            (request.user.get_full_name() or request.user.username),
+        )
+
+    nombre = f'formato_entrega_{objeto.pk}.pdf'
+    respuesta = HttpResponse(pdf_bytes, content_type='application/pdf')
+    respuesta['Content-Disposition'] = f'attachment; filename="{nombre}"'
+    return respuesta
 
 
 @staff_member_required

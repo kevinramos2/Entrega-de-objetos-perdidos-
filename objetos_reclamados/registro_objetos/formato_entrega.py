@@ -111,8 +111,11 @@ def _bloque_logo(static_root):
 
 def _definir_fecha(fecha):
     """Descompone la fecha de entrega en día, mes (texto) y año."""
+    from datetime import datetime
     if not fecha:
         fecha = date.today()
+    elif isinstance(fecha, str):
+        fecha = datetime.strptime(fecha, '%Y-%m-%d').date()
     elif hasattr(fecha, 'date'):
         fecha = fecha.date()
     return fecha.day, MES_ABREV[fecha.month], fecha.year
@@ -127,25 +130,64 @@ def generar_formato_entrega(solicitud):
     if static_root and not os.path.exists(static_root):
         static_root = getattr(settings, 'BASE_DIR', '') or ''
 
-    objeto = solicitud.objeto
     usuario = solicitud.usuario
     perfil = getattr(usuario, 'perfil', None)
 
-    nombre_reclamante = usuario.get_full_name() or usuario.username
-    tipo_doc = solicitud.tipo_documento or (perfil.get_tipo_documento_display() if perfil else '')
-    num_doc = solicitud.numero_documento or (perfil.numero_documento if perfil else '')
-    telefono = solicitud.telefono or (perfil.telefono if perfil else '')
-    correo = usuario.email or ''
+    datos = {
+        'nombre_reclamante': usuario.get_full_name() or usuario.username,
+        'tipo_doc': solicitud.tipo_documento or (perfil.get_tipo_documento_display() if perfil else ''),
+        'num_doc': solicitud.numero_documento or (perfil.numero_documento if perfil else ''),
+        'telefono': solicitud.telefono or (perfil.telefono if perfil else ''),
+        'correo': usuario.email or '',
+        'nombre_objeto': solicitud.objeto.nombre_objeto or 'objeto sin nombre',
+        'descripcion': solicitud.objeto.descripcion_objeto or '',
+        'nombre_encargado': (
+            (solicitud.entregado_por.get_full_name() or solicitud.entregado_por.username)
+            if solicitud.entregado_por else ''
+        ),
+        'fecha_entrega': solicitud.fecha_entrega,
+    }
+    return _render_formato(datos, static_root)
 
-    nombre_objeto = objeto.nombre_objeto or 'objeto sin nombre'
-    descripcion = objeto.descripcion_objeto or ''
 
-    nombre_encargado = (
-        (solicitud.entregado_por.get_full_name() or solicitud.entregado_por.username)
-        if solicitud.entregado_por else ''
-    )
+def generar_formato_entrega_objeto(objeto, nombre_encargado=''):
+    """Compone el PDF de entrega directamente desde los datos del objeto.
 
-    dia, mes, anio = _definir_fecha(solicitud.fecha_entrega)
+    Pensado para objetos marcados como entregados desde la gestión de objetos
+    y que no tienen una solicitud aprobada asociada (datos cargados en el
+    propio objeto)."""
+    from django.conf import settings
+    import os
+
+    static_root = getattr(settings, 'STATIC_ROOT', '') or ''
+    if static_root and not os.path.exists(static_root):
+        static_root = getattr(settings, 'BASE_DIR', '') or ''
+
+    datos = {
+        'nombre_reclamante': objeto.nombre_persona or '',
+        'tipo_doc': objeto.get_tipo_documento_display() if objeto.tipo_documento else '',
+        'num_doc': objeto.numero_documento or '',
+        'telefono': objeto.telefono or '',
+        'correo': objeto.correo or '',
+        'nombre_objeto': objeto.nombre_objeto or 'objeto sin nombre',
+        'descripcion': objeto.descripcion_objeto or '',
+        'nombre_encargado': nombre_encargado or objeto.responsable_entrega or '',
+        'fecha_entrega': objeto.fecha_entrega,
+    }
+    return _render_formato(datos, static_root)
+
+
+def _render_formato(datos, static_root):
+    nombre_reclamante = datos['nombre_reclamante']
+    tipo_doc = datos['tipo_doc']
+    num_doc = datos['num_doc']
+    telefono = datos['telefono']
+    correo = datos['correo']
+    nombre_objeto = datos['nombre_objeto']
+    descripcion = datos['descripcion']
+    nombre_encargado = datos['nombre_encargado']
+
+    dia, mes, anio = _definir_fecha(datos['fecha_entrega'])
 
     flujo = []
 

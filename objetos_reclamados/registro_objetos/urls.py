@@ -26,6 +26,7 @@ urlpatterns = [
     path('panel/objetos/<int:pk>/editar/', views.panel_objeto_editar, name='panel_objeto_editar'),
     path('panel/objetos/<int:pk>/eliminar/', views.panel_objeto_eliminar, name='panel_objeto_eliminar'),
     path('panel/objetos/<int:pk>/estado/', views.panel_objeto_estado, name='panel_objeto_estado'),
+    path('panel/objetos/<int:pk>/formato/', views.panel_objeto_formato, name='panel_objeto_formato'),
     path('panel/solicitudes/', views.panel_solicitudes, name='panel_solicitudes'),
     path('panel/solicitudes/<int:pk>/', views.panel_solicitud_detalle, name='panel_solicitud_detalle'),
     path('panel/solicitudes/<int:pk>/decidir/', views.panel_solicitud_decision, name='panel_solicitud_decidir'),

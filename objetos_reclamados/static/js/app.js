@@ -305,4 +305,47 @@ document.addEventListener('DOMContentLoaded', function () {
     actualizarOpcionSede();
     pintarInstruccionSede();
   }
+
+  // Subida de foto con vista previa (formulario de objeto)
+  var inputFoto = document.querySelector('.archivo-subida-input');
+  if (inputFoto) {
+    var area = inputFoto.closest('.archivo-subida-area');
+    var preview = area.querySelector('.archivo-subida-preview');
+    var vacio = area.querySelector('.archivo-subida-vacio');
+    // El clic en el área abre el selector
+    if (area) {
+      area.addEventListener('click', function () { inputFoto.click(); });
+    }
+    inputFoto.addEventListener('change', function () {
+      if (inputFoto.files && inputFoto.files[0]) {
+        var lector = new FileReader();
+        lector.onload = function (ev) {
+          preview.src = ev.target.result;
+          preview.hidden = false;
+          if (vacio) vacio.hidden = true;
+        };
+        lector.readAsDataURL(inputFoto.files[0]);
+      }
+    });
+    // Arrastrar y soltar
+    ['dragenter', 'dragover'].forEach(function (evt) {
+      area.addEventListener(evt, function (e) {
+        e.preventDefault();
+        area.classList.add('dragging');
+      });
+    });
+    ['dragleave', 'drop'].forEach(function (evt) {
+      area.addEventListener(evt, function (e) {
+        e.preventDefault();
+        area.classList.remove('dragging');
+      });
+    });
+    area.addEventListener('drop', function (e) {
+      var archivos = e.dataTransfer && e.dataTransfer.files;
+      if (archivos && archivos.length) {
+        inputFoto.files = archivos;
+        inputFoto.dispatchEvent(new Event('change'));
+      }
+    });
+  }
 });
