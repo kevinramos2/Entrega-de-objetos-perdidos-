@@ -76,7 +76,7 @@
       <div class="campo-fecha">
         <svg class="campo-fecha-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         {{ form.fecha_registro }}
-        <span class="campo-fecha-texto" data-fecha-texto data-valor="{{ form.fecha_registro.value|default:'' }}"></span>
+        <span class="campo-fecha-texto" data-fecha-texto data-valor="{{ form.fecha_registro.value|date:'d/m/Y' }}">{{ form.fecha_registro.value|date:'d/m/Y' }}</span>
       </div>
       <div class="help">Fecha en que fue encontrado el objeto.</div>
       {% if form.fecha_registro.errors %}<div class="form-error">{{ form.fecha_registro.errors }}</div>{% endif %}
@@ -127,4 +127,150 @@
     <a href="{% url 'panel_objetos' %}" class="btn btn-ghost">Cancelar</a>
   </div>
 </form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  function ceros(n) { return n < 10 ? '0' + n : '' + n; }
+  function formatearFecha(iso) {
+    if (!iso || iso.indexOf('-') < 0) return '';
+    var p = iso.split('-');
+    if (p.length !== 3) return '';
+    return p[2] + '/' + p[1] + '/' + p[0];
+  }
+
+  var campo = document.querySelector('.campo-fecha');
+  if (!campo) return;
+  var input = campo.querySelector('input[name="fecha_registro"]');
+  var texto = campo.querySelector('[data-fecha-texto]');
+  var pop = document.createElement('div');
+  pop.className = 'datepicker-pop';
+  pop.hidden = true;
+  campo.appendChild(pop);
+
+  input.readOnly = true;
+  input.style.color = 'transparent';
+
+  var MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
+               'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  var DIAS_SEMANA = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá', 'Do'];
+
+  function descomponer(iso) {
+    if (iso && iso.indexOf('-') > 0) {
+      var p = iso.split('-').map(Number);
+      if (p.length === 3 && !isNaN(p[0]) && !isNaN(p[1]) && !isNaN(p[2])) {
+        return new Date(p[0], p[1] - 1, p[2]);
+      }
+    }
+    return new Date();
+  }
+
+  // Vista actual del calendario (se persiste al navegar entre meses)
+  var vista = descomponer(input.value);
+
+  function pintarTexto() {
+    if (texto) texto.textContent = formatearFecha(input.value);
+  }
+
+  function renderCalendario() {
+    var anio = vista.getFullYear();
+    var mes = vista.getMonth();
+    var hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+    var seleccionado = input.value;
+
+    var cabecera = document.createElement('div');
+    cabecera.className = 'datepicker-cabecera';
+
+    function botonNav(dir) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'datepicker-nav';
+      b.innerHTML = dir > 0
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
+      b.addEventListener('click', function (e) {
+        e.stopPropagation();
+        vista.setMonth(vista.getMonth() + dir);
+        renderCalendario();
+      });
+      return b;
+    }
+
+    var titulo = document.createElement('span');
+    titulo.className = 'datepicker-titulo';
+    titulo.textContent = MESES[mes] + ' ' + anio;
+    cabecera.appendChild(botonNav(-1));
+    cabecera.appendChild(titulo);
+    cabecera.appendChild(botonNav(1));
+
+    var semana = document.createElement('div');
+    semana.className = 'datepicker-dias-semana';
+    DIAS_SEMANA.forEach(function (d) {
+      var s = document.createElement('span'); s.textContent = d; semana.appendChild(s);
+    });
+
+    var primeroSemana = new Date(anio, mes, 1).getDay();
+    var offset = (primeroSemana + 6) % 7;
+    var diasEnMes = new Date(anio, mes + 1, 0).getDate();
+    var rejilla = document.createElement('div');
+    rejilla.className = 'datepicker-rejilla';
+
+    for (var i = 0; i < offset; i++) { rejilla.appendChild(document.createElement('span')); }
+
+    for (var d = 1; d <= diasEnMes; d++) {
+      (function (dia) {
+        var boton = document.createElement('button');
+        boton.type = 'button';
+        boton.className = 'datepicker-dia';
+        boton.textContent = dia;
+        var fechaBot = new Date(anio, mes, dia);
+        if (fechaBot.getTime() === hoy.getTime()) boton.classList.add('hoy');
+        var iso = anio + '-' + ceros(mes + 1) + '-' + ceros(dia);
+        if (iso === seleccionado) { boton.classList.add('seleccionado'); boton.classList.remove('hoy'); }
+        boton.addEventListener('click', function (e) {
+          e.stopPropagation();
+          input.value = iso;
+          vista = descomponer(iso);
+          pintarTexto();
+          pop.hidden = true;
+        });
+        rejilla.appendChild(boton);
+      })(d);
+    }
+
+    var pie = document.createElement('div');
+    pie.className = 'datepicker-pie';
+    var hoyBtn = document.createElement('button');
+    hoyBtn.type = 'button'; hoyBtn.textContent = 'Hoy'; hoyBtn.className = 'datepicker-hoy-btn';
+    hoyBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var h = new Date();
+      vista = new Date();
+      input.value = h.getFullYear() + '-' + ceros(h.getMonth() + 1) + '-' + ceros(h.getDate());
+      pintarTexto(); pop.hidden = true;
+    });
+    var limpiarBtn = document.createElement('button');
+    limpiarBtn.type = 'button'; limpiarBtn.textContent = 'Limpiar'; limpiarBtn.className = 'datepicker-limpiar-btn';
+    limpiarBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      input.value = ''; pintarTexto(); pop.hidden = true;
+    });
+    pie.appendChild(hoyBtn); pie.appendChild(limpiarBtn);
+
+    pop.textContent = '';
+    pop.appendChild(cabecera); pop.appendChild(semana); pop.appendChild(rejilla); pop.appendChild(pie);
+  }
+
+  campo.addEventListener('click', function (e) {
+    if (e.target.closest('.datepicker-pop')) return;
+    if (pop.hidden) { renderCalendario(); pop.hidden = false; }
+    else { pop.hidden = true; }
+  });
+  document.addEventListener('click', function (e) {
+    if (!campo.contains(e.target)) pop.hidden = true;
+  });
+  pintarTexto();
+})();
+</script>
 {% endblock %}
