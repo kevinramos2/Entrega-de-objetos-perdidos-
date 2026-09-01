@@ -75,8 +75,9 @@
   <div class="form-campo" style="grid-column:1/-1">
     <label for="{{ form.fecha_registro.id_for_label }}">{{ form.fecha_registro.label }}</label>
     <div class="campo-fecha">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <svg class="campo-fecha-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       {{ form.fecha_registro }}
+      <span class="campo-fecha-texto" data-fecha-texto data-valor="{{ form.fecha_registro.value|default:'' }}"></span>
     </div>
     <div class="help">Fecha en que fue encontrado el objeto. Para registros antiguos escribe el día real (ej. 2025-04-12); se mostrará esa fecha en la lista.</div>
     {% if form.fecha_registro.errors %}<div class="form-error">{{ form.fecha_registro.errors }}</div>{% endif %}

@@ -348,4 +348,191 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
+
+  // Picker de fecha propio (reemplaza el widget nativo de type=date)
+  var MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
+               'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  var DIAS_SEMANA = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá', 'Do'];
+
+  function formatearFecha(iso) {
+    // 'YYYY-MM-DD' -> 'dd/mm/aaaa'
+    if (!iso || typeof iso !== 'string') return '';
+    var partes = iso.split('-');
+    if (partes.length !== 3) return '';
+    return partes[2] + '/' + partes[1] + '/' + partes[0];
+  }
+
+  function crearDatePicker(campo) {
+    var input = campo.querySelector('input[type=date]');
+    var texto = campo.querySelector('[data-fecha-texto]');
+    var pop = document.createElement('div');
+    pop.className = 'datepicker-pop';
+    pop.hidden = true;
+    campo.appendChild(pop);
+
+    // El calendario propio guía la selección; se evita teclear a ciegas.
+    input.readOnly = true;
+
+    // Fecha visible para el calendario
+    var actual = (function () {
+      var val = input.value;
+      if (val) {
+        var p = val.split('-').map(Number);
+        if (p.length === 3 && !isNaN(p[0]) && !isNaN(p[1]) && !isNaN(p[2])) {
+          return new Date(p[0], p[1] - 1, p[2]);
+        }
+      }
+      return new Date();
+    })();
+
+    // Texto inicial
+    if (texto) texto.textContent = formatearFecha(input.value);
+
+    function pintarTexto() {
+      if (texto) texto.textContent = formatearFecha(input.value);
+    }
+
+    function renderCalendario() {
+      var anio = actual.getFullYear();
+      var mes = actual.getMonth();
+      var hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      var seleccionado = input.value;
+
+      var cabecera = document.createElement('div');
+      cabecera.className = 'datepicker-cabecera';
+
+      function botonNav(direccion) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'datepicker-nav';
+        b.innerHTML = direccion > 0
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>'
+          : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
+        b.addEventListener('click', function () {
+          actual.setMonth(actual.getMonth() + direccion);
+          renderCalendario();
+        });
+        return b;
+      }
+
+      var titulo = document.createElement('span');
+      titulo.className = 'datepicker-titulo';
+      titulo.textContent = MESES[mes] + ' ' + anio;
+
+      cabecera.appendChild(botonNav(-1));
+      cabecera.appendChild(titulo);
+      cabecera.appendChild(botonNav(1));
+
+      var semana = document.createElement('div');
+      semana.className = 'datepicker-dias-semana';
+      DIAS_SEMANA.forEach(function (d) {
+        var s = document.createElement('span');
+        s.textContent = d;
+        semana.appendChild(s);
+      });
+
+      // Rejilla de días
+      var primeroSemana = new Date(anio, mes, 1).getDay(); // 0=domingo
+      var offset = (primeroSemana + 6) % 7; // convertir a lunes=0
+      var diasEnMes = new Date(anio, mes + 1, 0).getDate();
+      var rejilla = document.createElement('div');
+      rejilla.className = 'datepicker-rejilla';
+
+      for (var i = 0; i < offset; i++) {
+        var celdaVacia = document.createElement('span');
+        rejilla.appendChild(celdaVacia);
+      }
+
+      for (var d = 1; d <= diasEnMes; d++) {
+        (function (dia) {
+          var boton = document.createElement('button');
+          boton.type = 'button';
+          boton.className = 'datepicker-dia';
+          boton.textContent = dia;
+
+          var fechaActual = new Date(anio, mes, dia);
+
+          if (fechaActual.getTime() === hoy.getTime()) boton.classList.add('hoy');
+
+          var iso = anio + '-' + String(mes + 1).padStart(2, '0') + '-' + String(dia).padStart(2, '0');
+          if (iso === seleccionado) {
+            boton.classList.add('seleccionado');
+            // No marcar "hoy" también si hoy está seleccionado (favorece seleccionado)
+            boton.classList.remove('hoy');
+          }
+
+          boton.addEventListener('click', function () {
+            input.value = iso;
+            pintarTexto();
+            pop.hidden = true;
+          });
+          rejilla.appendChild(boton);
+        })(d);
+      }
+
+      // Pie: Hoy / Limpiar
+      var pie = document.createElement('div');
+      pie.className = 'datepicker-pie';
+
+      var hoyBtn = document.createElement('button');
+      hoyBtn.type = 'button';
+      hoyBtn.className = 'datepicker-hoy-btn';
+      hoyBtn.textContent = 'Hoy';
+      hoyBtn.addEventListener('click', function () {
+        var h = new Date();
+        input.value = h.getFullYear() + '-' + String(h.getMonth() + 1).padStart(2, '0') + '-' + String(h.getDate()).padStart(2, '0');
+        actual = new Date();
+        pintarTexto();
+        pop.hidden = true;
+      });
+
+      var limpiarBtn = document.createElement('button');
+      limpiarBtn.type = 'button';
+      limpiarBtn.className = 'datepicker-limpiar-btn';
+      limpiarBtn.textContent = 'Limpiar';
+      limpiarBtn.addEventListener('click', function () {
+        input.value = '';
+        pintarTexto();
+        pop.hidden = true;
+      });
+
+      pie.appendChild(hoyBtn);
+      pie.appendChild(limpiarBtn);
+
+      pop.textContent = '';
+      pop.appendChild(cabecera);
+      pop.appendChild(semana);
+      pop.appendChild(rejilla);
+      pop.appendChild(pie);
+    }
+
+    // Clic en cualquier parte del campo abre el calendario
+    campo.addEventListener('click', function (e) {
+      if (e.target.closest('.datepicker-pop')) return;
+      if (pop.hidden) {
+        actual = (function () {
+          var val = input.value;
+          if (val) {
+            var p = val.split('-').map(Number);
+            if (p.length === 3 && !isNaN(p[0]) && !isNaN(p[1]) && !isNaN(p[2])) {
+              return new Date(p[0], p[1] - 1, p[2]);
+            }
+          }
+          return new Date();
+        })();
+        renderCalendario();
+        pop.hidden = false;
+      } else {
+        pop.hidden = true;
+      }
+    });
+
+    // Cerrar al hacer clic fuera
+    document.addEventListener('click', function (e) {
+      if (!campo.contains(e.target)) pop.hidden = true;
+    });
+  }
+
+  document.querySelectorAll('.campo-fecha').forEach(crearDatePicker);
 });

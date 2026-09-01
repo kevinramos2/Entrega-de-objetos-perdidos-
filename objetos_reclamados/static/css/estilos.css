@@ -369,19 +369,67 @@ img { max-width: 100%; }
 }
 .archivo-subida-hint { font-size: .8rem; }
 
-/* ---------- Campo de fecha ---------- */
+/* ---------- Campo de fecha + picker propio ---------- */
 .campo-fecha { position: relative; }
-.campo-fecha svg {
+.campo-fecha .campo-fecha-icono {
   position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
   width: 17px; height: 17px; color: var(--muted); pointer-events: none;
 }
-.campo-fecha input[type=date] { padding-left: 40px; }
-.campo-fecha input[type=date]::-webkit-calendar-picker-indicator {
-  cursor: pointer; opacity: .55; transition: opacity .15s; padding: 4px;
+.campo-fecha input[type=date] {
+  padding-left: 40px; cursor: pointer;
+  /* Fuerza el aspecto de campo de texto y evita el popup nativo */
+  appearance: none; -webkit-appearance: none; -moz-appearance: textfield;
+  color: transparent;
 }
-.campo-fecha input[type=date]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
-.campo-fecha input[type=date]::-webkit-datetime-edit { color: var(--ink); }
-.campo-fecha input[type=date]:invalid::-webkit-datetime-edit { color: transparent; }
+.campo-fecha input[type=date]::-webkit-calendar-picker-indicator { display: none; }
+.campo-fecha input[type=date]::-webkit-datetime-edit { display: none; }
+.campo-fecha input[type=date]:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-50); }
+
+/* Fecha mostrada como texto legible (dd/mm/aaaa) */
+.campo-fecha .campo-fecha-texto {
+  position: absolute; left: 40px; top: 50%; transform: translateY(-50%);
+  pointer-events: none; color: var(--ink); white-space: nowrap;
+}
+
+/* Dropdown del calendario */
+.datepicker-pop {
+  position: absolute; z-index: 60; margin-top: 6px;
+  width: 280px; background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 14px;
+  font-family: inherit;
+}
+.datepicker-pop[hidden] { display: none; }
+.datepicker-cabecera { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.datepicker-titulo { font-weight: 700; color: var(--ink); font-size: .95rem; }
+.datepicker-nav {
+  background: none; border: 0; cursor: pointer; color: var(--muted);
+  width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+  transition: background .15s, color .15s;
+}
+.datepicker-nav:hover { background: var(--primary-50); color: var(--primary); }
+.datepicker-nav svg { width: 16px; height: 16px; }
+.datepicker-dias-semana, .datepicker-rejilla {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
+}
+.datepicker-dias-semana span {
+  text-align: center; font-size: .72rem; font-weight: 700; color: var(--muted);
+  padding-bottom: 6px; text-transform: uppercase;
+}
+.datepicker-dia {
+  aspect-ratio: 1/1; border: 0; background: none; cursor: pointer; border-radius: 8px;
+  font: inherit; font-size: .85rem; color: var(--ink-soft); transition: background .12s, color .12s;
+}
+.datepicker-dia:hover:not(.fuera):not(.hoy):not(.seleccionado) { background: var(--primary-50); color: var(--primary); }
+.datepicker-dia.fuera { color: var(--line); cursor: default; }
+.datepicker-dia.hoy { color: var(--primary); font-weight: 700; box-shadow: inset 0 0 0 1px var(--primary); }
+.datepicker-dia.seleccionado { background: var(--primary); color: #fff; font-weight: 700; }
+.datepicker-pie { display: flex; justify-content: space-between; margin-top: 12px; }
+.datepicker-hoy-btn, .datepicker-limpiar-btn {
+  background: none; border: 0; cursor: pointer; font: inherit; font-size: .8rem; font-weight: 600;
+  color: var(--primary); padding: 6px 8px; border-radius: 8px; transition: background .12s;
+}
+.datepicker-hoy-btn:hover, .datepicker-limpiar-btn:hover { background: var(--primary-50); }
+
 
 
 /* ---------- Autenticacion ---------- */
