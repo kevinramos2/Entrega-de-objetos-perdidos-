@@ -375,12 +375,12 @@ img { max-width: 100%; }
   position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
   width: 17px; height: 17px; color: var(--muted); pointer-events: none;
 }
-.campo-fecha > input {
+.campo-fecha > input.campo-fecha-input {
   padding-left: 40px; cursor: pointer; color: transparent;
   -webkit-text-fill-color: transparent;
   caret-color: transparent; user-select: none; -webkit-user-select: none;
 }
-.campo-fecha > input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-50); }
+.campo-fecha > input.campo-fecha-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-50); }
 
 /* Fecha mostrada como texto legible (dd/mm/aaaa) */
 .campo-fecha .campo-fecha-texto {
