@@ -426,6 +426,31 @@ img { max-width: 100%; }
 }
 .datepicker-hoy-btn:hover, .datepicker-limpiar-btn:hover { background: var(--primary-50); }
 
+/* ---------- Selector visual de categoría ---------- */
+.categorias-picker { position: relative; }
+.categorias-picker select { display: none; }
+.categorias-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px;
+}
+.categoria-opcion {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  border: 1.5px solid var(--line); border-radius: var(--radius); background: var(--surface);
+  padding: 14px 10px; cursor: pointer; font: inherit; color: var(--ink-soft);
+  transition: border .15s, box-shadow .15s, transform .15s, background .15s;
+}
+.categoria-opcion:hover { border-color: var(--primary); background: var(--primary-50); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.categoria-opcion[data-activa] {
+  border-color: var(--primary); background: var(--primary-50);
+  box-shadow: 0 0 0 4px var(--primary-50);
+}
+.categoria-ico {
+  width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center;
+}
+.categoria-ico svg { width: 23px; height: 23px; }
+.categoria-opcion[data-activa] .categoria-ico { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--primary); }
+.categoria-nombre { font-size: .82rem; font-weight: 600; text-align: center; line-height: 1.15; }
+
+
 
 
 /* ---------- Autenticacion ---------- */
