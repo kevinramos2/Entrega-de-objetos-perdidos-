@@ -49,26 +49,26 @@
       {{ form.nombre_objeto }}
     </div>
     <div class="form-campo">
-      <label for="{{ form.categoria.id_for_label }}">{{ form.categoria.label }}</label>
-      <div class="categorias-picker">
-        {{ form.categoria }}
-        <div class="categorias-grid">
-          {% for cat in form.categoria.field.queryset %}
-          <button type="button" class="categoria-opcion"
-                  data-valor="{{ cat.pk }}"
-                  data-color="{{ cat.color|default:'#0b7a54' }}"
-                  {% if form.categoria.value|stringformat:'s' == cat.pk|stringformat:'s' %}data-activa{% endif %}>
-            <span class="categoria-ico" style="background:{{ cat.color|default:'#0b7a54' }};color:#fff">{{ cat|icono_cat }}</span>
-            <span class="categoria-nombre">{{ cat.nombre }}</span>
-          </button>
-          {% endfor %}
-        </div>
-      </div>
+      <label for="{{ form.descripcion_objeto.id_for_label }}">{{ form.descripcion_objeto.label }}</label>
+      {{ form.descripcion_objeto }}
     </div>
   </div>
-  <div class="form-campo">
-    <label for="{{ form.descripcion_objeto.id_for_label }}">{{ form.descripcion_objeto.label }}</label>
-    {{ form.descripcion_objeto }}
+  <div class="form-campo" style="grid-column:1/-1">
+    <label for="{{ form.categoria.id_for_label }}">{{ form.categoria.label }}</label>
+    <div class="categorias-picker">
+      {{ form.categoria }}
+      <div class="categorias-grid">
+        {% for cat in form.categoria.field.queryset %}
+        <button type="button" class="categoria-opcion"
+                data-valor="{{ cat.pk }}"
+                data-color="{{ cat.color|default:'#0b7a54' }}"
+                {% if form.categoria.value|stringformat:'s' == cat.pk|stringformat:'s' %}data-activa{% endif %}>
+          <span class="categoria-ico" style="background:{{ cat.color|default:'#0b7a54' }};color:#fff">{{ cat|icono_cat }}</span>
+          <span class="categoria-nombre">{{ cat.nombre }}</span>
+        </button>
+        {% endfor %}
+      </div>
+    </div>
   </div>
   <div class="form-grid-2">
     <div class="form-campo">

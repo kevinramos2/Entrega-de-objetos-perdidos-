@@ -430,7 +430,7 @@ img { max-width: 100%; }
 .categorias-picker { position: relative; }
 .categorias-picker select { display: none; }
 .categorias-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 12px;
 }
 .categoria-opcion {
   display: flex; flex-direction: column; align-items: center; gap: 8px;
