@@ -23,6 +23,25 @@
 <form method="post" enctype="multipart/form-data" class="form-card">
   {% csrf_token %}
   <h3 style="margin-top:0">Información del objeto</h3>
+  <div class="form-campo" style="grid-column:1/-1">
+    <label for="{{ form.foto.id_for_label }}">{{ form.foto.label }}</label>
+    <div class="archivo-subida">
+      <input type="file" name="{{ form.foto.name }}" id="{{ form.foto.id_for_label }}" accept="image/*"
+             class="archivo-subida-input" {% if form.foto.value %}data-foto-actual="{{ form.foto.value.url }}"{% endif %}>
+      <div class="archivo-subida-area">
+        <img class="archivo-subida-preview"
+             src="{% if form.foto.value %}{{ form.foto.value.url }}{% endif %}"
+             alt="Vista previa de la foto" {% if not form.foto.value %}hidden{% endif %}>
+        <div class="archivo-subida-vacio" {% if form.foto.value %}hidden{% endif %}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span class="archivo-subida-accion">Elegir foto</span>
+          <span class="archivo-subida-hint">Arrastra o selecciona una imagen</span>
+        </div>
+      </div>
+    </div>
+    <div class="help">JPG, PNG o WEBP · máx. 5 MB</div>
+    {% if form.foto.errors %}<div class="form-error">{{ form.foto.errors }}</div>{% endif %}
+  </div>
   <div class="form-grid-2">
     <div class="form-campo">
       <label for="{{ form.nombre_objeto.id_for_label }}">{{ form.nombre_objeto.label }}</label>
@@ -49,38 +68,19 @@
   </div>
   <div class="form-grid-2">
     <div class="form-campo">
-      <label for="{{ form.foto.id_for_label }}">{{ form.foto.label }}</label>
-      <div class="archivo-subida">
-        <input type="file" name="{{ form.foto.name }}" id="{{ form.foto.id_for_label }}" accept="image/*"
-               class="archivo-subida-input" {% if form.foto.value %}data-foto-actual="{{ form.foto.value.url }}"{% endif %}>
-        <div class="archivo-subida-area">
-          <img class="archivo-subida-preview"
-               src="{% if form.foto.value %}{{ form.foto.value.url }}{% endif %}"
-               alt="Vista previa de la foto" {% if not form.foto.value %}hidden{% endif %}>
-          <div class="archivo-subida-vacio" {% if form.foto.value %}hidden{% endif %}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            <span class="archivo-subida-accion">Elegir foto</span>
-            <span class="archivo-subida-hint">Arrastra o selecciona una imagen</span>
-          </div>
-        </div>
-      </div>
-      <div class="help">JPG, PNG o WEBP · máx. 5 MB</div>
-      {% if form.foto.errors %}<div class="form-error">{{ form.foto.errors }}</div>{% endif %}
-    </div>
-    <div class="form-campo">
       <label for="{{ form.estado.id_for_label }}">{{ form.estado.label }}</label>
       {{ form.estado }}
     </div>
-  </div>
-  <div class="form-campo" style="grid-column:1/-1">
-    <label for="{{ form.fecha_registro.id_for_label }}">{{ form.fecha_registro.label }}</label>
-    <div class="campo-fecha">
-      <svg class="campo-fecha-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      {{ form.fecha_registro }}
-      <span class="campo-fecha-texto" data-fecha-texto data-valor="{{ form.fecha_registro.value|default:'' }}"></span>
+    <div class="form-campo">
+      <label for="{{ form.fecha_registro.id_for_label }}">{{ form.fecha_registro.label }}</label>
+      <div class="campo-fecha">
+        <svg class="campo-fecha-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        {{ form.fecha_registro }}
+        <span class="campo-fecha-texto" data-fecha-texto data-valor="{{ form.fecha_registro.value|default:'' }}"></span>
+      </div>
+      <div class="help">Fecha en que fue encontrado el objeto.</div>
+      {% if form.fecha_registro.errors %}<div class="form-error">{{ form.fecha_registro.errors }}</div>{% endif %}
     </div>
-    <div class="help">Fecha en que fue encontrado el objeto. Para registros antiguos escribe el día real (ej. 2025-04-12); se mostrará esa fecha en la lista.</div>
-    {% if form.fecha_registro.errors %}<div class="form-error">{{ form.fecha_registro.errors }}</div>{% endif %}
   </div>
 
   {% if es_nuevo %}<p class="muted" style="font-size:.86rem">Si el objeto es <b>reclamado</b> o <b>entregado</b>, completa también la sección de abajo. Si está <b>disponible</b>, puedes dejarla vacía.</p>{% endif %}

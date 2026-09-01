@@ -51,7 +51,7 @@ class ObjetoReclamadoForm(forms.ModelForm):
             'lugar_encontrado': forms.TextInput(attrs={'placeholder': 'Ej. Biblioteca, bloque 2, cafetería…'}),
             'foto': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
             'fecha_registro': forms.DateInput(
-                attrs={'type': 'date'},
+                attrs={'type': 'text', 'autocomplete': 'off'},
                 format='%Y-%m-%d',
             ),
             'tipo_documento': forms.Select(

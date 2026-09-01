@@ -554,7 +554,8 @@ class RegistroObjetoTipoDocumentoYFechaTest(TestCase):
         self.client.force_login(self.admin)
         respuesta = self.client.get(reverse('panel_objeto_nuevo'))
         contenido = respuesta.content.decode('utf-8', 'ignore')
-        self.assertIn('type="date"', contenido)
+        self.assertIn('class="campo-fecha"', contenido)
+        self.assertIn('campo-fecha-texto', contenido)
         for valor in ('value="CC"', 'value="TI"', 'value="CE"'):
             self.assertIn(valor, contenido)
 

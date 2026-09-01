@@ -350,7 +350,7 @@ img { max-width: 100%; }
 .archivo-subida-input { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; clip: rect(0 0 0 0); }
 .archivo-subida-area {
   position: relative; display: flex; align-items: center; justify-content: center;
-  min-height: 190px; border: 1.5px dashed var(--line); border-radius: var(--radius);
+  min-height: 200px; max-height: 340px; border: 1.5px dashed var(--line); border-radius: var(--radius);
   background: var(--bg); overflow: hidden; cursor: pointer;
   transition: border .15s, background .15s;
 }
@@ -370,20 +370,16 @@ img { max-width: 100%; }
 .archivo-subida-hint { font-size: .8rem; }
 
 /* ---------- Campo de fecha + picker propio ---------- */
-.campo-fecha { position: relative; }
+.campo-fecha { position: relative; max-width: 230px; }
 .campo-fecha .campo-fecha-icono {
   position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
   width: 17px; height: 17px; color: var(--muted); pointer-events: none;
 }
-.campo-fecha input[type=date] {
-  padding-left: 40px; cursor: pointer;
-  /* Fuerza el aspecto de campo de texto y evita el popup nativo */
-  appearance: none; -webkit-appearance: none; -moz-appearance: textfield;
-  color: transparent;
+.campo-fecha > input {
+  padding-left: 40px; cursor: pointer; color: transparent;
+  caret-color: transparent; user-select: none;
 }
-.campo-fecha input[type=date]::-webkit-calendar-picker-indicator { display: none; }
-.campo-fecha input[type=date]::-webkit-datetime-edit { display: none; }
-.campo-fecha input[type=date]:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-50); }
+.campo-fecha > input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-50); }
 
 /* Fecha mostrada como texto legible (dd/mm/aaaa) */
 .campo-fecha .campo-fecha-texto {

@@ -363,7 +363,8 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function crearDatePicker(campo) {
-    var input = campo.querySelector('input[type=date]');
+    var input = campo.querySelector('.campo-fecha > input');
+    if (!input) return;
     var texto = campo.querySelector('[data-fecha-texto]');
     var pop = document.createElement('div');
     pop.className = 'datepicker-pop';
