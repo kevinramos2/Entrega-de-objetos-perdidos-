@@ -389,11 +389,13 @@ img { max-width: 100%; }
 
 /* Dropdown del calendario */
 .datepicker-pop {
-  position: absolute; z-index: 60; margin-top: 6px;
+  position: absolute; z-index: 60;
+  top: calc(100% + 6px); left: 0;
   width: 280px; background: var(--surface); border: 1px solid var(--line);
   border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 14px;
   font-family: inherit;
 }
+.datepicker-pop.abrir-arriba { top: auto; bottom: calc(100% + 6px); }
 .datepicker-pop[hidden] { display: none; }
 .datepicker-cabecera { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .datepicker-titulo { font-weight: 700; color: var(--ink); font-size: .95rem; }

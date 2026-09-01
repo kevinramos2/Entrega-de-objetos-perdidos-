@@ -278,8 +278,19 @@
 
   campo.addEventListener('click', function (e) {
     if (e.target.closest('.datepicker-pop')) return;
-    if (pop.hidden) { renderCalendario(); pop.hidden = false; }
-    else { pop.hidden = true; }
+    if (pop.hidden) {
+      // El calendario sale hacia arriba si no hay espacio abajo en pantalla,
+      // y hacia abajo cuando hay espacio suficiente.
+      var rect = campo.getBoundingClientRect();
+      var espacioAbajo = window.innerHeight - rect.bottom;
+      var altoCalendario = 340;
+      if (espacioAbajo < altoCalendario) pop.classList.add('abrir-arriba');
+      else pop.classList.remove('abrir-arriba');
+      renderCalendario();
+      pop.hidden = false;
+    } else {
+      pop.hidden = true;
+    }
   });
   document.addEventListener('click', function (e) {
     if (!campo.contains(e.target)) pop.hidden = true;
