@@ -11,18 +11,18 @@ Plataforma web para centralizar la gestión de **objetos perdidos y encontrados*
 
 ##  Tabla de contenidos
 
-- [Motivación](#-motivación)
-- [Funcionalidades](#-funcionalidades)
-- [Roles](#-roles)
-- [Flujo de trabajo](#-flujo-de-trabajo)
-- [Capturas](#-capturas)
-- [Tecnologías](#️-tecnologías)
-- [Instalación y puesta en marcha](#️-instalación-y-puesta-en-marcha)
-- [Variables de entorno](#-variables-de-entorno)
-- [Seguridad](#-seguridad)
-- [Estructura del proyecto](#-estructura-del-proyecto)
-- [Despliegue](#-despliegue)
-- [Autor](#-autor)
+- [Motivación](#motivación)
+- [Funcionalidades](#funcionalidades)
+- [Roles](#roles)
+- [Flujo de trabajo](#flujo-de-trabajo)
+- [Capturas](#capturas)
+- [Tecnologías](#tecnologías)
+- [Instalación y puesta en marcha](#instalación-y-puesta-en-marcha)
+- [Variables de entorno](#variables-de-entorno)
+- [Seguridad](#seguridad)
+- [Estructura del proyecto](#estructura-del-proyecto)
+- [Despliegue](#despliegue)
+- [Autor](#autor)
 
 ---
 
