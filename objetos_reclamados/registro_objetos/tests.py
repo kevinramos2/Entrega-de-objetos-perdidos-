@@ -538,24 +538,36 @@ class RegistroObjetoTipoDocumentoYFechaTest(TestCase):
         return self.client.post(reverse('panel_objeto_nuevo'), datos)
 
     def test_se_guarda_la_fecha_antigua_ingresada(self):
-        self._post(fecha_registro='2025-04-12', tipo_documento='CE')
+        self._post(fecha_registro='2025-04-12')
         objeto = ObjetoReclamado.objects.get(nombre_objeto='Carnet')
         self.assertEqual(objeto.fecha_registro.strftime('%Y-%m-%d'), '2025-04-12')
-        self.assertEqual(objeto.tipo_documento, 'CE')
+        self.assertEqual(objeto.tipo_documento, '')
+        self.assertEqual(objeto.estado, ObjetoReclamado.Estados.DISPONIBLE)
 
     def test_sin_fecha_usa_el_dia_actual(self):
         from django.utils import timezone
-        self._post(fecha_registro='', tipo_documento='TI')
+        self._post(fecha_registro='')
         objeto = ObjetoReclamado.objects.get(nombre_objeto='Carnet')
         self.assertEqual(objeto.fecha_registro, timezone.localdate())
-        self.assertEqual(objeto.tipo_documento, 'TI')
+        self.assertEqual(objeto.tipo_documento, '')
+        self.assertEqual(objeto.estado, ObjetoReclamado.Estados.DISPONIBLE)
 
-    def test_formulario_incluye_calendario_y_tipo_de_documento(self):
+    def test_formulario_incluye_calendario_y_oculta_reclamante_al_registrar(self):
         self.client.force_login(self.admin)
-        respuesta = self.client.get(reverse('panel_objeto_nuevo'))
-        contenido = respuesta.content.decode('utf-8', 'ignore')
+        contenido = self.client.get(reverse('panel_objeto_nuevo')).content.decode('utf-8', 'ignore')
         self.assertIn('class="campo-fecha"', contenido)
         self.assertIn('campo-fecha-texto', contenido)
+        # El bloque de reclamante NO aparece al registrar un objeto nuevo.
+        self.assertNotIn('Datos de la persona que reclama', contenido)
+        self.assertNotIn('value="CC"', contenido)
+
+    def test_editar_objeto_reclamado_muestra_campos_de_reclamante(self):
+        self.client.force_login(self.admin)
+        objeto = ObjetoReclamado.objects.create(
+            nombre_objeto='Carnet', categoria=self.categoria, estado=ObjetoReclamado.Estados.RECLAMADO,
+        )
+        contenido = self.client.get(reverse('panel_objeto_editar', args=[objeto.pk])).content.decode('utf-8', 'ignore')
+        self.assertIn('Datos de la persona que reclama', contenido)
         for valor in ('value="CC"', 'value="TI"', 'value="CE"'):
             self.assertIn(valor, contenido)
 

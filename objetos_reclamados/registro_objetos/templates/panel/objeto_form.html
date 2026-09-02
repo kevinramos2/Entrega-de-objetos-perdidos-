@@ -83,7 +83,12 @@
   <div class="form-grid-2">
     <div class="form-campo">
       <label for="{{ form.estado.id_for_label }}">{{ form.estado.label }}</label>
-      {{ form.estado }}
+      {% if es_nuevo or not objeto or objeto.estado == 'disponible' %}
+        <input type="hidden" name="{{ form.estado.name }}" value="disponible">
+        <input type="text" class="campo-fecha-input" value="Disponible" readonly disabled style="color:var(--ink)">
+      {% else %}
+        {{ form.estado }}
+      {% endif %}
     </div>
     <div class="form-campo">
       <label for="{{ form.fecha_registro.id_for_label }}">{{ form.fecha_registro.label }}</label>
@@ -98,8 +103,7 @@
     </div>
   </div>
 
-  {% if es_nuevo %}<p class="muted" style="font-size:.86rem">Si el objeto es <b>reclamado</b> o <b>entregado</b>, completa también la sección de abajo. Si está <b>disponible</b>, puedes dejarla vacía.</p>{% endif %}
-
+  {% if objeto and objeto.estado == 'reclamado' or objeto and objeto.estado == 'entregado' %}
   <hr class="divider">
   <h3>Datos de la persona que reclama</h3>
   <div class="form-grid-2">
@@ -136,6 +140,9 @@
       <label for="{{ form.suministro_correo.id_for_label }}" style="margin:0">¿Suministró correo?</label>
     </div>
   </div>
+  {% else %}
+  <p class="muted" style="font-size:.86rem">El objeto se registrará como <b>Disponible</b>. Cuando alguien lo reclame y la solicitud sea aprobada, aquí podrás registrar los datos de la persona que lo reclama.</p>
+  {% endif %}
 
   <div class="flex mt-3">
     <button type="submit" class="btn btn-primary btn-lg">Guardar</button>
