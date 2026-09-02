@@ -96,13 +96,14 @@ flowchart LR
 
 ##  Capturas
 
-> Ejemplos:
+| | | |
+|---|---|---|
+| ![Inicio](img/capturas/home.jpg) | ![Inicio con filtros](img/capturas/home-filtros.jpg) | ![Iniciar sesión](img/capturas/login.jpg) |
+| ![Objetos disponibles](img/capturas/lista_objetos.jpg) | ![Mis solicitudes](img/capturas/mis_solicitudes.jpg) | ![Panel: resumen](img/capturas/panel_inicio.jpg) |
+| ![Panel: gráficas](img/capturas/panel_inicio_graficas.jpg) | ![Panel: objetos](img/capturas/panel_objetos.jpg) | ![Panel: registrar objeto](img/capturas/panel_objeto_nuevo.jpg) |
+| ![Panel: solicitudes](img/capturas/panel_solicitudes.jpg) | ![Panel: categorías](img/capturas/panel_categorias.jpg) | ![Panel: configuración de entrega](img/capturas/panel_configuracion_entrega.jpg) |
 
-| | |
-|---|---|
-| ![Inicio](img/capturas/home.png) | ![Listado de objetos](img/capturas/listado.png) |
-| ![Detalle del objeto](img/capturas/detalle.png) | ![Panel del administrador](img/capturas/panel_inicio.png) |
-| ![Solicitudes](img/capturas/solicitudes.png) | ![Exportar CSV](img/capturas/exportar.png) |
+> Las capturas pueden estar sujetas a cambios futuros para mejorar la experiencia de usuario.
 
 ---
 
