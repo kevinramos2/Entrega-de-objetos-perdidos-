@@ -34,7 +34,7 @@ SOLICITUD_DATOS = {
 class FlujoSolicitudApelacionTest(TestCase):
     def setUp(self):
         self.estudiante = crear_usuario('santiago', 'santiago@unal.edu.co')
-        self.admin = crear_usuario('keramosl', 'keramosl@unal.edu.co', is_staff=True)
+        self.admin = crear_usuario('adminflujo', 'adminflujo@unal.edu.co', is_staff=True)
         self.categoria = Categoria.objects.create(nombre='Termos', color='#123456')
         self.objeto = ObjetoReclamado.objects.create(
             nombre_objeto='Termo negro',

@@ -47,8 +47,9 @@ services:
       - key: DJANGO_EMAIL_DOMAINS
         value: unal.edu.co
       # Correo que se convierte en administrador automáticamente
+      # (coloca aquí el correo institucional del administrador del sitio)
       - key: DJANGO_ADMIN_EMAILS
-        value: keramosl@unal.edu.co
+        value: tu.correo@unal.edu.co
       # OAuth de Google (opcional). Con valores vacíos el botón no se muestra.
       - key: GOOGLE_OAUTH_CLIENT_ID
         sync: false

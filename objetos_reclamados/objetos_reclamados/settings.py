@@ -176,7 +176,7 @@ EMAILS_ADMINISTRADOR = {
     e.strip().lower()
     for e in os.getenv(
         'DJANGO_ADMIN_EMAILS',
-        'keramosl@unal.edu.co',  # Cuenta institucional del autor del proyecto
+        'tu.correo@unal.edu.co',  # Definir por variable de entorno en producción
     ).split(',')
     if e.strip()
 }
@@ -304,7 +304,7 @@ EMAIL_USE_SSL = os.getenv('SMTP_USE_SSL', 'False').lower() in ('1', 'true', 'yes
 # puede colgar el worker (Gunicorn lo terminaría con un 500 en producción).
 EMAIL_TIMEOUT = int(os.getenv('SMTP_TIMEOUT', '10'))
 DEFAULT_FROM_EMAIL = os.getenv(
-    'DEFAULT_FROM_EMAIL', 'kevin.ralu22@gmail.com'
+    'DEFAULT_FROM_EMAIL', 'objetos.perdidos@unal.edu.co'
 )
 # URL pública del sitio: se usa para construir enlaces dentro de los correos.
 SITE_URL = os.getenv(

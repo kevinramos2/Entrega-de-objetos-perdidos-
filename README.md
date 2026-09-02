@@ -50,9 +50,9 @@ Cada día se pierden y se recogen decenas de objetos en las instalaciones (termo
 
 ### Rol administrador
 - **Dashboard** con indicadores y gráficas (Chart.js) del estado de los objetos y solicitudes.
-- **CRUD completo de objetos** (categoría, foto, lugar, **sede**, estado, datos del reclamante).
+- **CRUD completo de objetos** (categoría, foto, lugar, **sede**, estado). Al registrar un objeto nuevo queda en **Disponible**; los **datos del reclamante** se capturan al editar objetos que ya están *Reclamados* o *Entregados* (o automáticamente al aprobar una solicitud).
 - **Aprobar o rechazar solicitudes** de reclamo; al aprobar se registra al reclamante automáticamente y se le **notifica por correo**.
-- **Marcar un objeto como Entregado** desde la solicitud aprobada; solo entonces se habilita la descarga del **formato de entrega en PDF** (exclusivo del administrador), con la fecha de entrega del día.
+- **Marcar un objeto como Entregado** desde la solicitud aprobada o desde el listado de objetos; solo entonces se habilita la descarga del **formato de entrega en PDF** (exclusivo del administrador), con la fecha de entrega del día.
 - **Gestión de cuentas** (crear/editar/activar/desactivar, asignar rol).
 - **Gestión de categorías** (crear, editar y eliminar desde el panel).
 - **Exportar datos en CSV** (incluye la sede) para análisis en Power BI / Excel.
@@ -85,12 +85,12 @@ flowchart LR
 ```
 
 1. **Registro y login**: solo correos institucionales (local o Google).
-2. **Publicación**: el administrador da de alta el objeto encontrado (con **lugar, fecha del hallazgo y tipo de documento**).
+2. **Publicación**: el administrador da de alta el objeto encontrado (con **lugar, fecha del hallazgo y categoría**); el objeto queda en estado *Disponible*.
 3. **Búsqueda**: el estudiante usa el buscador y los filtros de categoría.
 4. **Solicitud**: el estudiante envía una solicitud de reclamo con su justificación y sus **datos de identificación y contacto** (tipo/número de documento + teléfono, obligatorios).
 5. **Revisión**: el administrador aprueba o rechaza; al aprobar se registra al reclamante automáticamente.
 6. **Seguimiento**: el estado del objeto cambia a *Reclamado* y las estadísticas se actualizan.
-7. **Entrega**: al hacer efectiva la entrega, el administrador la **marca como Entregado** desde la solicitud y descarga el **formato de entrega en PDF** (exclusivo del admin) con la fecha del día.
+7. **Entrega**: al hacer efectiva la entrega, el administrador la **marca como Entregado** (desde la solicitud o desde el listado de objetos) y descarga el **formato de entrega en PDF** (exclusivo del admin) con la fecha del día.
 
 ---
 
@@ -195,7 +195,7 @@ Toda la configuración sensible se lee desde variables de entorno o desde un arc
 | `DJANGO_ALLOWED_HOSTS` | Hosts permitidos separados por coma. | `127.0.0.1,localhost` |
 | `DATABASE_URL` | Cadena de conexión PostgreSQL. Si no existe, se usa SQLite local. | `postgres://usuario:clave@host:puerto/base` |
 | `DJANGO_EMAIL_DOMAINS` | Dominios de correo autorizados separados por coma. | `unal.edu.co` |
-| `DJANGO_ADMIN_EMAILS` | Correos que se **promueven automáticamente a administrador** al crear la cuenta o iniciar sesión (separados por coma). | `keramosl@unal.edu.co` |
+| `DJANGO_ADMIN_EMAILS` | Correos que se **promueven automáticamente a administrador** al crear la cuenta o iniciar sesión (separados por coma). | `tu.correo@unal.edu.co` |
 | `GOOGLE_OAUTH_CLIENT_ID` | Client ID de Google OAuth 2.0. | *(vacío → oculta el botón de Google)* |
 | `GOOGLE_OAUTH_CLIENT_SECRET` | Client Secret de Google OAuth 2.0. | *(vacío → oculta el botón de Google)* |
 | `RESEND_API_KEY` | **Recomendado en Render**: API key de [Resend](https://resend.com) para enviar los correos **vía HTTPS (puerto 443)**. Render gratis **bloquea los puertos SMTP salientes** (25/465/587), por eso el SMTP no funciona ahí. Tiene prioridad sobre `SMTP_*`. | *(vacío → usa SMTP o consola)* |
@@ -206,7 +206,7 @@ Toda la configuración sensible se lee desde variables de entorno o desde un arc
 | `SMTP_USE_TLS` | Usa TLS (STARTTLS). | `True` |
 | `SMTP_USE_SSL` | Usa SSL directo. | `False` |
 | `SMTP_TIMEOUT` | Segundos máximos para conectar con el servidor SMTP (evita colgar el servicio si no responde). | `10` |
-| `DEFAULT_FROM_EMAIL` | Remitente de los correos de notificación. | `kevin.ralu22@gmail.com` |
+| `DEFAULT_FROM_EMAIL` | Remitente de los correos de notificación. | `objetos.perdidos@unal.edu.co` |
 | `SITE_URL` | URL pública del sitio para los enlaces dentro de los correos. | `http://127.0.0.1:8000` local / `https://…onrender.com` en Render |
 
 > **Correos en desarrollo**: sin `RESEND_API_KEY` ni `SMTP_HOST`/`SMTP_USER`, Django usa el backend de **consola**, así que al aprobar/rechazar una solicitud verás el correo en la terminal.
@@ -258,7 +258,7 @@ La cuenta cuyo correo esté en `DJANGO_ADMIN_EMAILS` obtiene automáticamente el
 - **Rate limiting del login**: se limita a **5 intentos fallidos en 15 minutos** por usuario y por IP; las nuevas contraseñas pasan los validadores de Django.
 - **Protección CSRF**, sesiones de 2 horas que expiran al cerrar el navegador, cookies `HttpOnly`, `Secure` y `SameSite`.
 - **Cabeceras seguras** en producción (HSTS, X-Content-Type-Options, X-Frame-Options, Referrer-Policy).
-- **Validación de imágenes** (formato y tamaño ≤ 5 MB) y **taille de campos** en formularios para evitar desbordamientos e inyecciones.
+- **Validación de imágenes** (formato y tamaño ≤ 5 MB) y **límites de campos** en formularios para evitar desbordamientos e inyecciones.
 - **Panel protegido**: el acceso al panel administrativo requiere el rol de administrador; cada vista del panel valida permisos.
 
 ---
