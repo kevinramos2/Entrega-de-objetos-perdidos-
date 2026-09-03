@@ -591,7 +591,6 @@ img { max-width: 100%; }
 
 /* Panel responsive movil/tableta */
 @media (max-width: 1024px) {
-  body, html { overflow-x: hidden; }
   .hero-grid, .detalle-grid { grid-template-columns: 1fr; }
   .pasos { grid-template-columns: 1fr; }
   .grid-charts, .grid-charts-2, .grid-charts-ancho, .grid-charts-medio { grid-template-columns: 1fr; }
