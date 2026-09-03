@@ -566,7 +566,7 @@ class RegistroObjetoTipoDocumentoYFechaTest(TestCase):
             'lugar_encontrado': 'Biblioteca',
             'estado': 'disponible',
             'fecha_registro': '',
-            'foto': SimpleUploadedFile('objeto.png', buf.getvalue()),
+            'foto': [SimpleUploadedFile('foto_camara.png', buf.getvalue())],
         }
         respuesta = self.client.post(reverse('panel_objeto_nuevo'), datos, follow=True)
         self.assertEqual(respuesta.status_code, 200)

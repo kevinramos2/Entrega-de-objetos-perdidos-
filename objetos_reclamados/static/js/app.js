@@ -351,9 +351,11 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         }
       }
+      var archivoElegido = null;
       inputs.forEach(function (input) {
         input.addEventListener('change', function () {
           var archivo = input.files && input.files[0];
+          archivoElegido = archivo;
           // Sincroniza el archivo elegido con el primer input (el que se envía),
           // para que siempre viaje un solo archivo hasta el servidor.
           if (archivo && input !== inputs[0] && typeof DataTransfer !== 'undefined') {
@@ -374,6 +376,18 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         });
       });
+      // Al enviar, si la foto procede de la cámara y no pudo sincronizarse antes,
+      // la colocamos en el input real para que viaje hasta el servidor.
+      var formFoto = archivoSubida.closest('form');
+      if (formFoto) {
+        formFoto.addEventListener('submit', function () {
+          if (archivoElegido && !inputs[0].files.length && typeof DataTransfer !== 'undefined') {
+            var dt2 = new DataTransfer();
+            dt2.items.add(archivoElegido);
+            inputs[0].files = dt2.files;
+          }
+        });
+      }
       // Arrastrar y soltar
       ['dragenter', 'dragover'].forEach(function (evt) {
         area.addEventListener(evt, function (e) {

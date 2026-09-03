@@ -29,7 +29,7 @@
     <div class="archivo-subida">
       <input type="file" name="{{ form.foto.name }}" id="{{ form.foto.id_for_label }}" accept="image/*"
              class="archivo-subida-input" {% if form.foto.value %}data-foto-actual="{{ form.foto.value.url }}"{% endif %}>
-      <input type="file" name="{{ form.foto.name }}" id="id_foto_camara" accept="image/*" capture="environment"
+      <input type="file" id="id_foto_camara" accept="image/*" capture="environment"
              class="archivo-subida-input">
       <div class="archivo-subida-area">
         <img class="archivo-subida-preview"
