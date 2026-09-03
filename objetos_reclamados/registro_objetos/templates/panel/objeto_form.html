@@ -29,7 +29,7 @@
     <div class="archivo-subida">
       <input type="file" name="{{ form.foto.name }}" id="{{ form.foto.id_for_label }}" accept="image/*"
              class="archivo-subida-input" {% if form.foto.value %}data-foto-actual="{{ form.foto.value.url }}"{% endif %}>
-      <div class="archivo-subida-area">
+      <label class="archivo-subida-area" for="{{ form.foto.id_for_label }}">
         <img class="archivo-subida-preview"
              src="{% if form.foto.value %}{{ form.foto.value.url }}{% endif %}"
              alt="Vista previa de la foto" {% if not form.foto.value %}hidden{% endif %}>
@@ -38,7 +38,7 @@
           <span class="archivo-subida-accion">Elegir foto</span>
           <span class="archivo-subida-hint">Arrastra o selecciona una imagen</span>
         </div>
-      </div>
+      </label>
     </div>
     <div class="help">JPG, PNG o WEBP · máx. 5 MB</div>
     {% if form.foto.errors %}<div class="form-error">{{ form.foto.errors }}</div>{% endif %}

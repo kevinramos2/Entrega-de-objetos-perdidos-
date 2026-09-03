@@ -309,13 +309,12 @@ document.addEventListener('DOMContentLoaded', function () {
   // Subida de foto con vista previa (formulario de objeto)
   var inputFoto = document.querySelector('.archivo-subida-input');
   if (inputFoto) {
-    var area = inputFoto.closest('.archivo-subida-area');
-    var preview = area.querySelector('.archivo-subida-preview');
-    var vacio = area.querySelector('.archivo-subida-vacio');
-    // El clic en el área abre el selector
-    if (area) {
-      area.addEventListener('click', function () { inputFoto.click(); });
-    }
+    var archivoSubida = inputFoto.closest('.archivo-subida');
+    var area = archivoSubida ? archivoSubida.querySelector('.archivo-subida-area') : null;
+    var preview = area ? area.querySelector('.archivo-subida-preview') : null;
+    var vacio = area ? area.querySelector('.archivo-subida-vacio') : null;
+    // El área es un <label for="..."> que abre el selector de forma nativa
+    // en cualquier dispositivo sin necesidad de JavaScript.
     inputFoto.addEventListener('change', function () {
       if (inputFoto.files && inputFoto.files[0]) {
         var lector = new FileReader();
