@@ -573,7 +573,10 @@ img { max-width: 100%; }
 .panel-menu a:hover svg { color: #fff; }
 .panel-menu a.active { background: var(--grad); color: #fff; box-shadow: var(--shadow-sm); }
 .panel-menu a.active svg { color: #fff; }
-.panel-menu a .contador { margin-left: auto; background: var(--danger); color: #fff; border-radius: 999px; min-width: 22px; text-align: center; font-size: .74rem; padding: 2px 7px; }
+.panel-menu a .contador { display: none; margin-left: auto; background: var(--danger); color: #fff; border-radius: 999px; min-width: 22px; text-align: center; font-size: .74rem; padding: 2px 7px; }
+@media (min-width: 1025px) {
+  .panel-menu a .contador { display: inline-block; }
+}
 .panel-main { padding: 24px; min-width: 0; }
 .panel-titulo { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
 .panel-titulo h1 { margin: 0; font-size: 1.45rem; }
