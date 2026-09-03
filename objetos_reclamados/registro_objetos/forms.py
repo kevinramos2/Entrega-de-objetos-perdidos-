@@ -93,6 +93,31 @@ class ObjetoReclamadoForm(forms.ModelForm):
             cleaned['suministro_correo'] = bool(cleaned.get('suministro_correo'))
         return cleaned
 
+    def _mime_de(self, nombre):
+        nombre = (nombre or '').lower()
+        if nombre.endswith('.png'):
+            return 'image/png'
+        if nombre.endswith(('.jpg', '.jpeg')):
+            return 'image/jpeg'
+        if nombre.endswith('.gif'):
+            return 'image/gif'
+        if nombre.endswith('.webp'):
+            return 'image/webp'
+        if nombre.endswith('.heic') or nombre.endswith('.heif'):
+            return 'image/heic'
+        return 'image/jpeg'
+
+    def save(self, commit=True):
+        foto = self.cleaned_data.get('foto')
+        if foto:
+            import base64 as _base64
+            contenido = foto.read()
+            mime = self._mime_de(foto.name)
+            self.instance.foto_base64 = 'data:%s;base64,%s' % (mime, _base64.b64encode(contenido).decode('ascii'))
+            self.instance.foto = None
+            self.cleaned_data['foto'] = None
+        return super().save(commit)
+
 
 class RegistroUsuarioForm(forms.Form):
     """Registro de estudiantes con correo institucional obligatorio."""

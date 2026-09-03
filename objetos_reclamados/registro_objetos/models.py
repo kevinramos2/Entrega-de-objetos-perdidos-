@@ -60,6 +60,7 @@ class ObjetoReclamado(models.Model):
     lugar_encontrado = models.CharField('Lugar donde fue encontrado', max_length=150, blank=True)
     fecha_registro = models.DateField('Fecha de registro', null=True, blank=True)
     foto = models.ImageField('Foto', upload_to='objetos/', blank=True, null=True)
+    foto_base64 = models.TextField('Foto (base64)', blank=True, default='')
     estado = models.CharField(
         'Estado', max_length=20, choices=Estados.choices,
         default=Estados.DISPONIBLE, db_index=True,
@@ -108,6 +109,15 @@ class ObjetoReclamado(models.Model):
     @property
     def esta_disponible(self):
         return self.estado == self.Estados.DISPONIBLE
+
+    @property
+    def foto_data(self):
+        """Data URI de la foto (base64 guardado en la DB) o URL del archivo heredado."""
+        if self.foto_base64:
+            return self.foto_base64
+        if self.foto:
+            return self.foto.url
+        return ''
 
 
 class PerfilUsuario(models.Model):

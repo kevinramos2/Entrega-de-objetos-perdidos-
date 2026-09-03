@@ -8,8 +8,8 @@
 
   <div class="detalle-grid">
     <div class="detalle-media">
-      {% if objeto.foto %}
-        <img src="{{ objeto.foto.url }}" alt="{{ objeto.nombre_objeto }}">
+      {% if objeto.foto_data %}
+        <img src="{{ objeto.foto_data }}" alt="{{ objeto.nombre_objeto }}">
       {% else %}
         <span class="media-ico media-ico-lg" style="color:{{ objeto.categoria.color|default:'#0b7a54' }}">{{ objeto.categoria|icono_cat }}</span>
       {% endif %}

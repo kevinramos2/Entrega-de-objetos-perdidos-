@@ -49,8 +49,8 @@
     {% for obj in objetos %}
     <article class="card card-obj">
       <div class="media">
-        {% if obj.foto %}
-          <img src="{{ obj.foto.url }}" alt="{{ obj.nombre_objeto }}">
+        {% if obj.foto_data %}
+          <img src="{{ obj.foto_data }}" alt="{{ obj.nombre_objeto }}">
         {% else %}
           <span class="media-ico" style="color:{{ obj.categoria.color|default:'#0b7a54' }}">{{ obj.categoria|icono_cat }}</span>
         {% endif %}
