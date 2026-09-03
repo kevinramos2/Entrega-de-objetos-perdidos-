@@ -369,6 +369,17 @@ img { max-width: 100%; }
 }
 .archivo-subida-hint { font-size: .8rem; }
 
+/* Botones: tomar foto (cámara) y galería */
+.archivo-subida-botones { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.archivo-subida-boton {
+  flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  cursor: pointer; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--surface); color: var(--ink); font-size: .9rem; font-weight: 600;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.archivo-subida-boton:hover { border-color: var(--primary); background: var(--primary-50); color: var(--primary); }
+.archivo-subida-boton svg { width: 17px; height: 17px; }
+
 /* ---------- Campo de fecha + picker propio ---------- */
 .campo-fecha { position: relative; max-width: 230px; }
 .campo-fecha .campo-fecha-icono {

@@ -307,24 +307,25 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Subida de foto con vista previa (formulario de objeto)
-  var inputFoto = document.querySelector('.archivo-subida-input');
-  if (inputFoto) {
-    var archivoSubida = inputFoto.closest('.archivo-subida');
+  var inputsFoto = document.querySelectorAll('.archivo-subida-input');
+  if (inputsFoto.length) {
+    var archivoSubida = inputsFoto[0].closest('.archivo-subida');
     var area = archivoSubida ? archivoSubida.querySelector('.archivo-subida-area') : null;
     var preview = area ? area.querySelector('.archivo-subida-preview') : null;
     var vacio = area ? area.querySelector('.archivo-subida-vacio') : null;
-    // El área es un <label for="..."> que abre el selector de forma nativa
-    // en cualquier dispositivo sin necesidad de JavaScript.
-    inputFoto.addEventListener('change', function () {
-      if (inputFoto.files && inputFoto.files[0]) {
+    function mostrarPreview(input) {
+      if (input.files && input.files[0]) {
         var lector = new FileReader();
         lector.onload = function (ev) {
           preview.src = ev.target.result;
           preview.hidden = false;
           if (vacio) vacio.hidden = true;
         };
-        lector.readAsDataURL(inputFoto.files[0]);
+        lector.readAsDataURL(input.files[0]);
       }
+    }
+    inputsFoto.forEach(function (input) {
+      input.addEventListener('change', function () { mostrarPreview(input); });
     });
     // Arrastrar y soltar
     ['dragenter', 'dragover'].forEach(function (evt) {
@@ -342,8 +343,8 @@ document.addEventListener('DOMContentLoaded', function () {
     area.addEventListener('drop', function (e) {
       var archivos = e.dataTransfer && e.dataTransfer.files;
       if (archivos && archivos.length) {
-        inputFoto.files = archivos;
-        inputFoto.dispatchEvent(new Event('change'));
+        inputsFoto[0].files = archivos;
+        inputsFoto[0].dispatchEvent(new Event('change'));
       }
     });
   }

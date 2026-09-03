@@ -552,6 +552,34 @@ class RegistroObjetoTipoDocumentoYFechaTest(TestCase):
         self.assertEqual(objeto.tipo_documento, '')
         self.assertEqual(objeto.estado, ObjetoReclamado.Estados.DISPONIBLE)
 
+    def test_la_foto_se_guarda_con_dos_inputs_camara_y_galeria(self):
+        import io
+        from PIL import Image
+        buf = io.BytesIO()
+        Image.new('RGBA', (30, 20), (10, 90, 40)).save(buf, 'PNG')
+        self.client.force_login(self.admin)
+        datos = {
+            'nombre_objeto': 'Carnet con foto',
+            'categoria': self.categoria.pk,
+            'descripcion_objeto': '',
+            'sede': 'minas',
+            'lugar_encontrado': 'Biblioteca',
+            'estado': 'disponible',
+            'fecha_registro': '',
+            'foto': SimpleUploadedFile('objeto.png', buf.getvalue()),
+        }
+        respuesta = self.client.post(reverse('panel_objeto_nuevo'), datos, follow=True)
+        self.assertEqual(respuesta.status_code, 200)
+        objeto = ObjetoReclamado.objects.get(nombre_objeto='Carnet con foto')
+        self.assertTrue(objeto.foto)
+
+    def test_formulario_muestra_botones_camara_y_galeria(self):
+        self.client.force_login(self.admin)
+        contenido = self.client.get(reverse('panel_objeto_nuevo')).content.decode('utf-8', 'ignore')
+        self.assertIn('Tomar foto', contenido)
+        self.assertIn('Galería', contenido)
+        self.assertIn('capture="environment"', contenido)
+
     def test_formulario_incluye_calendario_y_oculta_reclamante_al_registrar(self):
         self.client.force_login(self.admin)
         contenido = self.client.get(reverse('panel_objeto_nuevo')).content.decode('utf-8', 'ignore')
