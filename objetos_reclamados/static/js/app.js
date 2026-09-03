@@ -8,6 +8,21 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // Navbar horizontal del panel: mantiene visible el enlace activo (móvil/tableta)
+  var menuPanel = document.querySelector('.panel-menu');
+  if (menuPanel) {
+    var activo = menuPanel.querySelector('a.active');
+    function centrarMenu() {
+      if (activo && window.getComputedStyle(menuPanel).overflowX !== 'visible') {
+        var centro = menuPanel.offsetWidth / 2;
+        var objetivo = activo.offsetLeft - centro + (activo.offsetWidth / 2);
+        menuPanel.scrollLeft = Math.max(0, objetivo);
+      }
+    }
+    window.addEventListener('resize', centrarMenu);
+    centrarMenu();
+  }
+
   // Cierre manual de toasts
   document.querySelectorAll('.toast .cerrar').forEach(function (btn) {
     btn.addEventListener('click', function () {

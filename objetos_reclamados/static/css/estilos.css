@@ -602,7 +602,12 @@ img { max-width: 100%; }
   .panel-menu::after { content: ''; flex: 0 0 2px; }
   .panel-menu-sello { display: none; }
   .panel-menu .m-titulo { display: none; }
-  .panel-menu a { white-space: nowrap; flex: 0 0 auto; padding: 9px 13px; }
+  .panel-menu a { white-space: nowrap; flex: 0 0 auto; padding: 9px 13px; position: relative; }
+  .panel-menu a .contador {
+    position: absolute; top: 4px; right: 4px; margin: 0;
+    min-width: 17px; height: 17px; padding: 0 4px; font-size: .64rem;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
   .form-grid-2 { grid-template-columns: 1fr; }
 }
 
