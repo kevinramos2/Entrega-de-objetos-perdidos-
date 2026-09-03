@@ -332,26 +332,46 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!preview || !inputs.length) return;
       function mostrarPreview(input) {
         if (input.files && input.files[0]) {
-          var lector = new FileReader();
-          lector.onload = function (ev) {
-            preview.src = ev.target.result;
+          var objetoUrl;
+          if (window.URL && URL.createObjectURL) {
+            if (preview.dataset.blobUrl) URL.revokeObjectURL(preview.dataset.blobUrl);
+            objetoUrl = URL.createObjectURL(input.files[0]);
+            preview.dataset.blobUrl = objetoUrl;
+            preview.src = objetoUrl;
             preview.hidden = false;
             if (vacio) vacio.hidden = true;
-          };
-          lector.readAsDataURL(input.files[0]);
+          } else {
+            var lector = new FileReader();
+            lector.onload = function (ev) {
+              preview.src = ev.target.result;
+              preview.hidden = false;
+              if (vacio) vacio.hidden = true;
+            };
+            lector.readAsDataURL(input.files[0]);
+          }
         }
       }
       inputs.forEach(function (input) {
         input.addEventListener('change', function () {
+          var archivo = input.files && input.files[0];
           // Sincroniza el archivo elegido con el primer input (el que se envía),
           // para que siempre viaje un solo archivo hasta el servidor.
-          if (input.files && input.files[0] && input !== inputs[0] &&
-              typeof DataTransfer !== 'undefined') {
+          if (archivo && input !== inputs[0] && typeof DataTransfer !== 'undefined') {
             var dt = new DataTransfer();
             dt.items.add(input.files[0]);
             inputs[0].files = dt.files;
           }
-          mostrarPreview(input);
+          // En iOS/Android, la foto de la cámara a veces no está lista al
+          // instante; esperamos un ciclo para leerla de forma fiable.
+          var esCamara = input.hasAttribute('capture');
+          var leer = function () {
+            if (input.files && input.files[0]) mostrarPreview(input);
+          };
+          if (esCamara) {
+            setTimeout(leer, 150);
+          } else {
+            leer();
+          }
         });
       });
       // Arrastrar y soltar
