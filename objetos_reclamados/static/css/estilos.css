@@ -589,16 +589,16 @@ img { max-width: 100%; }
 .grafico-card .sub { color: var(--muted); font-size: .84rem; margin: 0 0 14px; }
 .chart-caja { position: relative; height: 260px; }
 
-/* Panel: scroll horizontal bloqueado y badge no ensancha */
-body.panel-body { overflow-x: hidden; }
+/* Panel: badge no ensancha en movil y scroll horizontal controlado */
+html, body { overflow-x: clip; }
 @media (max-width: 900px) {
   .hero-grid, .detalle-grid { grid-template-columns: 1fr; }
   .pasos { grid-template-columns: 1fr; }
   .grid-charts, .grid-charts-2, .grid-charts-ancho, .grid-charts-medio { grid-template-columns: 1fr; }
-  .panel-layout { grid-template-columns: 1fr; max-width: 100%; overflow: hidden; }
+  .panel-layout { grid-template-columns: 1fr; }
   .panel-menu {
     display: flex; flex-direction: row; gap: 6px; overflow-x: auto;
-    padding: 10px 12px; max-width: 100%; width: 100%; min-width: 0;
+    padding: 10px 12px; width: 100%; min-width: 0;
     -webkit-overflow-scrolling: touch; scrollbar-width: none;
   }
   .panel-menu::-webkit-scrollbar { display: none; }
@@ -606,10 +606,11 @@ body.panel-body { overflow-x: hidden; }
   .panel-menu .m-titulo { display: none; }
   .panel-menu a { white-space: nowrap; flex: 0 0 auto; padding: 9px 13px; position: relative; }
   .panel-menu a .contador {
-    position: absolute !important; top: -4px; right: -4px; margin: 0 !important;
-    min-width: 16px; height: 16px; padding: 0 4px; font-size: .62rem; line-height: 16px;
-    display: inline-flex; align-items: center; justify-content: center;
-    border-radius: 8px; pointer-events: none;
+    position: absolute !important; top: -3px; right: -3px;
+    margin: 0 !important; padding: 0 !important; min-width: 0 !important; width: 8px !important;
+    height: 8px !important; font-size: 0 !important; border-radius: 50%;
+    border: 2px solid var(--primary); background: var(--danger) !important;
+    pointer-events: none;
   }
   .form-grid-2 { grid-template-columns: 1fr; }
 }
