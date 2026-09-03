@@ -14,6 +14,7 @@ urlpatterns = [
     # Estudiante
     path('objetos/', views.lista_objetos, name='lista_objetos'),
     path('objetos/<int:pk>/', views.detalle_objeto, name='detalle_objeto'),
+    path('objetos/<int:pk>/foto/', views.servir_foto_objeto, name='servir_foto_objeto'),
     path('objetos/<int:pk>/solicitar/', views.solicitar_reclamacion, name='solicitar_reclamacion'),
     path('mis-solicitudes/', views.mis_solicitudes, name='mis_solicitudes'),
     path('solicitudes/<int:pk>/apelar/', views.apelar_solicitud, name='apelar_solicitud'),

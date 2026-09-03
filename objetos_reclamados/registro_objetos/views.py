@@ -241,6 +241,27 @@ def detalle_objeto(request, pk):
     })
 
 
+def servir_foto_objeto(request, pk):
+    """Sirve la foto guardada en la DB (base64) como respuesta HTTP, sin
+    embebarla en el HTML para no agotar la memoria del plan gratuito."""
+    import base64 as _base64
+    objeto = get_object_or_404(ObjetoReclamado, pk=pk)
+    foto = (objeto.foto_base64 or '').strip()
+    if not foto:
+        raise Http404('Este objeto no tiene foto.')
+    if foto.startswith('data:') and ';base64,' in foto:
+        mime = foto[5:foto.index(';')]
+        datos = foto[foto.index(',') + 1:]
+    else:
+        mime = 'image/jpeg'
+        datos = foto
+    try:
+        bytes_img = _base64.b64decode(datos)
+    except Exception:
+        raise Http404('Foto inválida.')
+    return HttpResponse(bytes_img, content_type=mime)
+
+
 @login_required
 @require_POST
 def solicitar_reclamacion(request, pk):

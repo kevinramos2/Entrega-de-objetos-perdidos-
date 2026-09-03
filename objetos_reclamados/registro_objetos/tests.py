@@ -572,8 +572,12 @@ class RegistroObjetoTipoDocumentoYFechaTest(TestCase):
         self.assertEqual(respuesta.status_code, 200)
         objeto = ObjetoReclamado.objects.get(nombre_objeto='Carnet con foto')
         self.assertTrue(objeto.foto_base64)
-        self.assertTrue(objeto.foto_base64.startswith('data:image/png;base64,'))
-        self.assertIn('base64', objeto.foto_data)
+        self.assertTrue(objeto.foto_base64.startswith('data:image/jpeg;base64,'))
+        self.assertTrue(objeto.foto_data.endswith('/foto/'))
+        respuesta_foto = self.client.get(objeto.foto_data)
+        self.assertEqual(respuesta_foto.status_code, 200)
+        self.assertEqual(respuesta_foto['Content-Type'], 'image/jpeg')
+        self.assertTrue(len(respuesta_foto.content) > 0)
 
     def test_formulario_muestra_botones_camara_y_galeria(self):
         self.client.force_login(self.admin)

@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 
 
@@ -112,9 +113,10 @@ class ObjetoReclamado(models.Model):
 
     @property
     def foto_data(self):
-        """Data URI de la foto (base64 guardado en la DB) o URL del archivo heredado."""
+        """URL del endpoint que sirve la foto guardada en la DB (base64),
+        manteniendo el HTML liviano para no agotar la memoria del servidor."""
         if self.foto_base64:
-            return self.foto_base64
+            return reverse('servir_foto_objeto', args=[self.pk])
         if self.foto:
             return self.foto.url
         return ''
