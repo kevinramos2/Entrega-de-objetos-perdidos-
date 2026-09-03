@@ -322,45 +322,58 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Subida de foto con vista previa (formulario de objeto)
-  var inputsFoto = document.querySelectorAll('.archivo-subida-input');
-  if (inputsFoto.length) {
-    var archivoSubida = inputsFoto[0].closest('.archivo-subida');
-    var area = archivoSubida ? archivoSubida.querySelector('.archivo-subida-area') : null;
-    var preview = area ? area.querySelector('.archivo-subida-preview') : null;
-    var vacio = area ? area.querySelector('.archivo-subida-vacio') : null;
-    function mostrarPreview(input) {
-      if (input.files && input.files[0]) {
-        var lector = new FileReader();
-        lector.onload = function (ev) {
-          preview.src = ev.target.result;
-          preview.hidden = false;
-          if (vacio) vacio.hidden = true;
-        };
-        lector.readAsDataURL(input.files[0]);
+  var archivoSubidas = document.querySelectorAll('.archivo-subida');
+  if (archivoSubidas.length) {
+    archivoSubidas.forEach(function (archivoSubida) {
+      var area = archivoSubida.querySelector('.archivo-subida-area');
+      var inputs = archivoSubida.querySelectorAll('.archivo-subida-input');
+      var preview = area ? area.querySelector('.archivo-subida-preview') : null;
+      var vacio = area ? area.querySelector('.archivo-subida-vacio') : null;
+      if (!preview || !inputs.length) return;
+      function mostrarPreview(input) {
+        if (input.files && input.files[0]) {
+          var lector = new FileReader();
+          lector.onload = function (ev) {
+            preview.src = ev.target.result;
+            preview.hidden = false;
+            if (vacio) vacio.hidden = true;
+          };
+          lector.readAsDataURL(input.files[0]);
+        }
       }
-    }
-    inputsFoto.forEach(function (input) {
-      input.addEventListener('change', function () { mostrarPreview(input); });
-    });
-    // Arrastrar y soltar
-    ['dragenter', 'dragover'].forEach(function (evt) {
-      area.addEventListener(evt, function (e) {
-        e.preventDefault();
-        area.classList.add('dragging');
+      inputs.forEach(function (input) {
+        input.addEventListener('change', function () {
+          // Sincroniza el archivo elegido con el primer input (el que se envía),
+          // para que siempre viaje un solo archivo hasta el servidor.
+          if (input.files && input.files[0] && input !== inputs[0] &&
+              typeof DataTransfer !== 'undefined') {
+            var dt = new DataTransfer();
+            dt.items.add(input.files[0]);
+            inputs[0].files = dt.files;
+          }
+          mostrarPreview(input);
+        });
       });
-    });
-    ['dragleave', 'drop'].forEach(function (evt) {
-      area.addEventListener(evt, function (e) {
-        e.preventDefault();
-        area.classList.remove('dragging');
+      // Arrastrar y soltar
+      ['dragenter', 'dragover'].forEach(function (evt) {
+        area.addEventListener(evt, function (e) {
+          e.preventDefault();
+          area.classList.add('dragging');
+        });
       });
-    });
-    area.addEventListener('drop', function (e) {
-      var archivos = e.dataTransfer && e.dataTransfer.files;
-      if (archivos && archivos.length) {
-        inputsFoto[0].files = archivos;
-        inputsFoto[0].dispatchEvent(new Event('change'));
-      }
+      ['dragleave', 'drop'].forEach(function (evt) {
+        area.addEventListener(evt, function (e) {
+          e.preventDefault();
+          area.classList.remove('dragging');
+        });
+      });
+      area.addEventListener('drop', function (e) {
+        var archivos = e.dataTransfer && e.dataTransfer.files;
+        if (archivos && archivos.length) {
+          inputs[0].files = archivos;
+          inputs[0].dispatchEvent(new Event('change'));
+        }
+      });
     });
   }
 });
