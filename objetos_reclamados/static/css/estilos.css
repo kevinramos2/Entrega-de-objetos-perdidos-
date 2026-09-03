@@ -593,8 +593,14 @@ img { max-width: 100%; }
 @media (max-width: 1024px) {
   .hero-grid, .detalle-grid { grid-template-columns: 1fr; }
   .pasos { grid-template-columns: 1fr; }
-  .grid-charts, .grid-charts-2, .grid-charts-ancho, .grid-charts-medio { grid-template-columns: 1fr; }
+  .grid-charts, .grid-charts-2, .grid-charts-ancho, .grid-charts-medio {
+    grid-template-columns: 1fr;
+  }
+  .grid-charts > *, .grid-charts-2 > *, .grid-charts-ancho > *, .grid-charts-medio > * {
+    min-width: 0; max-width: 100%;
+  }
   .panel-layout { grid-template-columns: 1fr; }
+  .panel-main { min-width: 0; max-width: 100%; overflow-x: auto; }
   .panel-menu {
     display: flex !important; flex-direction: row !important; gap: 4px;
     overflow-x: auto; min-width: 0; width: 100%; box-sizing: border-box;
