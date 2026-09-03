@@ -578,7 +578,8 @@ class RegistroObjetoTipoDocumentoYFechaTest(TestCase):
         contenido = self.client.get(reverse('panel_objeto_nuevo')).content.decode('utf-8', 'ignore')
         self.assertIn('Tomar foto', contenido)
         self.assertIn('Galería', contenido)
-        self.assertIn('capture="environment"', contenido)
+        self.assertIn('data-btn-camara', contenido)
+        self.assertIn('data-btn-galeria', contenido)
 
     def test_formulario_incluye_calendario_y_oculta_reclamante_al_registrar(self):
         self.client.force_login(self.admin)

@@ -326,16 +326,17 @@ document.addEventListener('DOMContentLoaded', function () {
   if (archivoSubidas.length) {
     archivoSubidas.forEach(function (archivoSubida) {
       var area = archivoSubida.querySelector('.archivo-subida-area');
-      var inputs = archivoSubida.querySelectorAll('.archivo-subida-input');
+      var input = archivoSubida.querySelector('.archivo-subida-input');
       var preview = area ? area.querySelector('.archivo-subida-preview') : null;
       var vacio = area ? area.querySelector('.archivo-subida-vacio') : null;
-      if (!preview || !inputs.length) return;
-      function mostrarPreview(input) {
+      var btnCamara = archivoSubida.querySelector('[data-btn-camara]');
+      var btnGaleria = archivoSubida.querySelector('[data-btn-galeria]');
+      if (!preview || !input) return;
+      function mostrarPreview() {
         if (input.files && input.files[0]) {
-          var objetoUrl;
           if (window.URL && URL.createObjectURL) {
             if (preview.dataset.blobUrl) URL.revokeObjectURL(preview.dataset.blobUrl);
-            objetoUrl = URL.createObjectURL(input.files[0]);
+            var objetoUrl = URL.createObjectURL(input.files[0]);
             preview.dataset.blobUrl = objetoUrl;
             preview.src = objetoUrl;
             preview.hidden = false;
@@ -351,41 +352,21 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         }
       }
-      var archivoElegido = null;
-      inputs.forEach(function (input) {
-        input.addEventListener('change', function () {
-          var archivo = input.files && input.files[0];
-          archivoElegido = archivo;
-          // Sincroniza el archivo elegido con el primer input (el que se envía),
-          // para que siempre viaje un solo archivo hasta el servidor.
-          if (archivo && input !== inputs[0] && typeof DataTransfer !== 'undefined') {
-            var dt = new DataTransfer();
-            dt.items.add(input.files[0]);
-            inputs[0].files = dt.files;
-          }
-          // En iOS/Android, la foto de la cámara a veces no está lista al
-          // instante; esperamos un ciclo para leerla de forma fiable.
-          var esCamara = input.hasAttribute('capture');
-          var leer = function () {
-            if (input.files && input.files[0]) mostrarPreview(input);
-          };
-          if (esCamara) {
-            setTimeout(leer, 150);
-          } else {
-            leer();
-          }
-        });
+      input.addEventListener('change', function () {
+        // En iOS/Android la foto de la cámara a veces no está lista al instante.
+        setTimeout(mostrarPreview, 150);
       });
-      // Al enviar, si la foto procede de la cámara y no pudo sincronizarse antes,
-      // la colocamos en el input real para que viaje hasta el servidor.
-      var formFoto = archivoSubida.closest('form');
-      if (formFoto) {
-        formFoto.addEventListener('submit', function () {
-          if (archivoElegido && !inputs[0].files.length && typeof DataTransfer !== 'undefined') {
-            var dt2 = new DataTransfer();
-            dt2.items.add(archivoElegido);
-            inputs[0].files = dt2.files;
-          }
+      // Un único input: "Tomar foto" activa la cámara y "Galería" abre el selector.
+      if (btnCamara) {
+        btnCamara.addEventListener('click', function () {
+          input.setAttribute('capture', 'environment');
+          input.click();
+        });
+      }
+      if (btnGaleria) {
+        btnGaleria.addEventListener('click', function () {
+          input.removeAttribute('capture');
+          input.click();
         });
       }
       // Arrastrar y soltar
@@ -404,8 +385,8 @@ document.addEventListener('DOMContentLoaded', function () {
       area.addEventListener('drop', function (e) {
         var archivos = e.dataTransfer && e.dataTransfer.files;
         if (archivos && archivos.length) {
-          inputs[0].files = archivos;
-          inputs[0].dispatchEvent(new Event('change'));
+          input.files = archivos;
+          input.dispatchEvent(new Event('change'));
         }
       });
     });
