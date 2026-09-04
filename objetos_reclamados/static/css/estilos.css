@@ -605,11 +605,12 @@ img { max-width: 100%; }
   .grid-charts > *, .grid-charts-2 > *, .grid-charts-ancho > *, .grid-charts-medio > * {
     min-width: 0; max-width: 100%;
   }
-  .panel-layout { grid-template-columns: 1fr; }
+  .panel-layout { grid-template-columns: 1fr; width: 100%; max-width: 100%; min-width: 0; }
   .panel-main { min-width: 0; max-width: 100%; overflow-x: auto; }
+  .panel-main .card, .panel-main .card > div { min-width: 0; max-width: 100%; }
   .panel-menu {
     display: flex !important; flex-direction: row !important; gap: 4px;
-    overflow-x: auto; min-width: 0; width: 100%; box-sizing: border-box;
+    overflow-x: auto; min-width: 0; max-width: 100%; width: 100%; box-sizing: border-box;
     padding: 10px 12px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
     background: linear-gradient(180deg, #0a2a20, #073022);
   }
