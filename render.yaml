@@ -25,7 +25,7 @@ services:
     # Dependencias + estáticos
     buildCommand: "pip install -r ../requirements.txt && python manage.py collectstatic --noinput"
 
-    startCommand: "python manage.py migrate && python manage.py promocionar_admins && gunicorn objetos_reclamados.wsgi:application --bind 0.0.0.0:$PORT"
+    startCommand: "python manage.py migrate && python manage.py recomprimir_fotos && python manage.py promocionar_admins && gunicorn objetos_reclamados.wsgi:application --bind 0.0.0.0:$PORT"
 
     healthCheckPath: /
 
