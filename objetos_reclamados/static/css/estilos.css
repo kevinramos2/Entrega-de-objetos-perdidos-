@@ -626,6 +626,7 @@ img { max-width: 100%; }
 }
 
 /* ---------- Actividad ---------- */
+.actividad-lista { max-height: 340px; overflow-y: auto; padding-right: 4px; }
 .actividad-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px dashed var(--line); font-size: .9rem; }
 .actividad-item:last-child { border-bottom: 0; }
 .actividad-item .ico { width: 40px; height: 40px; flex: none; border-radius: 11px; display: grid; place-items: center; background: var(--primary-50); color: var(--primary); font-family: var(--font-title); font-weight: 700; font-size: .78rem; }

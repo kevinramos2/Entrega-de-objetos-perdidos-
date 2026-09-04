@@ -356,7 +356,7 @@ def panel_inicio(request):
     por_categoria = stats.objetos_por_categoria()
     por_estado = stats.objetos_por_estado()
     por_mes = stats.objetos_por_mes()
-    actividad = stats.actividad_reciente(limite=8)
+    actividad = stats.actividad_reciente(limite=5)
 
     nombres_estado = dict(ObjetoReclamado.Estados.choices)
 
