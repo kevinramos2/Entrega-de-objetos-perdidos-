@@ -17,8 +17,9 @@
   <a href="{% url 'panel_solicitudes' %}?estado=rechazada" class="cat-chip {% if estado == 'rechazada' %}active{% endif %}">Rechazadas ({{ conteos.rechazada }})</a>
 </div>
 
-<div class="card" style="overflow:auto">
-  <table class="tabla">
+<div class="panel-tabla">
+  <div class="card" style="overflow:auto">
+    <table class="tabla">
     <thead>
       <tr>
         <th>Estudiante</th>
@@ -53,7 +54,8 @@
       {% empty %}
       <tr><td colspan="6"><div class="vacio"><p>No hay solicitudes en esta vista.</p></div></td></tr>
       {% endfor %}
-    </tbody>
-  </table>
+</tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}

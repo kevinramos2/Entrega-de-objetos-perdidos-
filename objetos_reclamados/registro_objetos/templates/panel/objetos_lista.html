@@ -32,8 +32,9 @@
   {% if q or estado or categoria_id %}<a href="{% url 'panel_objetos' %}" class="btn btn-ghost btn-sm">Limpiar</a>{% endif %}
 </form>
 
-<div class="card">
-  <div style="overflow:auto">
+<div class="panel-tabla">
+  <div class="card">
+    <div style="overflow:auto">
     <table class="tabla">
       <thead>
         <tr>
@@ -110,6 +111,7 @@
         {% endfor %}
       </tbody>
     </table>
+  </div>
   </div>
 </div>
 

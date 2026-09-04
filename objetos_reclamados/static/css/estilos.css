@@ -590,6 +590,7 @@ img { max-width: 100%; }
 .grid-charts-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 24px; }
 .grid-charts-ancho { grid-template-columns: 1.3fr .7fr; }
 .grid-charts-medio { grid-template-columns: 1.2fr .8fr; }
+.panel-tabla { display: grid; grid-template-columns: 1fr; gap: 18px; margin-top: 0; }
 .grafico-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-xs); padding: 20px; }
 .grafico-card h3 { margin: 0 0 6px; font-size: 1rem; }
 .grafico-card .sub { color: var(--muted); font-size: .84rem; margin: 0 0 14px; }
@@ -600,10 +601,10 @@ img { max-width: 100%; }
   body.panel-body { overflow-x: hidden; }
   .hero-grid, .detalle-grid { grid-template-columns: 1fr; }
   .pasos { grid-template-columns: 1fr; }
-  .grid-charts, .grid-charts-2, .grid-charts-ancho, .grid-charts-medio {
+  .grid-charts, .grid-charts-2, .grid-charts-ancho, .grid-charts-medio, .panel-tabla {
     grid-template-columns: 1fr;
   }
-  .grid-charts > *, .grid-charts-2 > *, .grid-charts-ancho > *, .grid-charts-medio > * {
+  .grid-charts > *, .grid-charts-2 > *, .grid-charts-ancho > *, .grid-charts-medio > *, .panel-tabla > * {
     min-width: 0; max-width: 100%;
   }
   .panel-layout { grid-template-columns: 1fr; width: 100%; max-width: 100%; min-width: 0; }
