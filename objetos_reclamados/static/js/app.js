@@ -391,4 +391,25 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
   }
+
+  // Cambio de tema claro/oscuro
+  var html = document.documentElement;
+  var btnTema = document.getElementById('tema-toggle');
+  if (btnTema) {
+    function aplicarTema(tema) {
+      if (tema === 'oscuro') html.setAttribute('data-tema', 'oscuro');
+      else html.removeAttribute('data-tema');
+      try { localStorage.setItem('tema-aplicacion', tema); } catch (e) {}
+    }
+    btnTema.addEventListener('click', function () {
+      aplicarTema(html.hasAttribute('data-tema') ? 'claro' : 'oscuro');
+    });
+    // Si el usuario cambia el tema del sistema y no eligio uno manual, seguirlo
+    var prefMedia = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+    if (prefMedia && !localStorage.getItem('tema-aplicacion')) {
+      prefMedia.addEventListener('change', function (e) {
+        aplicarTema(e.matches ? 'oscuro' : 'claro');
+      });
+    }
+  }
 });
