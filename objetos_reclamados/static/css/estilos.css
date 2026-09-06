@@ -151,7 +151,7 @@ img { max-width: 100%; }
   background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
   box-shadow: var(--shadow-sm); overflow: hidden;
 }
-.card-obj { transition: transform .2s ease, box-shadow .2s ease; }
+.card-obj { display: flex; flex-direction: column; transition: transform .2s ease, box-shadow .2s ease; }
 .card-obj:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
 .card-obj .media {
   height: 150px; display: grid; place-items: center; overflow: hidden;
@@ -159,10 +159,14 @@ img { max-width: 100%; }
 }
 .card-obj .media img { width: 100%; height: 150px; object-fit: cover; transition: transform .35s ease; }
 .card-obj:hover .media img { transform: scale(1.06); }
-.card-obj .body { padding: 16px; }
-.card-obj h3 { margin: 0 0 4px; font-size: 1rem; }
+.card-obj .body { display: flex; flex-direction: column; flex: 1; gap: 10px; padding: 16px; }
+.card-obj .body > .btn { margin-top: auto; }
+.card-obj h3 { flex: 1; min-width: 0; margin: 0 0 4px; font-size: 1rem; }
 .card-obj p { margin: 0; color: var(--muted); font-size: .87rem; }
-.card-obj .meta { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+.card-obj .badge-cat { flex: none; max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-obj .meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 4px; }
+.card-obj .meta .badge { flex: none; }
+.card-obj .meta .muted { min-width: 0; text-align: right; }
 
 /* Ficha de categoria: ícono SVG (o iniciales como respaldo) */
 .chip-icono {
