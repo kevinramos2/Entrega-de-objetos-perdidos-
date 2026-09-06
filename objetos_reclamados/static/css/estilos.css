@@ -67,7 +67,6 @@
     var(--bg);
 }
 [data-tema="oscuro"] .navbar { background: rgba(13, 19, 34, .9); }
-[data-tema="oscuro"] .nav-links { background: var(--surface); }
 [data-tema="oscuro"] .nav-toggle:hover { background: var(--line); }
 [data-tema="oscuro"] :is(input:not([type="checkbox"]), select, textarea) {
   background: var(--surface); color: var(--ink); border-color: var(--line);
@@ -177,6 +176,7 @@ img { max-width: 100%; }
     border-bottom: 1px solid var(--line); box-shadow: var(--shadow);
   }
   .nav-links.open { display: flex; }
+  [data-tema="oscuro"] .nav-links { background: var(--surface); }
   .nav-actions { gap: 6px; }
 }
 
