@@ -451,13 +451,23 @@ class FormatoEntregaTest(TestCase):
         )
 
     def test_admin_descarga_formato_entregado(self):
-        solicitud, _estudiante, admin = self._solicitud(entregada=True)
+        solicitud, _e, admin = self._solicitud(entregada=True)
         self.client.force_login(admin)
         respuesta = self.client.get(reverse('panel_solicitud_formato', args=[solicitud.pk]))
         self.assertEqual(respuesta.status_code, 200)
         self.assertEqual(respuesta['Content-Type'], 'application/pdf')
         self.assertIn('formato_entrega', respuesta['Content-Disposition'])
         self.assertGreater(len(respuesta.content), 1000)
+
+    def test_formato_estampa_la_firma_del_encargado(self):
+        from .formato_entrega import generar_formato_entrega
+        solicitud, _e, admin = self._solicitud(entregada=True)
+        admin.perfil.firma = SimpleUploadedFile('firma.png', self._png(color=(0, 0, 0)))
+        admin.perfil.save()
+        solicitud.entregado_por = admin
+        solicitud.save()
+        pdf = generar_formato_entrega(solicitud)
+        self.assertIn(b'/Subtype /Image', pdf)
 
     def test_estudiante_no_puede_descargar_el_formato(self):
         """El PDF es exclusivo del administrador: el estudiante no lo ve."""
@@ -510,6 +520,59 @@ class FormatoEntregaTest(TestCase):
         admin.perfil.refresh_from_db()
         self.assertTrue(admin.perfil.firma)
         self.assertTrue(admin.perfil.firma.name.endswith('.png'))
+
+    def test_firma_upload_se_normaliza_a_png(self):
+        admin = crear_usuario('adminfir2', 'adminfir2@unal.edu.co', is_staff=True)
+        self.client.force_login(admin)
+        buf = io.BytesIO()
+        imagen = Image.new('RGB', (3000, 1200), (255, 255, 255))
+        from PIL import ImageDraw
+        d = ImageDraw.Draw(imagen)
+        d.line([(120, 600), (1500, 560), (2600, 650)], fill=(10, 10, 10), width=14)
+        imagen.save(buf, 'JPEG')
+        respuesta = self.client.post(
+            reverse('panel_usuario_editar', args=[admin.pk]),
+            {
+                'username': admin.username,
+                'email': admin.email,
+                'first_name': admin.first_name,
+                'last_name': admin.last_name,
+                'rol': 'admin',
+                'is_active': 'on',
+                'firma': SimpleUploadedFile('foto.jpg', buf.getvalue()),
+            },
+        )
+        self.assertEqual(respuesta.status_code, 302)
+        admin.perfil.refresh_from_db()
+        self.assertTrue(admin.perfil.firma.name.endswith('.png'))
+        with Image.open(admin.perfil.firma.path) as imagen_guardada:
+            self.assertEqual(imagen_guardada.format, 'PNG')
+            self.assertLessEqual(max(imagen_guardada.size), 1000)
+            self.assertIn('A', imagen_guardada.getbands())
+            # El fondo blanco se volvió transparente y la tinta se conserva.
+            alphas = {px[3] for px in imagen_guardada.getdata()}
+            self.assertIn(0, alphas)
+            self.assertIn(255, alphas)
+
+    def test_firma_invalida_se_rechaza(self):
+        admin = crear_usuario('adminfir3', 'adminfir3@unal.edu.co', is_staff=True)
+        self.client.force_login(admin)
+        respuesta = self.client.post(
+            reverse('panel_usuario_editar', args=[admin.pk]),
+            {
+                'username': admin.username,
+                'email': admin.email,
+                'first_name': admin.first_name,
+                'last_name': admin.last_name,
+                'rol': 'admin',
+                'is_active': 'on',
+                'firma': SimpleUploadedFile('firma.png', b'no es una imagen'),
+            },
+        )
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertTrue(respuesta.context['form'].has_error('firma'))
+        admin.perfil.refresh_from_db()
+        self.assertFalse(bool(admin.perfil.firma))
 
 
 class RegistroObjetoTipoDocumentoYFechaTest(TestCase):

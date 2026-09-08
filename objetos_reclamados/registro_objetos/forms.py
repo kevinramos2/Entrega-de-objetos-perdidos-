@@ -291,7 +291,7 @@ class UsuarioPanelForm(forms.Form):
     telefono = forms.CharField(label='Teléfono', max_length=20, required=False)
     programa = forms.CharField(label='Programa / Carrera', max_length=120, required=False)
     firma = forms.ImageField(
-        label='Firma digital (solo administradores)· PNG con fondo transparente',
+        label='Firma digital',
         required=False,
         help_text='Se estampa en los formatos de entrega para impresión. '
                   'Déjalo vacío para conservar la firma actual.',
@@ -305,6 +305,18 @@ class UsuarioPanelForm(forms.Form):
             dominios = ', '.join(settings.ALLOWED_EMAIL_DOMAINS)
             raise ValidationError(f'Debe ser un correo institucional autorizado ({dominios}).')
         return correo
+
+    def clean_firma(self):
+        """Normaliza la firma subida: PNG con fondo transparente y tamaño
+        acotado, para que el PDF no tenga que procesar imágenes gigantes."""
+        archivo = self.cleaned_data.get('firma')
+        if not archivo:
+            return None
+        from .firma_util import ErrorFirma, normalizar_firma
+        try:
+            return normalizar_firma(archivo)
+        except ErrorFirma as exc:
+            raise ValidationError(str(exc)) from exc
 
     def clean_username(self):
         nombre = self.cleaned_data['username'].strip()

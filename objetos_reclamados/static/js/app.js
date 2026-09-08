@@ -389,6 +389,48 @@ document.addEventListener('DOMContentLoaded', function () {
           input.dispatchEvent(new Event('change'));
         }
       });
+
+      // Firma digital: botón propio y compresión en el navegador. La imagen se
+      // convierte a PNG y se acota a 1000 px para que el servidor (memoria)
+      // y el PDF nunca reciban archivos desmedidos.
+      if (input.dataset.firma) {
+        var btnFirma = archivoSubida.querySelector('[data-btn-firma]');
+        if (btnFirma) {
+          btnFirma.addEventListener('click', function () {
+            input.removeAttribute('capture');
+            input.click();
+          });
+        }
+        input.addEventListener('change', function () {
+          var archivo = input.files && input.files[0];
+          if (!archivo || !window.File || !window.FileReader) return;
+          var lector = new FileReader();
+          lector.onload = function (ev) {
+            var img = new Image();
+            img.onload = function () {
+              var MAX = 1000;
+              var escala = Math.min(1, MAX / Math.max(img.width, img.height));
+              var lienzo = document.createElement('canvas');
+              lienzo.width = Math.max(1, Math.round(img.width * escala));
+              lienzo.height = Math.max(1, Math.round(img.height * escala));
+              lienzo.getContext('2d').drawImage(img, 0, 0, lienzo.width, lienzo.height);
+              if (!lienzo.toBlob) return;
+              lienzo.toBlob(function (blob) {
+                var nuevo = new File([blob], 'firma.png', { type: 'image/png' });
+                input.files = [nuevo];
+                if (preview.dataset.blobUrl) URL.revokeObjectURL(preview.dataset.blobUrl);
+                var objetoUrl = URL.createObjectURL(nuevo);
+                preview.dataset.blobUrl = objetoUrl;
+                preview.src = objetoUrl;
+                preview.hidden = false;
+                if (vacio) vacio.hidden = true;
+              }, 'image/png');
+            };
+            img.src = ev.target.result;
+          };
+          lector.readAsDataURL(archivo);
+        });
+      }
     });
   }
 

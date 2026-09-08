@@ -109,6 +109,32 @@ def _bloque_logo(static_root):
     return piezas
 
 
+def _firma_flowable(firma_ruta):
+    """Devuelve la firma digital como flowable para el PDF, o None si no hay."""
+    if not firma_ruta:
+        return None
+    from .firma_util import firma_png_bytes
+    bytes_png = firma_png_bytes(firma_ruta)
+    if not bytes_png:
+        return None
+    try:
+        with PillowImage.open(io.BytesIO(bytes_png)) as im:
+            ancho, alto = im.size
+    except Exception:
+        return None
+    if not ancho or not alto:
+        return None
+    limite_w = 60 * mm
+    limite_h = 14 * mm
+    if ancho / alto > limite_w / limite_h:
+        w = limite_w
+        h = alto * w / ancho
+    else:
+        h = limite_h
+        w = ancho * h / alto
+    return FlowableImage(io.BytesIO(bytes_png), width=w, height=h)
+
+
 def _definir_fecha(fecha):
     """Descompone la fecha de entrega en día, mes (texto) y año."""
     from datetime import datetime
@@ -133,6 +159,15 @@ def generar_formato_entrega(solicitud):
     usuario = solicitud.usuario
     perfil = getattr(usuario, 'perfil', None)
 
+    firma_ruta = ''
+    encargado = solicitud.entregado_por
+    perfil_encargado = getattr(encargado, 'perfil', None) if encargado else None
+    if perfil_encargado and perfil_encargado.firma:
+        try:
+            firma_ruta = perfil_encargado.firma.path
+        except Exception:
+            firma_ruta = ''
+
     datos = {
         'nombre_reclamante': usuario.get_full_name() or usuario.username,
         'tipo_doc': solicitud.tipo_documento or (perfil.get_tipo_documento_display() if perfil else ''),
@@ -147,10 +182,10 @@ def generar_formato_entrega(solicitud):
         ),
         'fecha_entrega': solicitud.fecha_entrega,
     }
-    return _render_formato(datos, static_root)
+    return _render_formato(datos, static_root, firma_ruta)
 
 
-def generar_formato_entrega_objeto(objeto, nombre_encargado=''):
+def generar_formato_entrega_objeto(objeto, nombre_encargado='', firma_path=''):
     """Compone el PDF de entrega directamente desde los datos del objeto.
 
     Pensado para objetos marcados como entregados desde la gestión de objetos
@@ -174,10 +209,10 @@ def generar_formato_entrega_objeto(objeto, nombre_encargado=''):
         'nombre_encargado': nombre_encargado or objeto.responsable_entrega or '',
         'fecha_entrega': objeto.fecha_entrega,
     }
-    return _render_formato(datos, static_root)
+    return _render_formato(datos, static_root, firma_path or '')
 
 
-def _render_formato(datos, static_root):
+def _render_formato(datos, static_root, firma_ruta=''):
     nombre_reclamante = datos['nombre_reclamante']
     tipo_doc = datos['tipo_doc']
     num_doc = datos['num_doc']
@@ -244,7 +279,15 @@ def _render_formato(datos, static_root):
     ]
     col_encargado = [
         Paragraph('Firma de quien entrega', EST['firma_label']),
-        Spacer(1, 24 * mm),
+        Spacer(1, 4 * mm),
+    ]
+    firma_img = _firma_flowable(firma_ruta)
+    if firma_img:
+        col_encargado.append(firma_img)
+    else:
+        col_encargado.append(Spacer(1, 16 * mm))
+    col_encargado += [
+        Spacer(1, 4 * mm),
         HRFlowable(width='88%', thickness=0.8, color=LINEA),
         Spacer(1, 2 * mm),
         Paragraph(escape(nombre_encargado or '—'), EST['firma_dato']),

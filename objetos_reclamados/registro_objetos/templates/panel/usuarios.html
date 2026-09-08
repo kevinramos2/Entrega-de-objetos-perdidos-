@@ -101,8 +101,24 @@
       </div>
       <div class="form-campo">
         <label>{{ form.firma.label }}</label>
-        {{ form.firma }}
-        {% if form.firma.help_text %}<div class="help">{{ form.firma.help_text }}</div>{% endif %}
+        <div class="archivo-subida archivo-subida-firma" style="max-width:460px">
+          <input type="file" name="{{ form.firma.name }}" id="{{ form.firma.id_for_label }}"
+                 accept="image/png,image/jpeg,image/webp" class="archivo-subida-input" data-firma="1">
+          <div class="archivo-subida-area">
+            <img class="archivo-subida-preview" alt="Vista previa de la firma" hidden>
+            <div class="archivo-subida-vacio">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5 7.5L3 4.5 8 3l10 10z"/><path d="m9 14 4-4"/></svg>
+              <span class="archivo-subida-hint">Arrastra tu firma aquí o elige un archivo</span>
+            </div>
+            <div class="archivo-subida-botones">
+              <button type="button" class="archivo-subida-boton" data-btn-firma>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21H3"/><path d="M20.88 8.88 15.12 3.12l-13.3 13.3L1 20.88 4.7 21.7l13.3-13.3z"/></svg>
+                Elegir imagen
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="help">{{ form.firma.help_text }} Formato compatible: PNG, JPG o WEBP; se convierte a PNG con fondo transparente (máx. 1000 px).</div>
       </div>
       <button type="submit" class="btn btn-primary btn-block">Crear cuenta</button>
     </form>

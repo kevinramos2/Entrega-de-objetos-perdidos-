@@ -445,6 +445,14 @@ img { max-width: 100%; }
 .archivo-subida-boton:hover { border-color: var(--primary); background: var(--primary-50); color: var(--primary); }
 .archivo-subida-boton svg { width: 17px; height: 17px; }
 
+/* Variante para la firma digital: área más baja y chip claro para ver el PNG
+   transparente tanto en tema claro como oscuro */
+.archivo-subida-firma .archivo-subida-area { min-height: 120px; }
+.archivo-subida-firma .archivo-subida-preview {
+  margin-bottom: 6px; background: #f0f1f4; border-radius: 8px; padding: 6px;
+  border: 1px solid var(--line);
+}
+
 /* ---------- Campo de fecha + picker propio ---------- */
 .campo-fecha { position: relative; max-width: 230px; }
 .campo-fecha .campo-fecha-icono {

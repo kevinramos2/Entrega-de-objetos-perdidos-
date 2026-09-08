@@ -528,10 +528,12 @@ def panel_objeto_formato(request, pk):
         solicitud_aprobada.save(update_fields=['formato_descargado'])
         pdf_bytes = generar_formato_entrega(solicitud_aprobada)
     else:
+        from .firma_util import firma_path_de
         pdf_bytes = generar_formato_entrega_objeto(
             objeto,
             nombre_encargado=objeto.responsable_entrega or
             (request.user.get_full_name() or request.user.username),
+            firma_path=firma_path_de(request.user),
         )
 
     nombre = f'formato_entrega_{objeto.pk}.pdf'
