@@ -92,6 +92,47 @@
   .hero-orb { display: none; }
 }
 
+/* Luminosidad que sigue al cursor dentro del hero (ver components/HeroTracker.tsx) */
+.hero-tracker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 0 26px 8px rgba(120, 224, 180, 0.5),
+    0 0 90px 40px rgba(120, 224, 180, 0.18),
+    inset 0 0 18px 4px rgba(255, 255, 255, 0.15);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 0;
+  transition: opacity 0.25s ease;
+}
+.hero-tracker.visible { opacity: 1; }
+.hero-particula {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  pointer-events: none;
+  z-index: 0;
+  box-shadow: 0 0 8px 2px rgba(120, 224, 180, 0.6);
+  animation: hero-estela 0.95s ease-out forwards;
+}
+@keyframes hero-estela {
+  0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.95; }
+  100% { transform: translate3d(var(--dx, 0px), var(--dy, 0px), 0) scale(0); opacity: 0; }
+}
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .hero-tracker,
+  .hero-particula { display: none; }
+}
+
 .hero-stat {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.16);
@@ -208,6 +249,9 @@
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }
 }
+
+/* ---------- Sección alterna (fondo suave, "¿Cómo funciona?") ---------- */
+.seccion-alt { background: linear-gradient(180deg, #f3f9f5, #eef6fa); }
 
 /* ---------- Footer ---------- */
 .footer {

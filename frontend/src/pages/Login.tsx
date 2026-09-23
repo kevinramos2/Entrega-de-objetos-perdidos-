@@ -15,7 +15,7 @@ function IconoGoogle() {
 
 export default function Login() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-canvas px-4 py-12">
+    <div className="flex min-h-[60vh] flex-col items-center justify-center py-12">
       <LogoMark size={48} />
       <Card className="mt-6 w-full max-w-sm text-center">
         <h1 className="font-display text-heading-sm font-bold text-ink">Inicia sesión</h1>

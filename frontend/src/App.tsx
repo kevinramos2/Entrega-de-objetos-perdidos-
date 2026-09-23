@@ -16,12 +16,12 @@ import StyleGuide from './pages/StyleGuide'
 export default function App() {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/dev/styleguide" element={<StyleGuide />} />
 
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
 
         <Route element={<ProtectedRoute />}>
           <Route path="/objetos" element={<Objetos />} />

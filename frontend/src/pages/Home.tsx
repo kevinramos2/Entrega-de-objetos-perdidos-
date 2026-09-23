@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import type { Mensaje, ObjetoPublico } from '../api/estudiante'
 import { Button } from '../components/Button'
 import { CategoryIcon } from '../components/CategoryIcon'
+import { HeroTracker } from '../components/HeroTracker'
 import { useCategorias, useResumen } from '../hooks/useEstudianteApi'
 import { useAuth } from '../lib/auth-context'
 
@@ -142,10 +143,11 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
-      <section className="hero-fondo -mx-4 rounded-b-card-lg px-4 py-16 text-white sm:mx-0 sm:rounded-card-lg sm:px-10">
+      <section className="hero-fondo relative left-1/2 right-1/2 -mx-[50vw] w-screen px-4 py-20 text-white sm:px-10">
         <span className="hero-orb hero-orb-a" aria-hidden="true" />
         <span className="hero-orb hero-orb-b" aria-hidden="true" />
-        <div className="relative grid items-center gap-10 lg:grid-cols-2">
+        <HeroTracker />
+        <div className="relative mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2">
           <div>
             <h1 className="font-display text-heading-lg font-bold leading-tight">
               ¿Perdiste algo?
@@ -213,7 +215,7 @@ export default function Home() {
             titulo="¿Qué se pierde en la universidad?"
             texto="Revisa las categorías más comunes y encuentra lo que buscas."
           />
-          <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(225px,1fr))] gap-3.5">
             {categorias.map((categoria) => (
               <Link
                 key={categoria.id}
@@ -241,24 +243,26 @@ export default function Home() {
         </section>
       )}
 
-      <section className="-mx-4 bg-primary-wash px-4 py-16 sm:mx-0 sm:rounded-card-lg sm:px-10">
-        <SeccionHeader
-          eyebrow="¿Cómo funciona?"
-          titulo="Tres pasos simples que conectan lo perdido con su dueño"
-          texto="Del armario de objetos perdidos de regreso a tus manos."
-        />
-        <div className="grid gap-5 sm:grid-cols-3">
-          {PASOS.map((paso) => (
-            <div key={paso.titulo} className="paso animar-entrada rounded-card border border-line bg-surface p-7 text-center shadow-card">
-              <span className="mx-auto mb-3.5 flex h-[52px] w-[52px] items-center justify-center rounded-full bg-primary-wash text-primary">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
-                  {paso.icono}
-                </svg>
-              </span>
-              <h3 className="font-display text-body-lg font-bold text-ink">{paso.titulo}</h3>
-              <p className="mt-1.5 text-body text-muted">{paso.texto}</p>
-            </div>
-          ))}
+      <section className="seccion-alt relative left-1/2 right-1/2 -mx-[50vw] w-screen px-4 py-16 sm:px-10">
+        <div className="mx-auto max-w-5xl">
+          <SeccionHeader
+            eyebrow="¿Cómo funciona?"
+            titulo="Tres pasos simples que conectan lo perdido con su dueño"
+            texto="Del armario de objetos perdidos de regreso a tus manos."
+          />
+          <div className="grid gap-5 sm:grid-cols-3">
+            {PASOS.map((paso) => (
+              <div key={paso.titulo} className="paso animar-entrada rounded-card border border-line bg-surface p-7 text-center shadow-card">
+                <span className="mx-auto mb-3.5 flex h-[52px] w-[52px] items-center justify-center rounded-full bg-primary-wash text-primary">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
+                    {paso.icono}
+                  </svg>
+                </span>
+                <h3 className="font-display text-body-lg font-bold text-ink">{paso.titulo}</h3>
+                <p className="mt-1.5 text-body text-muted">{paso.texto}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
