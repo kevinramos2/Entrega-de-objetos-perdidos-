@@ -1,78 +1,32 @@
-import { useState, type FormEvent } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { API_BASE_URL, ApiError } from '../api/client'
-import { Button } from '../components/Button'
+import { API_BASE_URL } from '../api/client'
 import { Card } from '../components/Card'
-import { Input } from '../components/Input'
 import { LogoMark } from '../components/Logo'
-import { useAuth } from '../lib/auth-context'
+
+function IconoGoogle() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.1 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.3 6.4 29.4 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z" />
+      <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 18.9 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34.3 6.4 29.4 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" />
+      <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.1 0-9.3-3.1-11-7.5l-6.4 5C9.5 39.6 16.2 44 24 44z" />
+      <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C40.1 35.8 44 30.5 44 24c0-1.3-.1-2.6-.4-3.9z" />
+    </svg>
+  )
+}
 
 export default function Login() {
-  const { login } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
-  const [identificador, setIdentificador] = useState('')
-  const [contrasena, setContrasena] = useState('')
-  const [error, setError] = useState('')
-  const [cargando, setCargando] = useState(false)
-
-  async function enviar(evento: FormEvent) {
-    evento.preventDefault()
-    setError('')
-    setCargando(true)
-    try {
-      const usuario = await login(identificador, contrasena)
-      const destino = (location.state as { desde?: string } | null)?.desde
-      navigate(destino ?? (usuario.is_staff ? '/panel' : '/objetos'), { replace: true })
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'No pudimos iniciar sesión. Inténtalo de nuevo.')
-    } finally {
-      setCargando(false)
-    }
-  }
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-canvas px-4 py-12">
       <LogoMark size={48} />
-      <Card className="mt-6 w-full max-w-sm">
-        <h1 className="text-center font-display text-heading-sm font-bold text-ink">Bienvenido de nuevo</h1>
-        <p className="mt-1 text-center text-body text-muted">Ingresa con tu correo institucional.</p>
-
-        <form onSubmit={enviar} className="mt-6 flex flex-col gap-4">
-          <Input
-            id="identificador"
-            label="Usuario o correo institucional"
-            placeholder="correo@unal.edu.co"
-            value={identificador}
-            onChange={(evento) => setIdentificador(evento.target.value)}
-            autoComplete="username"
-            required
-          />
-          <Input
-            id="contrasena"
-            label="Contraseña"
-            type="password"
-            value={contrasena}
-            onChange={(evento) => setContrasena(evento.target.value)}
-            autoComplete="current-password"
-            required
-          />
-          {error && <p className="text-caption text-danger">{error}</p>}
-          <Button type="submit" variante="primario" disabled={cargando}>
-            {cargando ? 'Ingresando…' : 'Ingresar'}
-          </Button>
-        </form>
-
-        <div className="mt-6 flex items-center gap-3 text-caption text-muted">
-          <span className="h-px flex-1 bg-line" />
-          o
-          <span className="h-px flex-1 bg-line" />
-        </div>
-
+      <Card className="mt-6 w-full max-w-sm text-center">
+        <h1 className="font-display text-heading-sm font-bold text-ink">Inicia sesión</h1>
+        <p className="mt-2 text-body text-muted">
+          El acceso es únicamente con tu correo institucional <strong className="text-ink">@unal.edu.co</strong>.
+        </p>
         <a
           href={`${API_BASE_URL}/accounts/google/login/`}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-pill border border-primary/30 px-5 py-2.5 text-body font-semibold text-primary transition-colors hover:bg-primary-wash"
+          className="mt-6 inline-flex w-full items-center justify-center gap-2.5 rounded-pill border border-primary/30 px-5 py-3 text-body font-semibold text-primary transition-colors hover:bg-primary-wash"
         >
+          <IconoGoogle />
           Continuar con Google
         </a>
       </Card>
