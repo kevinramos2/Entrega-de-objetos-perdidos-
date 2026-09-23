@@ -8,8 +8,8 @@ function Chip({ activo, onClick, children }: { activo: boolean; onClick: () => v
   return (
     <button
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 rounded-pill border px-4 py-2 text-caption font-semibold transition-colors ${
-        activo ? 'border-primary bg-primary text-white' : 'border-line bg-surface text-ink-soft hover:border-primary/40'
+      className={`cat-chip inline-flex items-center gap-1.5 rounded-pill border px-4 py-2 text-caption font-semibold shadow-card ${
+        activo ? 'activo' : 'border-line bg-surface text-ink-soft hover:border-primary/40'
       }`}
     >
       {children}

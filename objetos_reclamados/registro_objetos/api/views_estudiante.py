@@ -2,6 +2,7 @@
 Traducción 1:1 de la lógica que ya vivía en ``views/estudiante.py`` — mismas
 reglas, misma reutilización de ``forms`` y ``estadisticas``, solo cambia el
 formato de salida de HTML a JSON."""
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -44,10 +45,17 @@ class ResumenView(APIView):
 
 
 class CategoriasView(APIView):
-    permission_classes = [IsAuthenticated]
+    """Pública: la usa tanto el filtro del listado (requiere sesión en la
+    página que lo envuelve) como la sección "Explora por categoría" de
+    Inicio, que sí es pública — igual que la vista clásica ``inicio``."""
+    permission_classes = [AllowAny]
 
     def get(self, request):
-        categorias = Categoria.objects.all()
+        categorias = Categoria.objects.annotate(
+            total_disponibles=Count(
+                'objetos', filter=Q(objetos__estado=ObjetoReclamado.Estados.DISPONIBLE),
+            ),
+        )
         return Response(CategoriaSerializer(categorias, many=True, context={'request': request}).data)
 
 

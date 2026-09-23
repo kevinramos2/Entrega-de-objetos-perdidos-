@@ -1,33 +1,30 @@
 import type { ReactNode } from 'react'
-import { Card } from './Card'
 
 interface StatCardProps {
   etiqueta: string
   valor: ReactNode
   detalle?: string
-  tono?: 'claro' | 'oscuro'
+  tono?: 'verde' | 'amarillo' | 'azul'
   icono?: ReactNode
 }
 
-export function StatCard({ etiqueta, valor, detalle, tono = 'claro', icono }: StatCardProps) {
+const TONOS: Record<NonNullable<StatCardProps['tono']>, string> = {
+  verde: 'kpi-verde',
+  amarillo: 'kpi-amarillo',
+  azul: 'kpi-azul',
+}
+
+export function StatCard({ etiqueta, valor, detalle, tono, icono }: StatCardProps) {
   return (
-    <Card tono={tono === 'oscuro' ? 'oscuro' : 'claro'} className="flex flex-col gap-1">
-      <div className="flex items-center justify-between">
-        <span className={`text-caption font-medium uppercase tracking-wide ${tono === 'oscuro' ? 'text-on-dark-muted' : 'text-muted'}`}>
-          {etiqueta}
+    <div className={`kpi rounded-card border border-line bg-surface p-5 ${tono ? TONOS[tono] : ''}`}>
+      {icono && (
+        <span className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-input bg-primary-wash text-primary">
+          {icono}
         </span>
-        {icono && (
-          <span className={`flex h-8 w-8 items-center justify-center rounded-input ${tono === 'oscuro' ? 'bg-white/10' : 'bg-primary-wash text-primary'}`}>
-            {icono}
-          </span>
-        )}
-      </div>
-      <span className={`font-display text-heading-lg font-bold ${tono === 'oscuro' ? 'text-on-dark' : 'text-ink'}`}>
-        {valor}
-      </span>
-      {detalle && (
-        <span className={`text-caption ${tono === 'oscuro' ? 'text-on-dark-muted' : 'text-muted'}`}>{detalle}</span>
       )}
-    </Card>
+      <span className="kpi-valor font-display text-heading-lg font-bold">{valor}</span>
+      <p className="mt-1 text-caption font-semibold text-muted">{etiqueta}</p>
+      {detalle && <p className="mt-0.5 text-caption text-muted">{detalle}</p>}
+    </div>
   )
 }

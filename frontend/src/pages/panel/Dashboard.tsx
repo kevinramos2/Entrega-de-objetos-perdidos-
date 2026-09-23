@@ -43,10 +43,10 @@ export default function Dashboard() {
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard etiqueta="Disponibles" valor={resumen.disponibles} />
-        <StatCard etiqueta="Reclamados" valor={resumen.reclamados} />
-        <StatCard etiqueta="Entregados" valor={resumen.entregados} />
-        <StatCard etiqueta="Por revisar" valor={resumen.solicitudes_pendientes} />
+        <StatCard etiqueta="Disponibles" valor={resumen.disponibles} tono="verde" />
+        <StatCard etiqueta="Reclamados" valor={resumen.reclamados} tono="amarillo" />
+        <StatCard etiqueta="Entregados" valor={resumen.entregados} tono="azul" />
+        <StatCard etiqueta="Por revisar" valor={resumen.solicitudes_pendientes} tono="amarillo" />
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">

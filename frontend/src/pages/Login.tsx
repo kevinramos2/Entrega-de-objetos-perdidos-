@@ -24,7 +24,7 @@ export default function Login() {
         </p>
         <a
           href={`${API_BASE_URL}/accounts/google/login/`}
-          className="mt-6 inline-flex w-full items-center justify-center gap-2.5 rounded-pill border border-primary/30 px-5 py-3 text-body font-semibold text-primary transition-colors hover:bg-primary-wash"
+          className="btn btn-ghost mt-6 w-full py-3 text-body"
         >
           <IconoGoogle />
           Continuar con Google

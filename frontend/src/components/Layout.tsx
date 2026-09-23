@@ -1,6 +1,7 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth-context'
 import { Button } from './Button'
+import { Footer } from './Footer'
 import { TopNav } from './TopNav'
 
 const ENLACES_ESTUDIANTE = [
@@ -20,7 +21,7 @@ export function Layout() {
   }
 
   return (
-    <div className="min-h-screen bg-canvas">
+    <div className="flex min-h-screen flex-col bg-canvas">
       <TopNav
         enlaces={ENLACES_ESTUDIANTE.map((enlace) => ({
           etiqueta: enlace.etiqueta,
@@ -41,7 +42,7 @@ export function Layout() {
               >
                 {(usuario.first_name || usuario.username).charAt(0).toUpperCase()}
               </span>
-              <button onClick={salir} className="text-caption font-medium text-ink-soft hover:text-ink">
+              <button onClick={salir} className="btn btn-ghost text-caption px-4 py-2">
                 Salir
               </button>
             </>
@@ -52,9 +53,10 @@ export function Layout() {
           )
         }
       />
-      <main className="mx-auto max-w-5xl px-4 py-10">
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
         <Outlet />
       </main>
+      <Footer />
     </div>
   )
 }

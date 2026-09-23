@@ -1,0 +1,252 @@
+/**
+ * Componentes con efectos que Tailwind no expresa bien como utilidades
+ * (degradados de varias capas, sombras compuestas, animaciones de hover) —
+ * portados 1:1 desde objetos_reclamados/static/css/estilos.css para que la
+ * SPA conserve la riqueza visual real de la app clásica.
+ */
+
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-decoration: none;
+  line-height: 1.2;
+  border: 1px solid transparent;
+}
+.btn:disabled { opacity: 0.55; cursor: not-allowed; pointer-events: none; }
+.btn:active { transform: translateY(0); }
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--color-primary-wash);
+}
+
+.btn-primario {
+  background: linear-gradient(180deg, #0e8a5e, #0b7a54);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+.btn-primario:hover {
+  background: linear-gradient(180deg, #0d8055, #0a6d4b);
+  box-shadow: var(--shadow-card);
+  transform: translateY(-1px);
+}
+.btn-invertido {
+  background: #fff;
+  color: var(--color-primary-dark);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+}
+.btn-invertido:hover { box-shadow: var(--shadow-floating); transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent;
+  color: var(--color-primary);
+  border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+.btn-ghost:hover { background: var(--color-primary-wash); }
+.btn-ghost-oscuro {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+.btn-ghost-oscuro:hover { background: rgba(255, 255, 255, 0.12); }
+.btn-peligro {
+  background: transparent;
+  color: var(--color-danger);
+  border-color: color-mix(in srgb, var(--color-danger) 30%, transparent);
+}
+.btn-peligro:hover { background: var(--color-danger-wash); }
+
+/* ---------- Hero ---------- */
+.hero-fondo {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(1100px 480px at 12% -12%, rgba(13, 107, 140, 0.5), transparent 60%),
+    radial-gradient(900px 460px at 108% 8%, rgba(0, 0, 0, 0.35), transparent 55%),
+    linear-gradient(135deg, #06543c, #0b7a54 52%, #0c5d80);
+}
+.hero-fondo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-size: 26px 26px;
+  opacity: 0.3;
+}
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(72px);
+  pointer-events: none;
+  opacity: 0.55;
+}
+.hero-orb-a { width: 430px; height: 430px; left: -130px; top: -160px; background: rgba(13, 107, 140, 0.6); }
+.hero-orb-b { width: 380px; height: 380px; right: -110px; bottom: -140px; background: rgba(18, 138, 86, 0.55); }
+@media (max-width: 640px) {
+  .hero-orb { display: none; }
+}
+
+.hero-stat {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  padding: 18px;
+  backdrop-filter: blur(6px);
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+.hero-stat:hover { transform: translateY(-2px); background: rgba(255, 255, 255, 0.12); }
+
+.hero-demo {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 20px;
+  padding: 22px;
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-floating);
+}
+.demo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 13px;
+  padding: 12px 14px;
+  transition: background 0.15s ease;
+}
+.demo-item:hover { background: rgba(255, 255, 255, 0.15); }
+.demo-pill {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ---------- Tarjeta de objeto ---------- */
+.card-obj {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-obj:hover { transform: translateY(-4px); box-shadow: var(--shadow-floating); }
+.card-obj-media {
+  background: linear-gradient(140deg, #f0f7f2, #eef6fa);
+  overflow: hidden;
+}
+.card-obj-media img { transition: transform 0.35s ease; }
+.card-obj:hover .card-obj-media img { transform: scale(1.06); }
+
+/* ---------- KPI / indicador ---------- */
+.kpi {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.kpi:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+.kpi::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #0d6b8c 100%);
+}
+.kpi-valor {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #0d6b8c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.kpi-verde::before { background: linear-gradient(90deg, #128a56, #34c98a); }
+.kpi-amarillo::before { background: linear-gradient(90deg, #c2700a, #e8a33c); }
+.kpi-azul::before { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+
+/* ---------- Tarjeta de categoría (explorar por categoría) ---------- */
+.cat-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.cat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-floating); }
+.cat-card-flecha {
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: all 0.18s ease;
+}
+.cat-card:hover .cat-card-flecha { opacity: 1; transform: none; }
+
+/* ---------- Paso ("cómo funciona") ---------- */
+.paso { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.paso:hover { transform: translateY(-3px); box-shadow: var(--shadow-card); }
+
+/* ---------- Insight ---------- */
+.insight { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+.insight:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+
+/* ---------- Chip de categoría (filtro) ---------- */
+.cat-chip { transition: all 0.18s ease; }
+.cat-chip:hover { transform: translateY(-1px); }
+.cat-chip.activo {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #0d6b8c 100%);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: var(--shadow-card);
+}
+
+/* ---------- Entrada suave ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .animar-entrada { animation: subir-suave 0.4s ease both; }
+}
+@keyframes subir-suave {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  position: relative;
+  background: #0c221a;
+  color: #9dc4b2;
+}
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #0d6b8c 100%);
+  opacity: 0.75;
+}
+.footer a { color: #9dc4b2; transition: color 0.15s ease, transform 0.15s ease; }
+.footer a:hover { color: #fff; transform: translateX(3px); }
+.footer-sello {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #8fc9ac;
+  background: #0f2a21;
+  border: 1px solid #1c3a30;
+  border-radius: 999px;
+  padding: 7px 14px;
+}
+.footer-mail {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 9px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 9px 14px !important;
+  font-weight: 600;
+  transform: none !important;
+}
+.footer-mail:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
