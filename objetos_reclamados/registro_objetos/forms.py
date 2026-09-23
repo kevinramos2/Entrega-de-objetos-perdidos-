@@ -93,36 +93,11 @@ class ObjetoReclamadoForm(forms.ModelForm):
             cleaned['suministro_correo'] = bool(cleaned.get('suministro_correo'))
         return cleaned
 
-    def _mime_de(self, nombre):
-        nombre = (nombre or '').lower()
-        if nombre.endswith('.png'):
-            return 'image/png'
-        if nombre.endswith('.gif'):
-            return 'image/gif'
-        if nombre.endswith('.webp'):
-            return 'image/webp'
-        return 'image/jpeg'
-
     def save(self, commit=True):
         foto = self.cleaned_data.get('foto')
         if foto:
-            import base64 as _base64
-            import io
-            from PIL import Image
-            contenido = foto.read()
-            mime = 'image/jpeg'
-            try:
-                img = Image.open(io.BytesIO(contenido))
-                img = img.convert('RGB')
-                if img.width > 900:
-                    h = round(img.height * 900 / img.width)
-                    img = img.resize((900, h), Image.LANCZOS)
-                buf = io.BytesIO()
-                img.save(buf, 'JPEG', quality=78, optimize=True)
-                datos = buf.getvalue()
-            except Exception:
-                datos = contenido
-            self.instance.foto_base64 = 'data:%s;base64,%s' % (mime, _base64.b64encode(datos).decode('ascii'))
+            from .imagenes import comprimir_a_base64
+            self.instance.foto_base64 = comprimir_a_base64(foto.read())
             self.instance.foto = None
             self.cleaned_data['foto'] = None
         return super().save(commit)

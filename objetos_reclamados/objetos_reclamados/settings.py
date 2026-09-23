@@ -18,6 +18,7 @@ Variables de entorno (opcionales en desarrollo, obligatorias en producción):
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -116,12 +117,16 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    # API REST para el frontend en React
+    'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     # Servir estáticos en producción (evita dependencia del servidor web)
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -274,6 +279,50 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'  # El dominio institucional ya valida la ide
 ACCOUNT_LOGIN_REDIRECT_URL = 'panel_inicio'
 ACCOUNT_SIGNUP_REDIRECT_URL = 'panel_inicio'
 LOGIN_REDIRECT_URL = 'panel_inicio'
+
+# ---------------------------------------------------------------------------
+# API REST (frontend en React) — JWT por cookie + CORS
+# ---------------------------------------------------------------------------
+# URL pública del frontend en Vercel. Se usa para el redirect final del login
+# con Google (el flujo OAuth sigue siendo 100% Django/allauth; solo cambia el
+# destino tras un login exitoso) y para la lista de orígenes CORS permitidos.
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+# Nombre y atributos de la cookie HttpOnly que guarda el refresh token.
+# No se puede leer desde JavaScript (protege contra robo por XSS); el access
+# token de corta duración vive solo en memoria dentro de React.
+REFRESH_COOKIE_NAME = 'refresh_token'
+REFRESH_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'
+REFRESH_COOKIE_SECURE = not DEBUG
+
+# CORS: solo el frontend configurado (y localhost en desarrollo) puede llamar
+# a la API con credenciales (cookies).
+CORS_ALLOWED_ORIGINS = [
+    origen.strip()
+    for origen in os.getenv('FRONTEND_URL', '').split(',')
+    if origen.strip()
+]
+if DEBUG:
+    CORS_ALLOWED_ORIGINS += ['http://localhost:5173', 'http://127.0.0.1:5173']
+CORS_ALLOW_CREDENTIALS = True
 
 # ---------------------------------------------------------------------------
 # Correo electrónico (notificaciones a estudiantes)

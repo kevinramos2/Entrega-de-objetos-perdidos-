@@ -26,18 +26,21 @@ class CuentaDominioAdapter(DefaultAccountAdapter):
         return email
 
     def _destino_inicial(self, request):
-        """URL de destino según el rol: panel para administradores,
-        lista de objetos para estudiantes."""
-        if request.user.is_staff:
-            return reverse('panel_inicio')
-        return reverse('lista_objetos')
+        """Tras un login o registro que pasa por las vistas de allauth (hoy,
+        en la práctica, solo el botón de Google: el login local con
+        usuario/contraseña usa la vista propia ``iniciar_sesion``, que no
+        pasa por este adapter). Se entrega el control al puente de la API,
+        que traduce la sesión de Django recién creada en un refresh token
+        para la SPA de React y redirige allí — ver ``api/auth_views.py``.
+        """
+        return reverse('api_google_bridge')
 
     def get_login_redirect_url(self, request):
-        """Tras iniciar sesión (Google o contraseña)."""
+        """Tras iniciar sesión con Google."""
         return self._destino_inicial(request)
 
     def get_signup_redirect_url(self, request):
-        """Al registrarse por primera vez (usuario nuevo)."""
+        """Al registrarse por primera vez con Google."""
         return self._destino_inicial(request)
 
 
