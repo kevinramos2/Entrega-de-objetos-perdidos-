@@ -3,7 +3,7 @@ Traducción 1:1 de la lógica que ya vivía en ``views/estudiante.py`` — misma
 reglas, misma reutilización de ``forms`` y ``estadisticas``, solo cambia el
 formato de salida de HTML a JSON."""
 from django.shortcuts import get_object_or_404
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -26,8 +26,9 @@ from .serializers import (
 
 
 class ResumenView(APIView):
-    """Indicadores y mensajes que se muestran en Inicio y en el listado."""
-    permission_classes = [IsAuthenticated]
+    """Indicadores y mensajes que se muestran en Inicio (pública, igual que
+    la vista clásica ``inicio``) y en el listado (que sí requiere sesión)."""
+    permission_classes = [AllowAny]
 
     def get(self, request):
         return Response({

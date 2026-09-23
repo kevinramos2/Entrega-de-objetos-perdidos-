@@ -99,6 +99,11 @@ class FlujoSolicitudApiTest(APITestCase):
         respuesta = self.client.get(reverse('api_panel_objetos'))
         self.assertEqual(respuesta.status_code, 403)
 
+    def test_resumen_es_publico(self):
+        respuesta = self.client.get(reverse('api_resumen'))
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertIn('resumen', respuesta.data)
+
     def test_listar_objetos_disponibles(self):
         self.client.force_authenticate(self.estudiante)
         respuesta = self.client.get(reverse('api_objetos'))
