@@ -89,7 +89,7 @@ export const SEDES = [
 ]
 
 export function obtenerResumen() {
-  return apiFetch<{ resumen: Resumen; mensajes: Mensaje[] }>('/api/v1/resumen/')
+  return apiFetch<{ resumen: Resumen; mensajes: Mensaje[]; recientes: ObjetoPublico[] }>('/api/v1/resumen/')
 }
 
 export function obtenerCategorias() {

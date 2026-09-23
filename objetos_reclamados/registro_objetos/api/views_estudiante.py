@@ -26,14 +26,20 @@ from .serializers import (
 
 
 class ResumenView(APIView):
-    """Indicadores y mensajes que se muestran en Inicio (pública, igual que
-    la vista clásica ``inicio``) y en el listado (que sí requiere sesión)."""
+    """Indicadores, mensajes y un adelanto de 3 objetos recientes — pública,
+    igual que la vista clásica ``inicio`` (que tampoco exige sesión)."""
     permission_classes = [AllowAny]
 
     def get(self, request):
+        recientes = (
+            ObjetoReclamado.objects
+            .select_related('categoria')
+            .filter(estado=ObjetoReclamado.Estados.DISPONIBLE)[:3]
+        )
         return Response({
             'resumen': stats.resumen_global(),
             'mensajes': stats.informacion_para_estudiantes(),
+            'recientes': ObjetoPublicoSerializer(recientes, many=True, context={'request': request}).data,
         })
 
 
