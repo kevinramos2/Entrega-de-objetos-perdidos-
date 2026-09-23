@@ -143,7 +143,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
-      <section className="hero-fondo relative left-1/2 right-1/2 -mx-[50vw] w-screen px-4 py-20 text-white sm:px-10">
+      <section className="hero-fondo relative left-1/2 right-1/2 -mx-[50vw] -mt-10 w-screen px-4 py-20 text-white sm:px-10">
         <span className="hero-orb hero-orb-a" aria-hidden="true" />
         <span className="hero-orb hero-orb-b" aria-hidden="true" />
         <HeroTracker />
