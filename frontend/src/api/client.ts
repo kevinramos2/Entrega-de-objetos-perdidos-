@@ -1,4 +1,7 @@
-const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000'
+// "localhost" (no "127.0.0.1"): con SameSite=Lax en desarrollo, la cookie de
+// refresh solo viaja entre orígenes que comparten el mismo *sitio* — puerto
+// aparte, "localhost" y "127.0.0.1" cuentan como sitios distintos.
+const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
 
 let accessToken: string | null = null
 
@@ -105,6 +108,21 @@ export async function apiFetch<T = unknown>(
     return (await respuesta.json()) as T
   }
   return respuesta as unknown as T
+}
+
+/** Descarga un archivo binario (PDF/CSV) autenticado y dispara la descarga
+ * en el navegador — un <a href> normal no puede llevar el header JWT. */
+export async function descargarArchivo(path: string, nombreArchivo: string): Promise<void> {
+  const respuesta = await apiFetch<Response>(path)
+  const blob = await respuesta.blob()
+  const url = URL.createObjectURL(blob)
+  const enlace = document.createElement('a')
+  enlace.href = url
+  enlace.download = nombreArchivo
+  document.body.appendChild(enlace)
+  enlace.click()
+  enlace.remove()
+  URL.revokeObjectURL(url)
 }
 
 export { API_BASE_URL, refrescarToken }

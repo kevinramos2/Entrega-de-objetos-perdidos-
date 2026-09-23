@@ -5,37 +5,37 @@ export type EstadoSolicitud = 'pendiente' | 'apelada' | 'aprobada' | 'rechazada'
 
 interface BadgeProps {
   children: ReactNode
-  tono?: 'terracota' | 'salvia' | 'neutro' | 'alerta'
+  tono?: 'primary' | 'accent' | 'success' | 'info' | 'neutro' | 'danger'
 }
 
 const TONOS: Record<NonNullable<BadgeProps['tono']>, string> = {
-  terracota: 'bg-terracota-wash text-terracota-hover',
-  salvia: 'bg-salvia-wash text-salvia',
-  neutro: 'bg-mist text-ink-muted',
-  alerta: 'bg-alerta-wash text-alerta',
+  primary: 'bg-primary-wash text-primary-dark',
+  accent: 'bg-accent-wash text-accent',
+  success: 'bg-success-wash text-success',
+  info: 'bg-info-wash text-info',
+  neutro: 'bg-surface-hover text-muted',
+  danger: 'bg-danger-wash text-danger',
 }
 
 export function Badge({ children, tono = 'neutro' }: BadgeProps) {
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-pill px-3 py-1 text-caption font-mono font-medium ${TONOS[tono]}`}
-    >
+    <span className={`inline-flex items-center gap-1.5 rounded-pill px-3 py-1 text-caption font-semibold ${TONOS[tono]}`}>
       {children}
     </span>
   )
 }
 
 const TONO_POR_ESTADO_OBJETO: Record<EstadoObjeto, BadgeProps['tono']> = {
-  disponible: 'terracota',
-  reclamado: 'neutro',
-  entregado: 'salvia',
+  disponible: 'primary',
+  reclamado: 'accent',
+  entregado: 'info',
 }
 
 const TONO_POR_ESTADO_SOLICITUD: Record<EstadoSolicitud, BadgeProps['tono']> = {
   pendiente: 'neutro',
-  apelada: 'terracota',
-  aprobada: 'salvia',
-  rechazada: 'alerta',
+  apelada: 'accent',
+  aprobada: 'primary',
+  rechazada: 'danger',
 }
 
 export function BadgeEstadoObjeto({ estado, etiqueta }: { estado: EstadoObjeto; etiqueta: string }) {

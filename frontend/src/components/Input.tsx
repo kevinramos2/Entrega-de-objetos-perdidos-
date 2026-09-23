@@ -1,9 +1,9 @@
 import { forwardRef, type InputHTMLAttributes, type LabelHTMLAttributes, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react'
 
 const CAMPO_BASE =
-  'w-full rounded-input border border-hairline bg-paper px-4 py-2.5 text-body text-ink ' +
-  'placeholder:text-ink-muted transition-colors duration-150 ' +
-  'focus:outline-none focus:border-terracota focus:ring-2 focus:ring-terracota/20'
+  'w-full rounded-input border border-line bg-surface px-4 py-2.5 text-body text-ink ' +
+  'placeholder:text-muted transition-colors duration-150 ' +
+  'focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15'
 
 interface CampoWrapperProps {
   label?: string
@@ -14,15 +14,15 @@ interface CampoWrapperProps {
 
 function Etiqueta({ children, ...props }: LabelHTMLAttributes<HTMLLabelElement>) {
   return (
-    <label className="mb-1.5 block text-caption font-medium text-ink-muted" {...props}>
+    <label className="mb-1.5 block text-caption font-medium text-muted" {...props}>
       {children}
     </label>
   )
 }
 
 function Mensajes({ error, ayuda }: { error?: string; ayuda?: string }) {
-  if (error) return <p className="mt-1.5 text-caption text-alerta">{error}</p>
-  if (ayuda) return <p className="mt-1.5 text-caption text-ink-muted">{ayuda}</p>
+  if (error) return <p className="mt-1.5 text-caption text-danger">{error}</p>
+  if (ayuda) return <p className="mt-1.5 text-caption text-muted">{ayuda}</p>
   return null
 }
 
@@ -33,7 +33,7 @@ export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputE
       <input
         id={id}
         ref={ref}
-        className={`${CAMPO_BASE} ${error ? 'border-alerta' : ''} ${className}`}
+        className={`${CAMPO_BASE} ${error ? 'border-danger' : ''} ${className}`}
         {...props}
       />
       <Mensajes error={error} ayuda={ayuda} />

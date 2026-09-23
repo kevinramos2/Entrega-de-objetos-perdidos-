@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { LogoMark } from '../components/Logo'
 import { useAuth } from '../lib/auth-context'
 
 /** Destino tras el login con Google: el backend ya dejó la cookie de
@@ -15,8 +16,9 @@ export default function AuthCallback() {
   }, [cargando, usuario, navigate])
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-forest">
-      <p className="font-mono text-body text-cream-muted">Iniciando sesión…</p>
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-canvas">
+      <LogoMark size={48} />
+      <p className="font-medium text-body text-muted">Iniciando sesión…</p>
     </div>
   )
 }

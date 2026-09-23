@@ -15,6 +15,7 @@ export interface ObjetoPublico {
   categoria: number | null
   categoria_nombre: string
   categoria_icono: string
+  categoria_color: string | null
   descripcion_objeto: string
   sede: 'minas' | 'volador'
   sede_display: string

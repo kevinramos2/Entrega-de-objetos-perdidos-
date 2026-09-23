@@ -1,17 +1,17 @@
 import type { HTMLAttributes } from 'react'
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  tono?: 'papel' | 'mist' | 'oscuro'
+  tono?: 'claro' | 'tenue' | 'oscuro'
   flotante?: boolean
 }
 
 const TONOS: Record<NonNullable<CardProps['tono']>, string> = {
-  papel: 'bg-paper border border-hairline',
-  mist: 'bg-mist border border-hairline',
-  oscuro: 'bg-forest-lift border border-forest-hairline text-cream',
+  claro: 'bg-surface border border-line',
+  tenue: 'bg-primary-wash border border-primary/15',
+  oscuro: 'bg-dark-lift border border-dark-line text-on-dark',
 }
 
-export function Card({ tono = 'papel', flotante = false, className = '', children, ...props }: CardProps) {
+export function Card({ tono = 'claro', flotante = false, className = '', children, ...props }: CardProps) {
   return (
     <div
       className={`rounded-card p-6 ${TONOS[tono]} ${flotante ? 'shadow-floating' : 'shadow-card'} ${className}`}

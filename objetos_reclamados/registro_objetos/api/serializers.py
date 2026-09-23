@@ -33,6 +33,7 @@ class ObjetoPublicoSerializer(serializers.ModelSerializer):
     """Lo que puede ver un estudiante: sin datos del reclamante."""
     categoria_nombre = serializers.CharField(source='etiqueta_categoria', read_only=True)
     categoria_icono = serializers.CharField(source='icono', read_only=True)
+    categoria_color = serializers.SerializerMethodField()
     estado_display = serializers.CharField(source='get_estado_display', read_only=True)
     sede_display = serializers.CharField(source='get_sede_display', read_only=True)
     foto_url = serializers.SerializerMethodField()
@@ -40,10 +41,13 @@ class ObjetoPublicoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ObjetoReclamado
         fields = [
-            'id', 'nombre_objeto', 'categoria', 'categoria_nombre', 'categoria_icono',
+            'id', 'nombre_objeto', 'categoria', 'categoria_nombre', 'categoria_icono', 'categoria_color',
             'descripcion_objeto', 'sede', 'sede_display', 'lugar_encontrado',
             'fecha_registro', 'foto_url', 'estado', 'estado_display',
         ]
+
+    def get_categoria_color(self, obj):
+        return obj.categoria.color if obj.categoria else None
 
     def get_foto_url(self, obj):
         return _url_absoluta(self.context, obj.foto_data)

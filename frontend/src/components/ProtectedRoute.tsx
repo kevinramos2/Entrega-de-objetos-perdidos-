@@ -7,8 +7,8 @@ export function ProtectedRoute() {
 
   if (cargando) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-paper">
-        <p className="font-mono text-body text-ink-muted">Cargando…</p>
+      <div className="flex min-h-screen items-center justify-center bg-canvas">
+        <p className="font-mono text-body text-muted">Cargando…</p>
       </div>
     )
   }
@@ -25,8 +25,8 @@ export function AdminRoute() {
 
   if (cargando) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-paper">
-        <p className="font-mono text-body text-ink-muted">Cargando…</p>
+      <div className="flex min-h-screen items-center justify-center bg-canvas">
+        <p className="font-mono text-body text-muted">Cargando…</p>
       </div>
     )
   }

@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
-type Variante = 'primario' | 'ghost' | 'ghost-oscuro' | 'peligro'
+type Variante = 'primario' | 'invertido' | 'ghost' | 'ghost-oscuro' | 'peligro'
 type Tamano = 'sm' | 'md'
 
 interface BotonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -10,19 +10,21 @@ interface BotonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const BASE =
-  'inline-flex items-center justify-center gap-2 rounded-pill font-sans font-medium ' +
+  'inline-flex items-center justify-center gap-2 rounded-pill font-sans font-semibold ' +
   'transition-colors duration-150 ease-out disabled:opacity-50 disabled:pointer-events-none ' +
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2'
 
 const VARIANTES: Record<Variante, string> = {
   primario:
-    'bg-terracota text-paper hover:bg-terracota-hover focus-visible:ring-terracota focus-visible:ring-offset-paper',
+    'bg-primary text-white shadow-card hover:bg-primary-hover focus-visible:ring-primary focus-visible:ring-offset-canvas',
+  invertido:
+    'bg-white text-primary-dark shadow-card hover:bg-white/90 focus-visible:ring-white focus-visible:ring-offset-dark',
   ghost:
-    'bg-transparent text-ink border border-hairline hover:border-ink focus-visible:ring-terracota focus-visible:ring-offset-paper',
+    'bg-surface text-primary border border-primary/30 hover:border-primary hover:bg-primary-wash focus-visible:ring-primary focus-visible:ring-offset-canvas',
   'ghost-oscuro':
-    'bg-transparent text-cream border border-forest-hairline hover:border-cream focus-visible:ring-cream focus-visible:ring-offset-forest',
+    'bg-transparent text-on-dark border border-on-dark/40 hover:bg-white/10 focus-visible:ring-on-dark focus-visible:ring-offset-dark',
   peligro:
-    'bg-transparent text-alerta border border-alerta/40 hover:bg-alerta-wash focus-visible:ring-alerta focus-visible:ring-offset-paper',
+    'bg-transparent text-danger border border-danger/30 hover:bg-danger-wash focus-visible:ring-danger focus-visible:ring-offset-canvas',
 }
 
 const TAMANOS: Record<Tamano, string> = {

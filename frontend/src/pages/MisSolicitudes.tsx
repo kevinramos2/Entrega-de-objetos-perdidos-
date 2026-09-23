@@ -29,10 +29,10 @@ function TarjetaSolicitud({ solicitud }: { solicitud: Solicitud }) {
     <Card className="flex flex-col gap-3">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h3 className="font-display text-heading-sm text-ink">
+          <h3 className="font-display text-body-lg font-bold text-ink">
             {solicitud.objeto_detalle.nombre_objeto || 'Objeto sin nombre'}
           </h3>
-          <p className="text-caption font-mono text-ink-muted">
+          <p className="text-caption text-muted">
             Solicitado el {new Date(solicitud.fecha).toLocaleDateString('es-CO')}
           </p>
         </div>
@@ -40,15 +40,15 @@ function TarjetaSolicitud({ solicitud }: { solicitud: Solicitud }) {
       </div>
 
       {solicitud.comentario_admin && (
-        <p className="text-body text-ink-muted">
+        <p className="text-body text-muted">
           <span className="font-medium text-ink">Respuesta: </span>
           {solicitud.comentario_admin}
         </p>
       )}
 
       {solicitud.estado === 'aprobada' && solicitud.datos_entrega && (
-        <div className="rounded-input bg-salvia-wash p-4">
-          <p className="text-caption font-medium uppercase tracking-wide text-salvia">
+        <div className="rounded-input bg-primary-wash p-4">
+          <p className="text-caption font-semibold uppercase tracking-wide text-primary-dark">
             ¿Cómo reclamar tu objeto?
           </p>
           <p className="mt-1 text-body text-ink">{solicitud.datos_entrega}</p>
@@ -62,7 +62,7 @@ function TarjetaSolicitud({ solicitud }: { solicitud: Solicitud }) {
       )}
 
       {mostrarApelacion && (
-        <form onSubmit={enviarApelacion} className="flex flex-col gap-3 rounded-input border border-hairline p-4">
+        <form onSubmit={enviarApelacion} className="flex flex-col gap-3 rounded-input border border-line p-4">
           <Textarea
             id={`apelacion-${solicitud.id}`}
             label="¿Por qué no estás de acuerdo con la decisión?"
@@ -71,7 +71,7 @@ function TarjetaSolicitud({ solicitud }: { solicitud: Solicitud }) {
             onChange={(evento) => setMotivo(evento.target.value)}
             required
           />
-          {error && <p className="text-caption text-alerta">{error}</p>}
+          {error && <p className="text-caption text-danger">{error}</p>}
           <div className="flex gap-2">
             <Button type="submit" variante="primario" tamano="sm" disabled={apelar.isPending}>
               {apelar.isPending ? 'Enviando…' : 'Enviar apelación'}
@@ -84,7 +84,7 @@ function TarjetaSolicitud({ solicitud }: { solicitud: Solicitud }) {
       )}
 
       {solicitud.fue_apelada && solicitud.estado === 'apelada' && (
-        <p className="text-caption text-ink-muted">Tu apelación está en revisión.</p>
+        <p className="text-caption text-muted">Tu apelación está en revisión.</p>
       )}
     </Card>
   )
@@ -96,14 +96,14 @@ export default function MisSolicitudes() {
   return (
     <div className="flex flex-col gap-8">
       <header>
-        <h1 className="font-display text-heading text-ink">Mis solicitudes</h1>
-        <p className="mt-1 text-body text-ink-muted">Sigue el estado de los objetos que has reclamado.</p>
+        <h1 className="font-display text-heading font-bold text-ink">Mis solicitudes</h1>
+        <p className="mt-1 text-body text-muted">Sigue el estado de los objetos que has reclamado.</p>
       </header>
 
-      {isLoading && <p className="text-body text-ink-muted">Cargando…</p>}
+      {isLoading && <p className="text-body text-muted">Cargando…</p>}
 
       {data && data.solicitudes.length === 0 && (
-        <p className="rounded-card border border-hairline bg-mist p-8 text-center text-body text-ink-muted">
+        <p className="rounded-card border border-line bg-surface p-8 text-center text-body text-muted shadow-card">
           Todavía no has solicitado ningún objeto.
         </p>
       )}

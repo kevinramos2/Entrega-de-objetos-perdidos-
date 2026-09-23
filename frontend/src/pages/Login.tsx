@@ -4,6 +4,7 @@ import { API_BASE_URL, ApiError } from '../api/client'
 import { Button } from '../components/Button'
 import { Card } from '../components/Card'
 import { Input } from '../components/Input'
+import { LogoMark } from '../components/Logo'
 import { useAuth } from '../lib/auth-context'
 
 export default function Login() {
@@ -31,11 +32,11 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-forest px-4 py-12">
-      <Card className="w-full max-w-sm">
-        <p className="font-mono text-caption uppercase tracking-widest text-terracota">Objetos Perdidos UNAL</p>
-        <h1 className="mt-2 font-display text-heading text-ink">Bienvenido de nuevo</h1>
-        <p className="mt-1 text-body text-ink-muted">Ingresa con tu correo institucional.</p>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-canvas px-4 py-12">
+      <LogoMark size={48} />
+      <Card className="mt-6 w-full max-w-sm">
+        <h1 className="text-center font-display text-heading-sm font-bold text-ink">Bienvenido de nuevo</h1>
+        <p className="mt-1 text-center text-body text-muted">Ingresa con tu correo institucional.</p>
 
         <form onSubmit={enviar} className="mt-6 flex flex-col gap-4">
           <Input
@@ -56,21 +57,21 @@ export default function Login() {
             autoComplete="current-password"
             required
           />
-          {error && <p className="text-caption text-alerta">{error}</p>}
+          {error && <p className="text-caption text-danger">{error}</p>}
           <Button type="submit" variante="primario" disabled={cargando}>
             {cargando ? 'Ingresando…' : 'Ingresar'}
           </Button>
         </form>
 
-        <div className="mt-6 flex items-center gap-3 text-caption text-ink-muted">
-          <span className="h-px flex-1 bg-hairline" />
+        <div className="mt-6 flex items-center gap-3 text-caption text-muted">
+          <span className="h-px flex-1 bg-line" />
           o
-          <span className="h-px flex-1 bg-hairline" />
+          <span className="h-px flex-1 bg-line" />
         </div>
 
         <a
           href={`${API_BASE_URL}/accounts/google/login/`}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-pill border border-hairline px-5 py-2.5 text-body font-medium text-ink transition-colors hover:border-ink"
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-pill border border-primary/30 px-5 py-2.5 text-body font-semibold text-primary transition-colors hover:bg-primary-wash"
         >
           Continuar con Google
         </a>
