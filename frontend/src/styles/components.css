@@ -181,6 +181,7 @@
   background: linear-gradient(140deg, #f0f7f2, #eef6fa);
   overflow: hidden;
 }
+:root[data-tema='oscuro'] .card-obj-media { background: linear-gradient(140deg, #16223a, #101c2c); }
 .card-obj-media img { transition: transform 0.35s ease; }
 .card-obj:hover .card-obj-media img { transform: scale(1.06); }
 
@@ -252,6 +253,7 @@
 
 /* ---------- Sección alterna (fondo suave, "¿Cómo funciona?") ---------- */
 .seccion-alt { background: linear-gradient(180deg, #f3f9f5, #eef6fa); }
+:root[data-tema='oscuro'] .seccion-alt { background: linear-gradient(180deg, #121a2c, #0f1730); }
 
 /* ---------- Footer ---------- */
 .footer {
@@ -302,6 +304,9 @@
 .tabla tbody tr { transition: background 0.12s ease; }
 .tabla tbody tr:hover { background: #f3f8f5; }
 .tabla .acciones { display: flex; gap: 8px; justify-content: flex-end; }
+:root[data-tema='oscuro'] .tabla { background: var(--color-surface); }
+:root[data-tema='oscuro'] .tabla th { background: #1b2440; }
+:root[data-tema='oscuro'] .tabla tbody tr:hover { background: rgba(16, 185, 129, 0.06); }
 
 /* ---------- Menú de acciones por fila ---------- */
 .menu-acciones { position: relative; }
@@ -345,7 +350,7 @@
   align-items: flex-start;
   padding: 14px 16px 14px 18px;
   border-radius: 12px;
-  background: #fff;
+  background: var(--color-surface);
   box-shadow: var(--shadow-floating);
   border: 1px solid var(--color-line);
   animation: toast-in 0.3s ease;

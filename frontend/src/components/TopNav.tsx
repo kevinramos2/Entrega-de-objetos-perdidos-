@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Logo } from './Logo'
+import { ThemeToggle } from './ThemeToggle'
 
 interface EnlaceNav {
   etiqueta: string
@@ -33,7 +34,10 @@ export function TopNav({ enlaces, acciones }: TopNavProps) {
             </button>
           ))}
         </nav>
-        <div className="flex items-center gap-3">{acciones}</div>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          {acciones}
+        </div>
       </div>
     </header>
   )

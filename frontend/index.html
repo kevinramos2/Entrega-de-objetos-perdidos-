@@ -11,6 +11,17 @@
       rel="stylesheet"
     />
     <title>Objetos Perdidos UNAL</title>
+    <script>
+      (function () {
+        var html = document.documentElement
+        var tema = null
+        try { tema = localStorage.getItem('tema-aplicacion') } catch (e) {}
+        if (tema !== 'claro' && tema !== 'oscuro' && window.matchMedia) {
+          tema = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oscuro' : 'claro'
+        }
+        if (tema === 'oscuro') html.setAttribute('data-tema', 'oscuro')
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

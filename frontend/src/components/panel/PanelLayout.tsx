@@ -5,6 +5,7 @@ import { useSolicitudesAdmin } from '../../hooks/usePanelApi'
 import { useAuth } from '../../lib/auth-context'
 import { Button } from '../Button'
 import { LogoMark } from '../Logo'
+import { ThemeToggle } from '../ThemeToggle'
 
 const ENLACES = [
   { etiqueta: 'Resumen', ruta: '/panel', fin: true },
@@ -66,10 +67,11 @@ export function PanelLayout({ children }: { children?: ReactNode }) {
       <aside className="flex w-64 flex-shrink-0 flex-col gap-6 bg-dark p-5">
         <div className="flex items-center gap-2.5">
           <LogoMark size={30} />
-          <div>
+          <div className="flex-1">
             <p className="font-display text-caption font-bold text-on-dark">Perdidos &amp; Encontrados</p>
             <p className="text-caption text-on-dark-muted">Panel administrativo</p>
           </div>
+          <ThemeToggle sobreOscuro />
         </div>
         <nav className="flex flex-1 flex-col gap-1">
           {ENLACES.map((enlace) => (
