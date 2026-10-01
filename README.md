@@ -9,8 +9,22 @@ Plataforma web para centralizar la gestión de **objetos perdidos y encontrados*
 
 ---
 
+##  Demo en vivo
+
+ **[objetos-perdidos.onrender.com](https://objetos-perdidos.onrender.com)**
+
+El login normal es con correo institucional (`@unal.edu.co`) vía Google, pero para que cualquiera pueda probar la app sin esa restricción, en `/login/` hay un enlace **"Acceso administrativo (usuario y contraseña)"** que acepta las cuentas de demostración:
+
+| Rol | Usuario | Contraseña |
+|-----|---------|------------|
+| Administrador (panel completo) | `admin` | `CambiaEsteAdmin123!` |
+| Estudiante (portal público) | `estudiante` | `Estudiante123!` |
+
+---
+
 ##  Tabla de contenidos
 
+- [Demo en vivo](#demo-en-vivo)
 - [Motivación](#motivación)
 - [Funcionalidades](#funcionalidades)
 - [Roles](#roles)
@@ -233,11 +247,9 @@ Toda la configuración sensible se lee desde variables de entorno o desde un arc
 
 ### ¿Cómo obtengo la conexión PostgreSQL?
 
-En Render: *New → PostgreSQL* (o *New → Add-ons → PostgreSQL*). Una vez creada, Render te da dos conexiones:
-- **Internal Database URL**: `postgres://user:pass@....compute.amazonaws.com:5432/objetos_perdidos` — úsala dentro de Render (los servicios se comunican por red interna).
-- **External Database URL**: para conectarte desde tu PC (p. ej. con DBeaver o un backup local).
+En [neon.tech](https://neon.tech), crea una cuenta gratis y un proyecto nuevo; el dashboard te da directamente la **connection string** (incluye `?sslmode=require`, no lo quites). Pega ese valor en `DATABASE_URL`.
 
-Pega ese valor en `DATABASE_URL`.
+> Se usa Neon en vez del PostgreSQL propio de Render porque el plan gratis de Render **expira la base de datos a los 30 días**; el de Neon no expira.
 
 > ⚠️ Si `DJANGO_DEBUG="False"` y falta `DJANGO_SECRET_KEY`, la aplicación **no arranca** (protección intencional). Igualmente, si `DJANGO_ALLOWED_HOSTS` no incluye el host del sitio, Django rechazará las peticiones (protección contra *host header poisoning*).
 
@@ -298,14 +310,15 @@ Entrega-de-objetos-perdidos-/
 
 ##  Despliegue
 
-**Forma recomendada: Blueprint (configuración a código).**
+**Forma recomendada: Blueprint (configuración a código) + Neon.**
 
-El archivo [`render.yaml`](render.yaml) define el Web Service, el **PostgreSQL** y todas las variables. Para usarlo:
+El Postgres gratis de Render **expira a los 30 días**, así que la base de datos vive en [Neon](https://neon.tech) (Postgres gratis que no expira) y el archivo [`render.yaml`](render.yaml) solo define el Web Service y sus variables:
 
-1. En Render: **Dashboard → New + → Blueprint** y elige este repositorio.
-2. Render lee `render.yaml` y prepara el servicio + la base de datos.
-3. Escribe el `DJANGO_SECRET_KEY` cuando Render lo pida y pulsa **Apply**.
-4. El primer despliegue ejecuta `migrate` y `promocionar_admins` automáticamente.
+1. Crea un proyecto en [neon.tech](https://neon.tech) y copia la **connection string** (debe incluir `?sslmode=require`).
+2. En Render: **Dashboard → New + → Blueprint** y elige este repositorio.
+3. Render lee `render.yaml` y prepara el Web Service.
+4. Escribe `DJANGO_SECRET_KEY`, `DATABASE_URL` (la de Neon) y `GOOGLE_OAUTH_*` cuando Render lo pida, y pulsa **Apply**.
+5. El primer despliegue ejecuta `migrate`, `promocionar_admins` y `seed_demo` automáticamente (ver `startCommand` en `render.yaml`).
 
 Alternativa, configuración **manual** (sin blueprint):
 
