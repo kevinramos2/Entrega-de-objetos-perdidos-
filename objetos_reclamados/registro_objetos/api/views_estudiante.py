@@ -55,7 +55,7 @@ class CategoriasView(APIView):
             total_disponibles=Count(
                 'objetos', filter=Q(objetos__estado=ObjetoReclamado.Estados.DISPONIBLE),
             ),
-        )
+        ).order_by('orden')
         return Response(CategoriaSerializer(categorias, many=True, context={'request': request}).data)
 
 

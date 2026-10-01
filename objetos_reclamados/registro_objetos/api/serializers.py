@@ -60,13 +60,14 @@ class ObjetoAdminSerializer(serializers.ModelSerializer):
     sede_display = serializers.CharField(source='get_sede_display', read_only=True)
     foto_url = serializers.SerializerMethodField()
     registrado_por_nombre = serializers.SerializerMethodField()
+    total_solicitudes = serializers.SerializerMethodField()
 
     class Meta:
         model = ObjetoReclamado
         fields = [
             'id', 'nombre_objeto', 'categoria', 'categoria_nombre', 'descripcion_objeto',
             'sede', 'sede_display', 'lugar_encontrado', 'fecha_registro', 'foto_url',
-            'estado', 'estado_display', 'registrado_por_nombre',
+            'estado', 'estado_display', 'registrado_por_nombre', 'total_solicitudes',
             'nombre_persona', 'tipo_documento', 'numero_documento', 'telefono',
             'suministro_correo', 'correo', 'fecha_entrega', 'responsable_entrega',
         ]
@@ -76,6 +77,10 @@ class ObjetoAdminSerializer(serializers.ModelSerializer):
 
     def get_registrado_por_nombre(self, obj):
         return obj.registrado_por.username if obj.registrado_por else ''
+
+    def get_total_solicitudes(self, obj):
+        total = getattr(obj, 'total_solicitudes', None)
+        return total if total is not None else obj.solicitudes.count()
 
 
 class SolicitudSerializer(serializers.ModelSerializer):

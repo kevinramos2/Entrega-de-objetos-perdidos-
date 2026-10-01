@@ -9,6 +9,7 @@ import { Card } from '../../components/Card'
 import { useConfirmModal } from '../../components/ConfirmModal'
 import { Textarea } from '../../components/Input'
 import { useDecidirSolicitud, useEntregarSolicitud, useSolicitudAdmin } from '../../hooks/usePanelApi'
+import { formatearFecha } from '../../lib/fecha'
 import { useToast } from '../../lib/toast-context'
 
 function Dato({ etiqueta, children }: { etiqueta: string; children: React.ReactNode }) {
@@ -149,7 +150,7 @@ export default function SolicitudDetalle() {
         <h3 className="font-display text-body-lg font-bold text-ink">¿Por qué cree que es suyo?</h3>
         <p className="mt-2 text-body text-ink">{solicitud.mensaje || 'No dejó un mensaje adicional.'}</p>
         <p className="mt-3 text-caption text-muted">
-          Solicitado el {new Date(solicitud.fecha).toLocaleString('es-CO')}
+          Solicitado el {formatearFecha(solicitud.fecha, { conHora: true })}
         </p>
       </Card>
 
@@ -159,7 +160,7 @@ export default function SolicitudDetalle() {
           <p className="mt-2 text-body text-ink">{solicitud.apelacion || 'No dejó un motivo.'}</p>
           {solicitud.fecha_apelacion && (
             <p className="mt-3 text-caption text-muted">
-              Apeló el {new Date(solicitud.fecha_apelacion).toLocaleString('es-CO')} · Esta es la única apelación permitida.
+              Apeló el {formatearFecha(solicitud.fecha_apelacion, { conHora: true })} · Esta es la única apelación permitida.
             </p>
           )}
         </Card>

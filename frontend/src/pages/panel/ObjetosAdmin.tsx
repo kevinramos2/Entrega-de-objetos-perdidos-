@@ -1,13 +1,22 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ApiError } from '../../api/client'
+import type { Categoria } from '../../api/estudiante'
 import { SEDES } from '../../api/estudiante'
+import { ApiError } from '../../api/client'
 import { descargarFormatoObjeto, type ObjetoAdmin } from '../../api/panel'
 import { BadgeEstadoObjeto } from '../../components/Badge'
 import { Button } from '../../components/Button'
+import { CategoryIcon } from '../../components/CategoryIcon'
 import { useConfirmModal } from '../../components/ConfirmModal'
 import { Input, Select } from '../../components/Input'
-import { useCambiarEstadoObjeto, useCategoriasAdmin, useEliminarObjeto, useObjetosAdmin } from '../../hooks/usePanelApi'
+import { formatearFechaSolo } from '../../lib/fecha'
+import {
+  useCambiarEstadoObjeto,
+  useCategoriasAdmin,
+  useEliminarObjeto,
+  useEliminarObjetosSeleccion,
+  useObjetosAdmin,
+} from '../../hooks/usePanelApi'
 import { useToast } from '../../lib/toast-context'
 
 const ESTADOS = [
@@ -16,7 +25,20 @@ const ESTADOS = [
   { value: 'entregado', label: 'Entregado' },
 ]
 
-function FilaObjeto({ objeto, confirmar }: { objeto: ObjetoAdmin; confirmar: ReturnType<typeof useConfirmModal>['confirmar'] }) {
+
+function FilaObjeto({
+  objeto,
+  categoria,
+  seleccionado,
+  onSeleccionar,
+  confirmar,
+}: {
+  objeto: ObjetoAdmin
+  categoria?: Categoria
+  seleccionado: boolean
+  onSeleccionar: (id: number, valor: boolean) => void
+  confirmar: ReturnType<typeof useConfirmModal>['confirmar']
+}) {
   const cambiarEstado = useCambiarEstadoObjeto()
   const eliminar = useEliminarObjeto()
   const toast = useToast()
@@ -60,12 +82,36 @@ function FilaObjeto({ objeto, confirmar }: { objeto: ObjetoAdmin; confirmar: Ret
   return (
     <tr>
       <td>
-        <Link to={`/panel/objetos/${objeto.id}/editar`} className="font-medium text-ink hover:text-primary">
-          {objeto.nombre_objeto || 'Sin nombre'}
-        </Link>
-        <p className="text-caption text-muted">{objeto.categoria_nombre}</p>
+        <input
+          type="checkbox"
+          checked={seleccionado}
+          onChange={(evento) => onSeleccionar(objeto.id, evento.target.checked)}
+          aria-label={`Seleccionar ${objeto.nombre_objeto}`}
+        />
+      </td>
+      <td>
+        <div className="flex items-center gap-2.5">
+          <span
+            className="flex h-8 w-8 flex-none items-center justify-center rounded-input text-white"
+            style={{ background: categoria?.color || '#0b7a54' }}
+          >
+            <CategoryIcon clave={categoria?.icono} size={16} />
+          </span>
+          <div>
+            <Link to={`/panel/objetos/${objeto.id}/editar`} className="font-medium text-ink hover:text-primary">
+              {objeto.nombre_objeto || 'Sin nombre'}
+            </Link>
+            {objeto.nombre_persona && <p className="text-caption text-muted">{objeto.nombre_persona}</p>}
+          </div>
+        </div>
       </td>
       <td className="text-caption text-muted">{objeto.sede_display}</td>
+      <td className="text-caption text-muted">{objeto.categoria_nombre || '—'}</td>
+      <td className="text-caption text-muted">{formatearFechaSolo(objeto.fecha_registro)}</td>
+      <td className="max-w-[160px] truncate text-caption text-muted" title={objeto.lugar_encontrado || ''}>
+        {objeto.lugar_encontrado || '—'}
+      </td>
+      <td className="text-caption text-muted">{objeto.total_solicitudes}</td>
       <td>
         <select
           value={objeto.estado}
@@ -108,10 +154,39 @@ export default function ObjetosAdmin() {
   const [estado, setEstado] = useState('')
   const [categoria, setCategoria] = useState('')
   const [sede, setSede] = useState('')
+  const [seleccion, setSeleccion] = useState<number[]>([])
   const { confirmar, modal } = useConfirmModal()
+  const toast = useToast()
 
   const { data: categorias } = useCategoriasAdmin()
   const { data: objetos, isLoading } = useObjetosAdmin({ q, estado, categoria, sede })
+  const eliminarSeleccion = useEliminarObjetosSeleccion()
+
+  const categoriasPorId = new Map((categorias ?? []).map((cat) => [cat.id, cat]))
+
+  function alternarSeleccion(id: number, valor: boolean) {
+    setSeleccion((actual) => (valor ? [...actual, id] : actual.filter((x) => x !== id)))
+  }
+
+  function alternarSeleccionTodos(valor: boolean) {
+    setSeleccion(valor ? (objetos ?? []).map((o) => o.id) : [])
+  }
+
+  async function borrarSeleccion() {
+    const ok = await confirmar({
+      titulo: 'Eliminar objetos seleccionados',
+      mensaje: `¿Eliminar ${seleccion.length} objeto(s)? Esta acción no se puede deshacer.`,
+      textoConfirmar: 'Eliminar',
+    })
+    if (!ok) return
+    try {
+      await eliminarSeleccion.mutateAsync(seleccion)
+      toast.mostrar('Objetos eliminados.', 'exito')
+      setSeleccion([])
+    } catch {
+      toast.mostrar('No pudimos eliminar la selección.', 'error')
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -163,11 +238,23 @@ export default function ObjetosAdmin() {
 
       {objetos && objetos.length > 0 && (
         <div className="overflow-x-auto rounded-card shadow-card">
-          <table className="tabla min-w-[640px]">
+          <table className="tabla min-w-[760px]">
             <thead>
               <tr>
+                <th>
+                  <input
+                    type="checkbox"
+                    checked={seleccion.length > 0 && seleccion.length === objetos.length}
+                    onChange={(evento) => alternarSeleccionTodos(evento.target.checked)}
+                    aria-label="Seleccionar todos los objetos"
+                  />
+                </th>
                 <th>Objeto</th>
                 <th>Sede</th>
+                <th>Categoría</th>
+                <th>Fecha</th>
+                <th>Lugar</th>
+                <th>Solicitudes</th>
                 <th>Cambiar estado</th>
                 <th>Estado</th>
                 <th />
@@ -175,10 +262,31 @@ export default function ObjetosAdmin() {
             </thead>
             <tbody>
               {objetos.map((objeto) => (
-                <FilaObjeto key={objeto.id} objeto={objeto} confirmar={confirmar} />
+                <FilaObjeto
+                  key={objeto.id}
+                  objeto={objeto}
+                  categoria={objeto.categoria ? categoriasPorId.get(objeto.categoria) : undefined}
+                  seleccionado={seleccion.includes(objeto.id)}
+                  onSeleccionar={alternarSeleccion}
+                  confirmar={confirmar}
+                />
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {seleccion.length > 0 && (
+        <div className="sticky bottom-4 flex items-center gap-4 self-start rounded-pill border border-line bg-surface px-5 py-3 shadow-floating">
+          <span className="text-body text-ink">
+            <b>{seleccion.length}</b> seleccionado{seleccion.length === 1 ? '' : 's'}
+          </span>
+          <Button variante="ghost" tamano="sm" onClick={() => setSeleccion([])}>
+            Cancelar
+          </Button>
+          <Button variante="peligro" tamano="sm" onClick={borrarSeleccion} disabled={eliminarSeleccion.isPending}>
+            Eliminar
+          </Button>
         </div>
       )}
       {modal}

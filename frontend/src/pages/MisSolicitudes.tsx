@@ -6,6 +6,7 @@ import { Button } from '../components/Button'
 import { Card } from '../components/Card'
 import { Textarea } from '../components/Input'
 import { useApelarSolicitud, useMisSolicitudes } from '../hooks/useEstudianteApi'
+import { formatearFecha } from '../lib/fecha'
 
 function TarjetaSolicitud({ solicitud }: { solicitud: Solicitud }) {
   const apelar = useApelarSolicitud()
@@ -33,7 +34,7 @@ function TarjetaSolicitud({ solicitud }: { solicitud: Solicitud }) {
             {solicitud.objeto_detalle.nombre_objeto || 'Objeto sin nombre'}
           </h3>
           <p className="text-caption text-muted">
-            Solicitado el {new Date(solicitud.fecha).toLocaleDateString('es-CO')}
+            Solicitado el {formatearFecha(solicitud.fecha, { conHora: true })}
           </p>
         </div>
         <BadgeEstadoSolicitud estado={solicitud.estado} etiqueta={solicitud.estado_display} />

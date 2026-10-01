@@ -62,7 +62,11 @@ class PanelObjetosView(APIView):
         estado = request.query_params.get('estado', '')
         categoria_id = request.query_params.get('categoria') or None
         sede = request.query_params.get('sede') or None
-        qs = ObjetoReclamado.objects.select_related('categoria', 'registrado_por').all()
+        qs = (
+            ObjetoReclamado.objects.select_related('categoria', 'registrado_por')
+            .annotate(total_solicitudes=Count('solicitudes'))
+            .all()
+        )
         if estado:
             qs = qs.filter(estado=estado)
         if sede:

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { BadgeEstadoSolicitud } from '../../components/Badge'
 import { CategoryIcon } from '../../components/CategoryIcon'
 import { useSolicitudesAdmin } from '../../hooks/usePanelApi'
+import { formatearFecha } from '../../lib/fecha'
 
 const FILTROS = [
   { estado: '', etiqueta: 'conteo', clave: 'por_revisar' as const, texto: 'Por revisar' },
@@ -79,7 +80,7 @@ export default function Solicitudes() {
                     </div>
                   </td>
                   <td className="max-w-60 truncate text-muted">{s.mensaje || '—'}</td>
-                  <td className="text-caption text-muted">{new Date(s.fecha).toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                  <td className="text-caption text-muted">{formatearFecha(s.fecha, { conHora: true })}</td>
                   <td>
                     <BadgeEstadoSolicitud estado={s.estado} etiqueta={s.estado_display} />
                   </td>

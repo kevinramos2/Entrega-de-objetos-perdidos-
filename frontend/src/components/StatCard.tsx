@@ -14,11 +14,21 @@ const TONOS: Record<NonNullable<StatCardProps['tono']>, string> = {
   azul: 'kpi-azul',
 }
 
+const TONOS_ICONO: Record<NonNullable<StatCardProps['tono']>, string> = {
+  verde: 'bg-success-wash text-success',
+  amarillo: 'bg-warning-wash text-warning',
+  azul: 'bg-info-wash text-info',
+}
+
 export function StatCard({ etiqueta, valor, detalle, tono, icono }: StatCardProps) {
   return (
     <div className={`kpi rounded-card border border-line bg-surface p-5 ${tono ? TONOS[tono] : ''}`}>
       {icono && (
-        <span className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-input bg-primary-wash text-primary">
+        <span
+          className={`absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-input [&>svg]:h-4.5 [&>svg]:w-4.5 ${
+            tono ? TONOS_ICONO[tono] : 'bg-primary-wash text-primary'
+          }`}
+        >
           {icono}
         </span>
       )}

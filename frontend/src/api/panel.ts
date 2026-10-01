@@ -24,6 +24,7 @@ export interface ObjetoAdmin {
   correo: string | null
   fecha_entrega: string | null
   responsable_entrega: string
+  total_solicitudes: number
 }
 
 export interface UsuarioAdmin {

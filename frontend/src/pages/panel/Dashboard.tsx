@@ -10,10 +10,13 @@ import {
   Tooltip,
 } from 'chart.js'
 import { Bar, Doughnut, Line } from 'react-chartjs-2'
+import { Link } from 'react-router-dom'
 import { BadgeEstadoSolicitud } from '../../components/Badge'
+import { Button } from '../../components/Button'
 import { Card } from '../../components/Card'
 import { StatCard } from '../../components/StatCard'
 import { useDashboard } from '../../hooks/usePanelApi'
+import { useAuth } from '../../lib/auth-context'
 
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, LineElement, PointElement, Legend, Tooltip)
 
@@ -26,7 +29,40 @@ const NOMBRES_ESTADO: Record<string, string> = {
   entregado: 'Entregado',
 }
 
+const ICONO_CAJA = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+    <path d="M3.27 6.96 12 12.01l8.73-5.05" />
+    <path d="M12 22.08V12" />
+  </svg>
+)
+const ICONO_LUPA = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8" />
+    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+  </svg>
+)
+const ICONO_RELOJ = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
+  </svg>
+)
+const ICONO_CHECK = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+)
+const ICONO_DIANA = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <circle cx="12" cy="12" r="6" />
+    <circle cx="12" cy="12" r="2" />
+  </svg>
+)
+
 export default function Dashboard() {
+  const { usuario } = useAuth()
   const { data, isLoading } = useDashboard()
 
   if (isLoading || !data) {
@@ -37,16 +73,26 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col gap-8">
-      <header>
-        <h1 className="font-display text-heading font-bold text-ink">Resumen</h1>
-        <p className="mt-1 text-body text-muted">Estado general de objetos y solicitudes.</p>
+      <header className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="text-caption text-muted">Panel de administración</p>
+          <h1 className="font-display text-heading font-bold text-ink">
+            Hola, {usuario?.first_name || usuario?.username}
+          </h1>
+        </div>
+        <div className="flex gap-2">
+          <Link to="/panel/objetos/nuevo">
+            <Button variante="primario">Registrar objeto</Button>
+          </Link>
+        </div>
       </header>
 
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard etiqueta="Disponibles" valor={resumen.disponibles} tono="verde" />
-        <StatCard etiqueta="Reclamados" valor={resumen.reclamados} tono="amarillo" />
-        <StatCard etiqueta="Entregados" valor={resumen.entregados} tono="azul" />
-        <StatCard etiqueta="Por revisar" valor={resumen.solicitudes_pendientes} tono="amarillo" />
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <StatCard etiqueta="Objetos registrados" valor={resumen.total} icono={ICONO_CAJA} />
+        <StatCard etiqueta="Disponibles" valor={resumen.disponibles} tono="verde" icono={ICONO_LUPA} />
+        <StatCard etiqueta="Reclamados" valor={resumen.reclamados} tono="amarillo" icono={ICONO_RELOJ} />
+        <StatCard etiqueta="Entregados" valor={resumen.entregados} tono="azul" icono={ICONO_CHECK} />
+        <StatCard etiqueta="Tasa de recuperación" valor={`${resumen.tasa_recuperacion}%`} icono={ICONO_DIANA} />
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
