@@ -57,9 +57,3 @@ services:
       # incluye "?sslmode=require", no lo quites.
       - key: DATABASE_URL
         sync: false
-      # URL pública del frontend en Vercel. Se usa para CORS y para el
-      # redirect final del login con Google hacia la SPA (ver
-      # registro_objetos/api/auth_views.py::google_auth_bridge). Déjala sin
-      # definir hasta tener la URL real de Vercel.
-      - key: FRONTEND_URL
-        sync: false
