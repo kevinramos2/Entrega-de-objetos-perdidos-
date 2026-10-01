@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { descargarFormatoObjeto, type ObjetoAdmin } from '../../api/panel'
+import { ApiError } from '../../api/client'
 import { SEDES } from '../../api/estudiante'
+import { descargarFormatoObjeto, type ObjetoAdmin } from '../../api/panel'
 import { BadgeEstadoObjeto } from '../../components/Badge'
 import { Button } from '../../components/Button'
+import { useConfirmModal } from '../../components/ConfirmModal'
 import { Input, Select } from '../../components/Input'
-import { useCategoriasAdmin } from '../../hooks/usePanelApi'
-import { useCambiarEstadoObjeto, useEliminarObjeto, useObjetosAdmin } from '../../hooks/usePanelApi'
+import { useCambiarEstadoObjeto, useCategoriasAdmin, useEliminarObjeto, useObjetosAdmin } from '../../hooks/usePanelApi'
+import { useToast } from '../../lib/toast-context'
 
 const ESTADOS = [
   { value: 'disponible', label: 'Disponible' },
@@ -14,40 +16,61 @@ const ESTADOS = [
   { value: 'entregado', label: 'Entregado' },
 ]
 
-function FilaObjeto({ objeto }: { objeto: ObjetoAdmin }) {
+function FilaObjeto({ objeto, confirmar }: { objeto: ObjetoAdmin; confirmar: ReturnType<typeof useConfirmModal>['confirmar'] }) {
   const cambiarEstado = useCambiarEstadoObjeto()
   const eliminar = useEliminarObjeto()
+  const toast = useToast()
   const [descargando, setDescargando] = useState(false)
 
   async function descargar() {
     setDescargando(true)
     try {
       await descargarFormatoObjeto(objeto.id)
+    } catch (err) {
+      toast.mostrar(err instanceof ApiError ? err.message : 'No pudimos generar el PDF.', 'error')
     } finally {
       setDescargando(false)
     }
   }
 
-  function confirmarEliminar() {
-    if (window.confirm(`¿Eliminar «${objeto.nombre_objeto || 'este objeto'}»? Esta acción no se puede deshacer.`)) {
-      eliminar.mutate(objeto.id)
+  async function cambiar(estado: string) {
+    try {
+      await cambiarEstado.mutateAsync({ id: objeto.id, estado })
+      toast.mostrar(`El objeto pasó a «${ESTADOS.find((e) => e.value === estado)?.label}».`, 'exito')
+    } catch (err) {
+      toast.mostrar(err instanceof ApiError ? err.message : 'No pudimos cambiar el estado.', 'error')
+    }
+  }
+
+  async function confirmarEliminar() {
+    const ok = await confirmar({
+      titulo: 'Eliminar objeto',
+      mensaje: `¿Eliminar «${objeto.nombre_objeto || 'este objeto'}»? Esta acción no se puede deshacer.`,
+      textoConfirmar: 'Eliminar',
+    })
+    if (!ok) return
+    try {
+      await eliminar.mutateAsync(objeto.id)
+      toast.mostrar('Objeto eliminado.', 'exito')
+    } catch {
+      toast.mostrar('No pudimos eliminar el objeto.', 'error')
     }
   }
 
   return (
-    <tr className="border-b border-line text-body">
-      <td className="py-3 pr-4">
+    <tr>
+      <td>
         <Link to={`/panel/objetos/${objeto.id}/editar`} className="font-medium text-ink hover:text-primary">
           {objeto.nombre_objeto || 'Sin nombre'}
         </Link>
         <p className="text-caption text-muted">{objeto.categoria_nombre}</p>
       </td>
-      <td className="py-3 pr-4 text-caption text-muted">{objeto.sede_display}</td>
-      <td className="py-3 pr-4">
+      <td className="text-caption text-muted">{objeto.sede_display}</td>
+      <td>
         <select
           value={objeto.estado}
-          onChange={(evento) => cambiarEstado.mutate({ id: objeto.id, estado: evento.target.value })}
-          className="rounded-input border border-line bg-surface px-2 py-1 text-caption text-ink"
+          onChange={(evento) => cambiar(evento.target.value)}
+          className="rounded-input border border-line bg-surface px-2 py-1.5 text-caption text-ink"
         >
           {ESTADOS.map((estado) => (
             <option key={estado.value} value={estado.value}>
@@ -56,11 +79,11 @@ function FilaObjeto({ objeto }: { objeto: ObjetoAdmin }) {
           ))}
         </select>
       </td>
-      <td className="py-3 pr-4">
+      <td>
         <BadgeEstadoObjeto estado={objeto.estado} etiqueta={objeto.estado_display} />
       </td>
-      <td className="py-3 text-right">
-        <div className="flex justify-end gap-2">
+      <td>
+        <div className="acciones">
           {objeto.estado === 'entregado' && (
             <Button variante="ghost" tamano="sm" onClick={descargar} disabled={descargando}>
               {descargando ? 'Generando…' : 'PDF'}
@@ -85,6 +108,7 @@ export default function ObjetosAdmin() {
   const [estado, setEstado] = useState('')
   const [categoria, setCategoria] = useState('')
   const [sede, setSede] = useState('')
+  const { confirmar, modal } = useConfirmModal()
 
   const { data: categorias } = useCategoriasAdmin()
   const { data: objetos, isLoading } = useObjetosAdmin({ q, estado, categoria, sede })
@@ -93,7 +117,7 @@ export default function ObjetosAdmin() {
     <div className="flex flex-col gap-6">
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-heading text-ink">Objetos</h1>
+          <h1 className="font-display text-heading font-bold text-ink">Objetos</h1>
           <p className="mt-1 text-body text-muted">{objetos?.length ?? 0} registrados con estos filtros.</p>
         </div>
         <Link to="/panel/objetos/nuevo">
@@ -131,26 +155,33 @@ export default function ObjetosAdmin() {
 
       {isLoading && <p className="text-body text-muted">Cargando…</p>}
 
-      {objetos && (
-        <div className="overflow-x-auto rounded-card border border-line bg-surface">
-          <table className="w-full min-w-[640px] px-2">
+      {objetos && objetos.length === 0 && (
+        <p className="rounded-card border border-line bg-surface p-8 text-center text-body text-muted shadow-card">
+          No hay objetos con estos filtros.
+        </p>
+      )}
+
+      {objetos && objetos.length > 0 && (
+        <div className="overflow-x-auto rounded-card shadow-card">
+          <table className="tabla min-w-[640px]">
             <thead>
-              <tr className="border-b border-line text-left text-caption uppercase tracking-wide text-muted">
-                <th className="px-4 py-3 font-medium">Objeto</th>
-                <th className="px-4 py-3 font-medium">Sede</th>
-                <th className="px-4 py-3 font-medium">Cambiar estado</th>
-                <th className="px-4 py-3 font-medium">Estado</th>
-                <th className="px-4 py-3" />
+              <tr>
+                <th>Objeto</th>
+                <th>Sede</th>
+                <th>Cambiar estado</th>
+                <th>Estado</th>
+                <th />
               </tr>
             </thead>
-            <tbody className="px-4">
+            <tbody>
               {objetos.map((objeto) => (
-                <FilaObjeto key={objeto.id} objeto={objeto} />
+                <FilaObjeto key={objeto.id} objeto={objeto} confirmar={confirmar} />
               ))}
             </tbody>
           </table>
         </div>
       )}
+      {modal}
     </div>
   )
 }

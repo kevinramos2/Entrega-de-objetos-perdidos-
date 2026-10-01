@@ -294,3 +294,134 @@
   transform: none !important;
 }
 .footer-mail:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+
+/* ---------- Tabla ---------- */
+.tabla { width: 100%; border-collapse: collapse; background: #fff; border-radius: var(--radius-card); overflow: hidden; }
+.tabla th { text-align: left; padding: 14px; background: #f9fafb; color: var(--color-muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+.tabla td { padding: 15px 14px; border-top: 1px solid var(--color-line); font-size: 0.9rem; vertical-align: middle; }
+.tabla tbody tr { transition: background 0.12s ease; }
+.tabla tbody tr:hover { background: #f3f8f5; }
+.tabla .acciones { display: flex; gap: 8px; justify-content: flex-end; }
+
+/* ---------- Menú de acciones por fila ---------- */
+.menu-acciones { position: relative; }
+.menu-acciones-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 60;
+  min-width: 190px;
+  padding: 6px;
+  text-align: left;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+  box-shadow: var(--shadow-floating);
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  color: var(--color-ink);
+  border-radius: 8px;
+  text-align: left;
+}
+.menu-item:hover { background: var(--color-primary-wash); color: var(--color-primary); }
+.menu-item-danger:hover { background: var(--color-danger-wash); color: var(--color-danger); }
+
+/* ---------- Toasts ---------- */
+.toasts { position: fixed; top: 80px; right: 18px; z-index: 100; display: flex; flex-direction: column; gap: 10px; width: min(360px, 90vw); }
+.toast {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px 14px 18px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--shadow-floating);
+  border: 1px solid var(--color-line);
+  animation: toast-in 0.3s ease;
+  font-size: 0.88rem;
+  overflow: hidden;
+}
+.toast::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--color-muted); }
+.toast.exito::before { background: var(--color-success); }
+.toast.error::before { background: var(--color-danger); }
+.toast .cerrar { margin-left: auto; background: none; border: 0; cursor: pointer; color: var(--color-muted); font-size: 1.05rem; line-height: 1; padding: 0 2px; }
+.toast .cerrar:hover { color: var(--color-ink); }
+@keyframes toast-in { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: none; } }
+
+/* ---------- Modal de confirmación ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+}
+.modal {
+  width: 100%;
+  max-width: 420px;
+  background: var(--color-surface);
+  border-radius: 18px;
+  padding: 26px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.3);
+  animation: modal-entra 0.18s ease;
+}
+@keyframes modal-entra { from { transform: translateY(10px) scale(0.98); opacity: 0; } }
+.modal-ico {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: inline-grid;
+  place-items: center;
+  background: var(--color-danger-wash);
+  color: var(--color-danger);
+  margin-bottom: 14px;
+}
+.modal-ico.ok { background: var(--color-success-wash); color: var(--color-success); }
+.modal-acciones { display: flex; gap: 10px; justify-content: center; margin-top: 22px; }
+.modal-acciones .btn { min-width: 118px; }
+
+/* ---------- Subida de archivo (foto / firma) ---------- */
+.archivo-subida-area {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  border: 1.5px dashed var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-canvas);
+  cursor: pointer;
+  padding: 16px;
+  transition: border 0.15s, background 0.15s;
+  text-align: center;
+}
+.archivo-subida-area:hover { border-color: var(--color-primary); background: var(--color-primary-wash); }
+.archivo-subida-preview {
+  max-width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+.archivo-subida-firma .archivo-subida-area { min-height: 120px; }
+.archivo-subida-firma .archivo-subida-preview {
+  background: #f0f1f4;
+  border-radius: 8px;
+  padding: 6px;
+  border: 1px solid var(--color-line);
+}

@@ -8,9 +8,15 @@ import Login from './pages/Login'
 import MisSolicitudes from './pages/MisSolicitudes'
 import ObjetoDetalle from './pages/ObjetoDetalle'
 import Objetos from './pages/Objetos'
+import Categorias from './pages/panel/Categorias'
+import ConfiguracionEntrega from './pages/panel/ConfiguracionEntrega'
 import Dashboard from './pages/panel/Dashboard'
+import ObjetoForm from './pages/panel/ObjetoForm'
 import ObjetosAdmin from './pages/panel/ObjetosAdmin'
-import PanelPlaceholder from './pages/PanelPlaceholder'
+import SolicitudDetalle from './pages/panel/SolicitudDetalle'
+import Solicitudes from './pages/panel/Solicitudes'
+import UsuarioForm from './pages/panel/UsuarioForm'
+import Usuarios from './pages/panel/Usuarios'
 import StyleGuide from './pages/StyleGuide'
 
 export default function App() {
@@ -34,10 +40,14 @@ export default function App() {
         <Route element={<PanelLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="objetos" element={<ObjetosAdmin />} />
-          <Route path="solicitudes" element={<PanelPlaceholder />} />
-          <Route path="categorias" element={<PanelPlaceholder />} />
-          <Route path="usuarios" element={<PanelPlaceholder />} />
-          <Route path="configuracion-entrega" element={<PanelPlaceholder />} />
+          <Route path="objetos/nuevo" element={<ObjetoForm />} />
+          <Route path="objetos/:id/editar" element={<ObjetoForm />} />
+          <Route path="solicitudes" element={<Solicitudes />} />
+          <Route path="solicitudes/:id" element={<SolicitudDetalle />} />
+          <Route path="categorias" element={<Categorias />} />
+          <Route path="usuarios" element={<Usuarios />} />
+          <Route path="usuarios/:id/editar" element={<UsuarioForm />} />
+          <Route path="configuracion-entrega" element={<ConfiguracionEntrega />} />
         </Route>
       </Route>
 
