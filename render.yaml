@@ -3,17 +3,14 @@
 # ---------------------------------------------------------------------------
 # Cómo usarlo:
 #   1) Render -> Dashboard -> "New +" -> "Blueprint" -> elige este repositorio.
-#   2) Render detecta este archivo y crea el Web Service + PostgreSQL.
-#   3) Escribe el valor de DJANGO_SECRET_KEY cuando Render lo pida.
+#   2) Render detecta este archivo y crea el Web Service (ya no provisiona
+#      una base de datos: el Postgres gratis de Render expira a los 30 días,
+#      así que la base vive en Neon — ver DATABASE_URL más abajo).
+#   3) Escribe el valor de DJANGO_SECRET_KEY, DATABASE_URL (la de Neon) y
+#      GOOGLE_OAUTH_* cuando Render lo pida.
 #   4) "Apply" y espera el despliegue.
 # En el primer arranque se ejecutan las migraciones (startCommand).
 # ---------------------------------------------------------------------------
-
-databases:
-  - name: objetos-perdidos-db
-    databaseName: objetos_perdidos
-    user: objetos
-    plan: free
 
 services:
   - type: web
@@ -55,8 +52,14 @@ services:
         sync: false
       - key: GOOGLE_OAUTH_CLIENT_SECRET
         sync: false
-      # Vincula la base de datos: Render inyecta la connection string como DATABASE_URL
+      # Postgres de Neon (no expira, a diferencia del de Render). Pega aquí
+      # la "Connection string" que te da Neon al crear el proyecto —
+      # incluye "?sslmode=require", no lo quites.
       - key: DATABASE_URL
-        fromDatabase:
-          name: objetos-perdidos-db
-          property: connectionString
+        sync: false
+      # URL pública del frontend en Vercel. Se usa para CORS y para el
+      # redirect final del login con Google hacia la SPA (ver
+      # registro_objetos/api/auth_views.py::google_auth_bridge). Déjala sin
+      # definir hasta tener la URL real de Vercel.
+      - key: FRONTEND_URL
+        sync: false
