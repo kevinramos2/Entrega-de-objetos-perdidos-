@@ -11,8 +11,6 @@ Plataforma web para centralizar la gestión de **objetos perdidos y encontrados*
 
 ##  Demo en vivo
 
- **[objetos-perdidos.onrender.com](https://objetos-perdidos.onrender.com)**
-
 El login normal es con correo institucional (`@unal.edu.co`) vía Google, pero para que cualquiera pueda probar la app sin esa restricción, en `/login/` hay un enlace **"Acceso administrativo (usuario y contraseña)"** que acepta las cuentas de demostración:
 
 | Rol | Usuario | Contraseña |
